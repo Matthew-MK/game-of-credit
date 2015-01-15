@@ -15,7 +15,7 @@ server.listen(port)
 
 # Event listener for HTTP server "listening" event
 server.on "listening", ->
-  console.log("Server listening on #{port}")
+  console.log("Server listening on #{port} in #{app.get('env')}")
 
 # Event listener for HTTP server "listening" event
 server.on "error", (err) ->
