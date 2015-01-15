@@ -2,7 +2,6 @@
   "name": "Game-of-credit",
   "version": "0.0.1",
   "scripts": {
-    "preinstall": "npm install coffee-script -g",
     "start": "coffee ./bin/www"
   },
   "dependencies": {
