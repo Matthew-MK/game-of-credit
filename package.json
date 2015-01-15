@@ -9,6 +9,7 @@
     "start": "coffee ./bin/www"
   },
   "dependencies": {
+    "coffee-script": "^1.8.0",
     "express": "^4.11.0",
     "jade": "^1.9.0"
   }
