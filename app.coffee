@@ -13,22 +13,42 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-
+fs = require("fs")
 express = require("express")
+coffee = require('coffee-script')
+through = require("through")
+browserify = require("browserify")
 
-app = express()
+
+###
+Browserify transform
+- convert all coffee files to single js bundle
+###
+browserify(__dirname + "/src/main.coffee")
+.transform ->
+  data = ""
+  write = (buf) -> data += buf
+  end = ->
+    @queue(coffee.compile(data))
+    @queue(null)
+  return through(write, end)
+.bundle()
+.pipe(fs.createWriteStream(__dirname + "/static/build/bundle.js"))
+# TODO(svagis) uglyify transform
+
 
 ### Setup ###
+app = express()
+env = app.get('env')
 
 # View engine setup
 app.set("views", __dirname + "/views")
 app.set("view engine", "jade")
+app.use(express.static(__dirname + "/static")) if env is "development"
 
-### Routes ###
-if app.get('env') is "development"
-  app.use "/", (req, res) ->
-    res.render "index",
-      title: "Play"
+app.use "/", (req, res) ->
+  res.render "play",
+    title: "Play"
 
 ### Middleware ###
 # catch 404 and forward to error handler
@@ -42,6 +62,6 @@ app.use (err, req, res) ->
   res.status err.status or 500
   res.render 'error',
     message: err.message
-    error: if app.get('env') is "development" then err else {}
+    error: if env is "development" then err else {}
 
 module.exports = app
