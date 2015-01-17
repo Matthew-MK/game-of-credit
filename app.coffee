@@ -24,7 +24,7 @@ browserify = require("browserify")
 Browserify transform
 - convert all coffee files to single js bundle
 ###
-b = browserify(__dirname + "/src/main.coffee")
+b = browserify(__dirname + "/src/main.coffee", {extensions: [".coffee"]} )
 b.transform ->
   data = ""
   write = (buf) -> data += buf

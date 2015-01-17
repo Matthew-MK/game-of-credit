@@ -15,7 +15,7 @@ limitations under the License.
 ###
 "use strict"
 
-App = require("./App.coffee")
+App = require("./App")
 $ = (id) -> document.getElementById(id)
 
 document.body.onload = ->
