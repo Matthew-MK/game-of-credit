@@ -11,11 +11,11 @@
   "dependencies": {
     "browserify": "^8.1.1",
     "coffee-script": "^1.8.0",
+    "coffeeify": "^1.0.0",
     "express": "^4.11.0",
     "jade": "^1.9.0",
     "stats-js": "^1.0.0-alpha1",
     "three": "^0.69.0",
-    "through": "^2.3.6",
     "uglifyify": "^2.6.0"
   }
 }

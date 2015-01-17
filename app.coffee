@@ -25,13 +25,7 @@ Browserify transform
 - convert all coffee files to single js bundle
 ###
 b = browserify(__dirname + "/src/main.coffee", {extensions: [".coffee"]} )
-b.transform ->
-  data = ""
-  write = (buf) -> data += buf
-  end = ->
-    @queue(coffee.compile(data))
-    @queue(null)
-  return through(write, end)
+b.transform "coffeeify"
 b.transform {global: true}, 'uglifyify' if env is "development"
 b.bundle().pipe(fs.createWriteStream(__dirname + "/static/build/bundle.js"))
 
