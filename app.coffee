@@ -18,17 +18,6 @@ express = require("express")
 coffee = require('coffee-script')
 browserify = require("browserify")
 
-
-###
-Browserify transform
-- convert all coffee files to single js bundle
-###
-b = browserify(__dirname + "/src/main.coffee", {extensions: [".coffee"]} )
-b.transform "coffeeify"
-b.transform {global: true}, 'uglifyify' if env is "development"
-b.bundle().pipe(fs.createWriteStream(__dirname + "/static/build/bundle.js"))
-
-
 ### Setup ###
 app = express()
 env = app.get('env')
@@ -36,6 +25,20 @@ env = app.get('env')
 # View engine setup
 app.set("views", __dirname + "/views")
 app.set("view engine", "jade")
+
+###
+Browserify transform
+- convert all coffee files to single js bundle
+###
+b = browserify __dirname + "/src/main.coffee",
+  extensions: [".coffee"]
+  debug: env is "development"
+b.transform "coffeeify"
+b.transform {global: true}, 'uglifyify' if env is "production"
+b.bundle().pipe(fs.createWriteStream(__dirname + "/static/build/bundle.js"))
+
+
+# TODO CDN for static files
 app.use(express.static(__dirname + "/static")) if env is "development"
 
 # load all resources only from current origin (but not its sub-domains)
