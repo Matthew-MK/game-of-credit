@@ -16,7 +16,6 @@ limitations under the License.
 fs = require("fs")
 express = require("express")
 coffee = require('coffee-script')
-through = require("through")
 browserify = require("browserify")
 
 
@@ -39,11 +38,16 @@ app.set("views", __dirname + "/views")
 app.set("view engine", "jade")
 app.use(express.static(__dirname + "/static")) if env is "development"
 
+# load all resources only from current origin (but not its sub-domains)
+app.use (req, res, next) ->
+  res.setHeader("Content-Security-Policy", "default-src 'self'")
+  res.setHeader("X-Frame-Options", "sameorigin")
+  next()
+
 app.use "/", (req, res) ->
   res.render "play",
     title: "Play"
 
-### Middleware ###
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
   err = new Error("Not Found")
