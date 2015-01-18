@@ -43,7 +43,7 @@ app.use(express.static(__dirname + "/static")) if env is "development"
 
 # load all resources only from current origin (but not its sub-domains)
 app.use (req, res, next) ->
-  res.setHeader("Content-Security-Policy", "default-src 'self'")
+  res.setHeader("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'")
   res.setHeader("X-Frame-Options", "sameorigin")
   next()
 
