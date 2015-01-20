@@ -16,14 +16,21 @@ limitations under the License.
 "use strict"
 
 App = require("./App")
+PointerLock = require("./PointerLock")
+
 $ = (id) -> document.getElementById(id)
 
 document.body.onload = ->
+
+  blocker = $("blocker")
+  instructions = $("instructions")
+  PointerLock(blocker, instructions)
+
   # Create application
   app = new App
     width: window.innerWidth
     height: window.innerHeight
-    container: $("render")
+    container: $("app")
     devicePixelRatio: 1.0
     antialias: false
 

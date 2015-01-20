@@ -1,5 +1,21 @@
+###
+Copyright 2014 Jan Svager & Michael Muller
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+###
+
 THREE = require("three")
-STATS = require("stats-js")
+Stats = require("stats-js")
 
 class App
   constructor: (opts)->
@@ -8,7 +24,7 @@ class App
     @aspectRatio = @width / @height
     @container = opts.container
 
-    @stats = new STATS
+    @stats = new Stats
     @scene = new THREE.Scene
     @camera = new THREE.PerspectiveCamera(45, @aspectRatio, 1, 1000)
     @renderer = new THREE.WebGLRenderer
@@ -31,6 +47,12 @@ class App
 
     @camera.position.set(0, 0, 100)
     @scene.add(@camera)
+
+    cube = new THREE.Mesh(
+      new THREE.BoxGeometry(10,10,10),
+      new THREE.MeshBasicMaterial(color: "red")
+    )
+    @scene.add(cube)
 
   ### Render single frame ###
   render: =>

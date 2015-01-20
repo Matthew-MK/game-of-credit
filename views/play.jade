@@ -1,9 +1,13 @@
 extends layout
 
 block js
-  script(src="build/bundle.js", async)
+    script(src="build/bundle.js", async)
 
 block content
-  div(id="render")
+    div(id="blocker")
+        div(id="instructions")
+            span "Click to play"
+            span "(W, A, S, D = Move, SPACE = Jump, MOUSE = Look around)"
+    div(id="app")
 
 
