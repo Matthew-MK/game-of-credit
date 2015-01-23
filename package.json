@@ -8,6 +8,13 @@
   "scripts": {
     "start": "coffee ./bin/www"
   },
+  "browser": "./src/main.coffee",
+  "browserify": {
+    "transform": ["coffeeify", "browserify-shim"]
+  },
+  "browserify-shim": {
+    "three": "global:THREE"
+  },
   "dependencies": {
     "browserify": "^8.1.1",
     "coffee-script": "^1.8.0",

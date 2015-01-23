@@ -33,7 +33,6 @@ Browserify transform
 b = browserify __dirname + "/src/main.coffee",
   extensions: [".coffee"]
   debug: env is "development"
-b.transform "coffeeify"
 b.transform {global: true}, 'uglifyify' if env is "production"
 b.bundle().pipe(fs.createWriteStream(__dirname + "/static/build/bundle.js"))
 
@@ -43,7 +42,11 @@ app.use(express.static(__dirname + "/static")) if env is "development"
 
 # load all resources only from current origin (but not its sub-domains)
 app.use (req, res, next) ->
-  res.setHeader("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'")
+  res.setHeader("Content-Security-Policy","
+    default-src 'self';
+    style-src 'self' 'unsafe-inline';
+    script-src 'self' cdnjs.cloudflare.com
+  ")
   res.setHeader("X-Frame-Options", "sameorigin")
   next()
 

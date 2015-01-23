@@ -16,6 +16,7 @@ limitations under the License.
 
 THREE = require("three")
 Stats = require("stats-js")
+Controls = require("./Controls")
 
 class App
   constructor: (opts)->
@@ -26,7 +27,7 @@ class App
 
     @stats = new Stats
     @scene = new THREE.Scene
-    @camera = new THREE.PerspectiveCamera(45, @aspectRatio, 1, 1000)
+    @camera = new THREE.PerspectiveCamera(75, @aspectRatio, 1, 1000)
     @renderer = new THREE.WebGLRenderer
       devicePixelRatio: opts.devicePixelRatio
       antialias: opts.antialias
@@ -45,17 +46,36 @@ class App
     @stats.domElement.style.top = '0px'
     @container.appendChild(@stats.domElement)
 
-    @camera.position.set(0, 0, 100)
+
     @scene.add(@camera)
 
     cube = new THREE.Mesh(
       new THREE.BoxGeometry(10,10,10),
       new THREE.MeshBasicMaterial(color: "red")
     )
+    cube.position.set(10, 10, -30)
     @scene.add(cube)
+
+    cube = new THREE.Mesh(
+      new THREE.BoxGeometry(10,10,10),
+      new THREE.MeshBasicMaterial(color: "yellow")
+    )
+    cube.position.set(-10, 10, -30)
+    @scene.add(cube)
+
+    plane = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(2000, 2000, 100, 100),
+      new THREE.MeshBasicMaterial(color: "green")
+    )
+    plane.rotation.x -= Math.PI / 2
+    @scene.add(plane)
+
+    @controls = new Controls(@camera)
+    @scene.add(@controls.getObject())
 
   ### Render single frame ###
   render: =>
+    @controls.render()
     @renderer.render(@scene, @camera)
 
   ### Animate all frames ###

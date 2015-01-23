@@ -1,13 +1,10 @@
 extends layout
 
-block js
-    script(src="build/bundle.js", async)
-
 block content
     div(id="blocker")
         div(id="instructions")
-            span "Click to play"
-            span "(W, A, S, D = Move, SPACE = Jump, MOUSE = Look around)"
+            span Click to play
+            span (W, A, S, D = Move, SPACE = Jump, MOUSE = Look around)
     div(id="app")
-
-
+    script(src="//cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.min.js")
+    script(src="build/bundle.js", async)
