@@ -20,10 +20,7 @@ App = require("./App")
 document.body.onload = ->
   # Create application
   app = new App
-    width: window.innerWidth
-    height: window.innerHeight
-    container: document.getElementById("app")
-    devicePixelRatio: 1.0
+    pixelRatio: 1.0
     antialias: false
 
   # RUN APPLICATION!

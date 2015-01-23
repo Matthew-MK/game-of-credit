@@ -39,7 +39,7 @@ class Controls
       @enabled = false
       @instructions.innerHTML = "Your browser doesn't seem to support Pointer Lock API"
 
-  getObject: ->
+  getCamera: ->
     @camera
 
   render: =>

@@ -19,24 +19,41 @@ Stats = require("stats-js")
 Controls = require("./Controls")
 
 class App
-  constructor: (opts)->
-    @width = opts.width
-    @height = opts.height
-    @aspectRatio = @width / @height
-    @container = opts.container
 
-    @stats = new Stats
+  # Main DOM container for canvas
+  container: document.getElementById("app")
+
+  # Window width & height
+  width: -> window.innerWidth
+  height: -> window.innerHeight
+
+  # Window aspect ratio
+  aspect: -> @width() / @height()
+
+  # FPS debugging
+  stats: new Stats
+
+  constructor: (opts)->
     @scene = new THREE.Scene
-    @camera = new THREE.PerspectiveCamera(75, @aspectRatio, 1, 1000)
+    @camera = new THREE.PerspectiveCamera 75, @aspect(), 1, 1000
     @renderer = new THREE.WebGLRenderer
-      devicePixelRatio: opts.devicePixelRatio
+      devicePixelRatio: opts.pixelRatio
       antialias: opts.antialias
+
+    # events
+    window.addEventListener('resize', @handleWindowResize)
+
+  ### Handle window resizing ###
+  handleWindowResize: ->
+    @camera.aspect = @aspect()
+    @camera.updateProjectionMatrix()
+    @renderer.setSize(@width(), @height())
 
   ### Init all stuff here before rendering ###
   init: =>
 
     # Init renderer
-    @renderer.setSize(@width, @height)
+    @renderer.setSize(@width(), @height())
     @renderer.setClearColor(0xCCCCCC)
     @renderer.shadowMapEnabled = true
     @container.appendChild(@renderer.domElement)
@@ -45,9 +62,6 @@ class App
     @stats.domElement.style.position = 'absolute'
     @stats.domElement.style.top = '0px'
     @container.appendChild(@stats.domElement)
-
-
-    @scene.add(@camera)
 
     cube = new THREE.Mesh(
       new THREE.BoxGeometry(10,10,10),
@@ -71,7 +85,7 @@ class App
     @scene.add(plane)
 
     @controls = new Controls(@camera)
-    @scene.add(@controls.getObject())
+    @scene.add(@controls.getCamera())
 
   ### Render single frame ###
   render: =>
