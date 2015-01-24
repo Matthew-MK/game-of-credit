@@ -15,7 +15,8 @@ class Controls
     S: false
     W: false
   velocity: new THREE.Vector3
-  prevTime: performance.now()
+  prevTime: 0
+  canJump: true
 
   constructor: (camera, @enabled=true) ->
 
@@ -52,14 +53,25 @@ class Controls
       @velocity.x -= @velocity.x * 10.0 * delta
       @velocity.z -= @velocity.z * 10.0 * delta
 
+      @velocity.y -= 9.823 * 3.0 * delta
+
       @velocity.z -= 10.0 * delta if @keys.W
       @velocity.z += 10.0 * delta if @keys.S
       @velocity.x -= 10.0 * delta if @keys.A
       @velocity.x += 10.0 * delta if @keys.D
 
+      if @keys.SPACE
+        @velocity.y += 7.0 if @canJump
+        @canJump = false
+
       @camera.translateX(@velocity.x)
-      @camera.translateX(@velocity.y)
+      @camera.translateY(@velocity.y)
       @camera.translateZ(@velocity.z)
+
+      if @camera.position.y < 10
+        @canJump = true
+        @velocity.y = 0
+        @camera.position.y = 10
 
       @prevTime = time
 
