@@ -45,6 +45,10 @@
     "three": "^0.69.0",
     "uglifyify": "^2.6.0"
   },
+  "devDependencies": {
+    "mocha": "^2.1.0",
+    "supertest": "^0.15.0"
+  },
   "browser": "./src/main.coffee",
   "browserify": {
     "transform": [
