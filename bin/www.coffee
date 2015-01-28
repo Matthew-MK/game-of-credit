@@ -2,9 +2,10 @@
 
 http = require("http")
 app = require("../app")
+{config} = require('../package.json')
 
 # Get port from environment and store it in Express
-port = parseInt(process.env.PORT, 100) or 3000
+port = parseInt(process.env.PORT, 100) or config.port or 3000
 app.set('port', port)
 
 # Create HTTP server
