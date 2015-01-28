@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "start": "coffee ./bin/www",
-    "a": "npm start 8000"
+    "test": "mocha"
   },
   "dependencies": {
     "browserify": "^8.1.1",
