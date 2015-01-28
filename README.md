@@ -1,6 +1,8 @@
 # Game-of-credit
 3D first person shooter
 
+[![Circle CI](https://circleci.com/gh/svagi/Game-of-credit.svg?style=svg)](https://circleci.com/gh/svagi/Game-of-credit)
+
 # Installation
 Install node.js
 
