@@ -50,7 +50,7 @@ app.use (req, res, next) ->
   res.setHeader("X-Frame-Options", "sameorigin")
   next()
 
-app.use "/", (req, res) ->
+app.get "/", (req, res) ->
   res.render "play",
     title: "Play"
 
@@ -61,7 +61,7 @@ app.use (req, res, next) ->
   next(err)
 
 # error handler
-app.use (err, req, res) ->
+app.use (err, req, res, next) ->
   res.status err.status or 500
   res.render 'error',
     message: err.message
