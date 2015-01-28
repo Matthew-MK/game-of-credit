@@ -1,22 +1,38 @@
 {
   "name": "Game-of-credit",
   "version": "0.0.1",
+  "description": "3D first person shooter in web browser",
+  "author": "Jan Svager <jan@svager.cz> (http://svager.cz)",
+  "contributors": [
+    "Michael Muller"
+  ],
+  "license": "Apache License 2.0",
   "repository": {
     "type": "git",
     "url": "git@github.com:svagi/Game-of-credit.git"
   },
+  "bugs": {
+    "url": "https://github.com/svagi/Game-of-credit/issues"
+  },
+  "keywords": [
+    "WebGL",
+    "Three.js",
+    "3D",
+    "game",
+    "credit"
+  ],
+  "bin": "./bin/www",
+  "config": {
+    "port": "8000"
+  },
+  "main": "./app.coffee",
+  "os": [
+    "win32",
+    "darwin"
+  ],
   "scripts": {
-    "start": "coffee ./bin/www"
-  },
-  "browser": "./src/main.coffee",
-  "browserify": {
-    "transform": [
-      "coffeeify",
-      "browserify-shim"
-    ]
-  },
-  "browserify-shim": {
-    "three": "global:THREE"
+    "start": "coffee ./bin/www",
+    "a": "npm start 8000"
   },
   "dependencies": {
     "browserify": "^8.1.1",
@@ -28,5 +44,15 @@
     "stats-js": "^1.0.0-alpha1",
     "three": "^0.69.0",
     "uglifyify": "^2.6.0"
+  },
+  "browser": "./src/main.coffee",
+  "browserify": {
+    "transform": [
+      "coffeeify",
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "three": "global:THREE"
   }
 }
