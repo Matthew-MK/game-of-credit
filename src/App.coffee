@@ -63,6 +63,25 @@ class App
     @stats.domElement.style.top = '0px'
     @container.appendChild(@stats.domElement)
 
+    #skybox test
+    path = '(textures/'
+    sides = [path + 'back.jpg', path + 'down.jpg', path + 'left.jpg', path + 'right.jpg', path + 'up.jpg', path + 'front.jpg']
+    scCube = THREE.ImageUtils.loadTextureCube(sides)
+    scCube.format = THREE.RGBFormat
+    skyShader = THREE.ShaderLib["cube"]
+    skyShader.uniforms["tCube"].value = scCube
+    skyMaterial = new THREE.ShaderMaterial(
+      fragmentShader: skyShader.fragmentShader, vertexShader: skyShader.vertexShader,
+      uniforms: skyShader.uniforms, depthWrite: false, side: THREE.BackSide
+    )
+
+    skybox = new THREE.Mesh(
+      new THREE.CubeGeometry(1000, 1000, 1000),
+      skyMaterial
+    )
+    skybox.position.set(0, 10, 0)
+    @scene.add(skybox)
+
     cube = new THREE.Mesh(
       new THREE.BoxGeometry(10,10,10),
       new THREE.MeshBasicMaterial(color: "red")
@@ -78,7 +97,7 @@ class App
     @scene.add(cube)
 
     plane = new THREE.Mesh(
-      new THREE.PlaneBufferGeometry(2000, 2000, 100, 100),
+      new THREE.PlaneBufferGeometry(1000, 1000, 100, 100),
       new THREE.MeshBasicMaterial(color: "green")
     )
     plane.rotation.x -= Math.PI / 2
