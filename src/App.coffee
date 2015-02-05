@@ -64,8 +64,8 @@ class App
     @container.appendChild(@stats.domElement)
 
     #skybox test
-    path = '(textures/'
-    sides = [path + 'back.jpg', path + 'down.jpg', path + 'left.jpg', path + 'right.jpg', path + 'up.jpg', path + 'front.jpg']
+    path = 'textures/'
+    sides = [path + 'front.jpg', path + 'back.jpg', path + 'up.jpg', path + 'down.jpg', path + 'right.jpg', path + 'left.jpg']
     scCube = THREE.ImageUtils.loadTextureCube(sides)
     scCube.format = THREE.RGBFormat
     skyShader = THREE.ShaderLib["cube"]
