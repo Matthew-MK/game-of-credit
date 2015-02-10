@@ -40,17 +40,16 @@ class App
       devicePixelRatio: opts.pixelRatio
       antialias: opts.antialias
 
-    # events
-    window.addEventListener('resize', @handleWindowResize)
-
   ### Handle window resizing ###
-  handleWindowResize: ->
+  handleWindowResize: =>
     @camera.aspect = @aspect()
     @camera.updateProjectionMatrix()
     @renderer.setSize(@width(), @height())
 
   ### Init all stuff here before rendering ###
   init: =>
+    #events
+    window.addEventListener('resize', @handleWindowResize)
 
     # Init renderer
     @renderer.setSize(@width(), @height())

@@ -15,7 +15,9 @@ limitations under the License.
 ###
 "use strict"
 
-App = require("./App")
+require("./css/style.css")
+
+App = require("./modules/App")
 
 document.body.onload = ->
   # Create application
