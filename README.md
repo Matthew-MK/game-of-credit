@@ -6,30 +6,16 @@
 [![devDependency Status](https://david-dm.org/svagi/Game-of-credit/dev-status.png)](https://david-dm.org/svagi/Game-of-credit#info=devDependencies)
 
 # Installation
-Install node.js
-
-    http://nodejs.org/
-
-Clone repo
-
-    git clone git@github.com:svagi/Game-of-credit.git
-
-or
-
-    https://github.com/svagi/Game-of-credit.git
-
-Install CoffeeScript
+Install global CoffeeScript, Webpack & Webpack-dev-server
 
     npm install coffee-script -g
+    npm install webpack -g
+    npm install webpack-dev-server -g
 
 Then install all dependencies
 
     npm install
 
-Finally run application with
+Finally run application in development mode with
 
     npm start
-
-or
-
-    coffee bin/www

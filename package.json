@@ -31,32 +31,26 @@
     "darwin"
   ],
   "scripts": {
-    "start": "coffee ./bin/www",
+    "build": "webpack",
+    "production": "webpack -p && NODE_ENV=production coffee ./bin/www",
+    "dev": "webpack-dev-server --progress --colors --inline -d",
+    "start": "npm run dev & coffee ./bin/www",
     "test": "mocha"
   },
   "dependencies": {
-    "browserify": "^8.1.1",
-    "browserify-shim": "^3.8.2",
-    "coffee-script": "^1.8.0",
-    "coffeeify": "^1.0.0",
+    "coffee-script": "^1.9.0",
     "express": "^4.11.0",
-    "jade": "^1.9.0",
-    "stats-js": "^1.0.0-alpha1",
-    "three": "^0.69.0",
-    "uglifyify": "^2.6.0"
+    "jade": "^1.9.2",
+    "react": "^0.13.0-beta.1",
+    "stats-js": "^1.0.0-alpha1"
   },
   "devDependencies": {
+    "coffee-loader": "^0.7.2",
+    "css-loader": "^0.9.1",
     "mocha": "^2.1.0",
-    "supertest": "^0.15.0"
-  },
-  "browser": "./src/main.coffee",
-  "browserify": {
-    "transform": [
-      "coffeeify",
-      "browserify-shim"
-    ]
-  },
-  "browserify-shim": {
-    "three": "global:THREE"
+    "style-loader": "^0.8.3",
+    "supertest": "^0.15.0",
+    "webpack": "^1.5.3",
+    "webpack-dev-server": "^1.7.0"
   }
 }
