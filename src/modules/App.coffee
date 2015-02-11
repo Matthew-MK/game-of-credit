@@ -74,7 +74,7 @@ class App
     @skyBox = new Objects.SkyBox 8000, 8000, 8000, [
       'front.jpg', 'back.jpg', 'up.jpg', 'down.jpg', 'right.jpg', 'left.jpg'
     ]
-    @heightMap = new Objects.HeightMap("textures/height_map.png")
+    @heightMap = new Objects.HeightMap("textures/height_map_2.png")
 
     # Init objects position
     @redCube.position.set(10, 5, -30)
