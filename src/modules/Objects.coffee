@@ -105,7 +105,7 @@ class HeightMap extends THREE.Mesh
     snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping
 
     super(
-      new THREE.PlaneBufferGeometry(1000, 1000, 100, 100)
+      new THREE.PlaneBufferGeometry(1024, 1024, 100, 100)
       new THREE.ShaderMaterial
         uniforms:
           heightMap:

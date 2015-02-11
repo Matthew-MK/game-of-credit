@@ -36,7 +36,7 @@ class App
 
   constructor: (opts)->
     @scene = new THREE.Scene
-    @camera = new THREE.PerspectiveCamera 75, @aspect(), 1, 10000
+    @camera = new THREE.PerspectiveCamera 45, @aspect(), 1, 10000
     @renderer = new THREE.WebGLRenderer
       devicePixelRatio: opts.pixelRatio
       antialias: opts.antialias
@@ -74,7 +74,7 @@ class App
     @skyBox = new Objects.SkyBox 8000, 8000, 8000, [
       'front.jpg', 'back.jpg', 'up.jpg', 'down.jpg', 'right.jpg', 'left.jpg'
     ]
-    @heightMap = new Objects.HeightMap("textures/height_map_2.png")
+    @heightMap = new Objects.HeightMap("textures/height_map_1.png")
 
     # Init objects position
     @redCube.position.set(10, 5, -30)
