@@ -17,6 +17,7 @@ limitations under the License.
 THREE = require("three")
 Stats = require("stats-js")
 Controls = require("./Controls")
+Objects = require("./Objects")
 
 class App
 
@@ -35,7 +36,7 @@ class App
 
   constructor: (opts)->
     @scene = new THREE.Scene
-    @camera = new THREE.PerspectiveCamera 75, @aspect(), 1, 1000
+    @camera = new THREE.PerspectiveCamera 75, @aspect(), 1, 10000
     @renderer = new THREE.WebGLRenderer
       devicePixelRatio: opts.pixelRatio
       antialias: opts.antialias
@@ -48,7 +49,7 @@ class App
 
   ### Init all stuff here before rendering ###
   init: =>
-    #events
+    # Init events
     window.addEventListener('resize', @handleWindowResize)
 
     # Init renderer
@@ -62,48 +63,33 @@ class App
     @stats.domElement.style.top = '0px'
     @container.appendChild(@stats.domElement)
 
-    #skybox test
-    path = 'textures/'
-    sides = [path + 'front.jpg', path + 'back.jpg', path + 'up.jpg', path + 'down.jpg', path + 'right.jpg', path + 'left.jpg']
-    scCube = THREE.ImageUtils.loadTextureCube(sides)
-    scCube.format = THREE.RGBFormat
-    skyShader = THREE.ShaderLib["cube"]
-    skyShader.uniforms["tCube"].value = scCube
-    skyMaterial = new THREE.ShaderMaterial(
-      fragmentShader: skyShader.fragmentShader, vertexShader: skyShader.vertexShader,
-      uniforms: skyShader.uniforms, depthWrite: false, side: THREE.BackSide
-    )
+    # Init controls & camera
+    @controls = new Controls(@camera)
+    @controlsCamera = @controls.getCamera()
 
-    skybox = new THREE.Mesh(
-      new THREE.CubeGeometry(1000, 1000, 1000),
-      skyMaterial
-    )
-    skybox.position.set(0, 10, 0)
-    @scene.add(skybox)
-
-    cube = new THREE.Mesh(
-      new THREE.BoxGeometry(10,10,10),
-      new THREE.MeshBasicMaterial(color: "red")
-    )
-    cube.position.set(10, 10, -30)
-    @scene.add(cube)
-
-    cube = new THREE.Mesh(
-      new THREE.BoxGeometry(10,10,10),
-      new THREE.MeshBasicMaterial(color: "yellow")
-    )
-    cube.position.set(-10, 10, -30)
-    @scene.add(cube)
-
-    plane = new THREE.Mesh(
+    # Init scene objects
+    @redCube = new Objects.ColorCube(10, 10, 10, "red")
+    @greenCube = new Objects.ColorCube(10, 10, 10, "yellow")
+    @skyBox = new Objects.SkyBox 1000, 1000, 1000, [
+      'front.jpg', 'back.jpg', 'up.jpg', 'down.jpg', 'right.jpg', 'left.jpg'
+    ]
+    @plane = new THREE.Mesh(
       new THREE.PlaneBufferGeometry(1000, 1000, 100, 100),
       new THREE.MeshBasicMaterial(color: "green")
     )
-    plane.rotation.x -= Math.PI / 2
-    @scene.add(plane)
 
-    @controls = new Controls(@camera)
-    @scene.add(@controls.getCamera())
+    # Init objects position
+    @redCube.position.set(10, 10, -30)
+    @greenCube.position.set(-10, 10, -30)
+    @skyBox.position.copy(@controlsCamera.position)
+    @plane.rotation.x -= Math.PI / 2
+
+    # Add objects to scene
+    @scene.add(@controlsCamera)
+    @scene.add(@redCube)
+    @scene.add(@greenCube)
+    @scene.add(@skyBox)
+    @scene.add(@plane)
 
   ### Render single frame ###
   render: =>
