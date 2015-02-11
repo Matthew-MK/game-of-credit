@@ -70,7 +70,7 @@ class App
     # Init scene objects
     @redCube = new Objects.ColorCube(10, 10, 10, "red")
     @greenCube = new Objects.ColorCube(10, 10, 10, "yellow")
-    @skyBox = new Objects.SkyBox 1000, 1000, 1000, [
+    @skyBox = new Objects.SkyBox 8000, 8000, 8000, [
       'front.jpg', 'back.jpg', 'up.jpg', 'down.jpg', 'right.jpg', 'left.jpg'
     ]
     @plane = new THREE.Mesh(
@@ -81,7 +81,6 @@ class App
     # Init objects position
     @redCube.position.set(10, 10, -30)
     @greenCube.position.set(-10, 10, -30)
-    @skyBox.position.copy(@controlsCamera.position)
     @plane.rotation.x -= Math.PI / 2
 
     # Add objects to scene
