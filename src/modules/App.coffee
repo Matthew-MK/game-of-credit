@@ -54,7 +54,7 @@ class App
 
     # Init renderer
     @renderer.setSize(@width(), @height())
-    @renderer.setClearColor(0xCCCCCC)
+    @renderer.setClearColor(0xFFFFFF)
     @renderer.shadowMapEnabled = true
     @container.appendChild(@renderer.domElement)
 
@@ -69,26 +69,25 @@ class App
 
     # Init scene objects
     @redCube = new Objects.ColorCube(10, 10, 10, "red")
-    @greenCube = new Objects.ColorCube(10, 10, 10, "yellow")
+    @greenCube = new Objects.ColorCube(10, 10, 10, "green")
+
     @skyBox = new Objects.SkyBox 8000, 8000, 8000, [
       'front.jpg', 'back.jpg', 'up.jpg', 'down.jpg', 'right.jpg', 'left.jpg'
     ]
-    @plane = new THREE.Mesh(
-      new THREE.PlaneBufferGeometry(1000, 1000, 100, 100),
-      new THREE.MeshBasicMaterial(color: "green")
-    )
+    @heightMap = new Objects.HeightMap("textures/height_map.png")
 
     # Init objects position
-    @redCube.position.set(10, 10, -30)
-    @greenCube.position.set(-10, 10, -30)
-    @plane.rotation.x -= Math.PI / 2
+    @redCube.position.set(10, 5, -30)
+    @greenCube.position.set(-10, 5, -30)
+    @heightMap.rotation.x -= Math.PI / 2
+    @heightMap.position.y = -50
 
     # Add objects to scene
     @scene.add(@controlsCamera)
     @scene.add(@redCube)
     @scene.add(@greenCube)
     @scene.add(@skyBox)
-    @scene.add(@plane)
+    @scene.add(@heightMap)
 
   ### Render single frame ###
   render: =>

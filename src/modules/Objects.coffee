@@ -38,5 +38,96 @@ class SkyBox extends THREE.Mesh
         side: THREE.BackSide
     )
 
-exports.ColorCube = ColorCube
-exports.SkyBox = SkyBox
+class HeightMap extends THREE.Mesh
+
+  vertexShader: """
+    uniform sampler2D heightMap;
+    uniform float scale;
+
+    varying float vAmount;
+    varying vec2 vUV;
+
+    void main()
+    {
+      vUV = uv;
+      vec4 img = texture2D(heightMap, uv);
+
+      // assuming map is grayscale it doesn't matter if you use r, g, or b.
+      vAmount = img.r;
+
+      // move the position along the normal
+      vec3 newPosition = position + normal * scale * vAmount;
+
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+    }
+  """
+
+  fragmentShader: """
+    uniform sampler2D dirtTexture;
+    uniform sampler2D sandyTexture;
+    uniform sampler2D grassTexture;
+    uniform sampler2D rockyTexture;
+    uniform sampler2D snowyTexture;
+
+    varying vec2 vUV;
+
+    varying float vAmount;
+
+    void main()
+    {
+      vec4 dirt = (smoothstep(0.01, 0.25, vAmount) - smoothstep(0.24, 0.26, vAmount)) * texture2D( dirtTexture, vUV * 10.0 );
+      vec4 sand = (smoothstep(0.24, 0.27, vAmount) - smoothstep(0.28, 0.31, vAmount)) * texture2D( sandyTexture, vUV * 10.0 );
+      vec4 grass = (smoothstep(0.28, 0.32, vAmount) - smoothstep(0.35, 0.40, vAmount)) * texture2D( grassTexture, vUV * 20.0 );
+      vec4 rock = (smoothstep(0.30, 0.50, vAmount) - smoothstep(0.40, 0.70, vAmount)) * texture2D( rockyTexture, vUV * 20.0 );
+      vec4 snow = (smoothstep(0.50, 0.65, vAmount))                                   * texture2D( snowyTexture, vUV * 10.0 );
+
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) + dirt + sand + grass + rock + snow;
+    }
+  """
+
+  constructor: (heightMapPath) ->
+    heightMap = new THREE.ImageUtils.loadTexture(heightMapPath)
+    heightMap.wrapS = heightMap.wrapT = THREE.RepeatWrapping
+
+    dirtTexture = new THREE.ImageUtils.loadTexture('textures/dirt-512.jpg')
+    dirtTexture.wrapS = dirtTexture.wrapT = THREE.RepeatWrapping
+
+    sandyTexture = new THREE.ImageUtils.loadTexture('textures/sand-512.jpg')
+    sandyTexture.wrapS = sandyTexture.wrapT = THREE.RepeatWrapping
+
+    grassTexture = new THREE.ImageUtils.loadTexture('textures/grass-512.jpg')
+    grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping
+
+    rockyTexture = new THREE.ImageUtils.loadTexture('textures/rock-512.jpg')
+    rockyTexture.wrapS = rockyTexture.wrapT = THREE.RepeatWrapping
+
+    snowyTexture = new THREE.ImageUtils.loadTexture('textures/snow-512.jpg')
+    snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping
+
+    super(
+      new THREE.PlaneGeometry(1000, 1000, 100, 100)
+      new THREE.ShaderMaterial
+        uniforms:
+          heightMap:
+            type: "t", value: heightMap
+          scale:
+            type: "f", value: 180.0
+          dirtTexture:
+            type: "t", value: dirtTexture
+          sandyTexture:
+            type: "t", value: sandyTexture
+          grassTexture:
+            type: "t", value: grassTexture
+          rockyTexture:
+            type: "t", value: rockyTexture
+          snowyTexture:
+            type: "t", value: snowyTexture
+        vertexShader: @vertexShader
+        fragmentShader: @fragmentShader
+    )
+
+
+module.exports =
+  ColorCube: ColorCube
+  SkyBox: SkyBox
+  HeightMap: HeightMap
