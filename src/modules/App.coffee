@@ -18,6 +18,7 @@ THREE = require("three")
 Stats = require("stats-js")
 Controls = require("./Controls")
 Objects = require("./Objects")
+helpers = require("./helpers")
 
 class App
 
@@ -33,6 +34,8 @@ class App
 
   # FPS debugging
   stats: new Stats
+
+  loading: true
 
   constructor: (opts)->
     @scene = new THREE.Scene
@@ -74,13 +77,16 @@ class App
     @skyBox = new Objects.SkyBox 8000, 8000, 8000, [
       'front.jpg', 'back.jpg', 'up.jpg', 'down.jpg', 'right.jpg', 'left.jpg'
     ]
-    @heightMap = new Objects.HeightMap("textures/height_map_1.png")
+
+    @heightMapTexture = new THREE.ImageUtils.loadTexture "textures/height_map_1.png", null, (texture) =>
+      @heightMapImage = helpers.getImageData(texture.image)
+      @loading = false
+    @heightMap = new Objects.HeightMap(@heightMapTexture)
 
     # Init objects position
-    @redCube.position.set(10, 5, -30)
-    @greenCube.position.set(-10, 5, -30)
+    @redCube.position.set(10, 50, -30)
+    @greenCube.position.set(-10, 50, -30)
     @heightMap.rotation.x -= Math.PI / 2
-    @heightMap.position.y = -50
 
     # Add objects to scene
     @scene.add(@controlsCamera)
@@ -91,14 +97,18 @@ class App
 
   ### Render single frame ###
   render: =>
-    @controls.render()
+    height = helpers.getPixel(@heightMapImage,
+      Math.round(@controlsCamera.position.x) + @heightMapImage.width / 2,
+      Math.round(@controlsCamera.position.z) + @heightMapImage.height / 2
+    ).r
+    @controls.render(height)
     @renderer.render(@scene, @camera)
 
   ### Animate all frames ###
   animate: =>
     @stats.begin()
-    @render()
-    @stats.end()
+    @render() if not @loading
+    @stats.end();
     requestAnimationFrame @animate
 
   ### Run application ###

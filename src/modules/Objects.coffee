@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 THREE = require("three")
+helpers = require("./helpers")
 
 class ColorCube extends THREE.Mesh
   constructor: (@width, @height, @depth, @color) ->
@@ -84,9 +85,7 @@ class HeightMap extends THREE.Mesh
       gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) + dirt + sand + grass + rock + snow;
     }
   """
-
-  constructor: (heightMapPath) ->
-    heightMap = new THREE.ImageUtils.loadTexture(heightMapPath)
+  constructor: (heightMap) ->
     heightMap.wrapS = heightMap.wrapT = THREE.RepeatWrapping
 
     dirtTexture = new THREE.ImageUtils.loadTexture('textures/dirt-512.jpg')
@@ -105,7 +104,7 @@ class HeightMap extends THREE.Mesh
     snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping
 
     super(
-      new THREE.PlaneBufferGeometry(1024, 1024, 100, 100)
+      new THREE.PlaneBufferGeometry(512, 512, 100, 100)
       new THREE.ShaderMaterial
         uniforms:
           heightMap:
@@ -125,7 +124,6 @@ class HeightMap extends THREE.Mesh
         vertexShader: @vertexShader
         fragmentShader: @fragmentShader
     )
-
 
 module.exports =
   ColorCube: ColorCube

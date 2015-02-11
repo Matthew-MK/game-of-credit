@@ -41,7 +41,7 @@ class Controls
     @cameraPitch = camera
 
     @camera = new THREE.Object3D
-    @camera.position.y = 10
+    @camera.position.y = 50
     @camera.add(camera)
 
     if @havePointerLock
@@ -59,7 +59,7 @@ class Controls
   getCamera: ->
     @camera
 
-  render: =>
+  render: (height) =>
     if @enabled and @pointerLocked
 
       time = performance.now()
@@ -84,10 +84,10 @@ class Controls
       @camera.translateY(@velocity.y)
       @camera.translateZ(@velocity.z)
 
-      if @camera.position.y < 10
+      if @camera.position.y < height
         @canJump = true
         @velocity.y = 0
-        @camera.position.y = 10
+        @camera.position.y = height
 
       @prevTime = time
 
