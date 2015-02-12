@@ -1,5 +1,5 @@
 ###
-Copyright 2015 Jan Svager & Michael Muller
+Copyright 2015 Jan Svager
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,14 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-"use strict"
-
-require("./css/style.css")
-
-
 React = require("react")
-Game = require("./components/Game")
+{div} = React.DOM
 
-document.body.onload = ->
-  game = Game()
-  React.render(game, document.getElementById("app"))
+Stats = React.createClass
+  render: ->
+    div
+      id: "stats",
+      style:
+        position: "absolute"
+      dangerouslySetInnerHTML:
+        __html: @props.stats.domElement.innerHTML
+
+module.exports = (props = null) -> React.createElement(Stats, props)

@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-THREE = require("three")
 helpers = require("./helpers")
 
 class ColorCube extends THREE.Mesh
@@ -24,11 +23,9 @@ class ColorCube extends THREE.Mesh
     )
 
 class SkyBox extends THREE.Mesh
-  constructor: (@width, @height, @depth, textures, path = "textures/") ->
-    sides = []
-    sides.push(path + texture) for texture in textures
+  constructor: (@width, @height, @depth, textures) ->
     shader = THREE.ShaderLib["cube"]
-    shader.uniforms["tCube"].value = THREE.ImageUtils.loadTextureCube(sides)
+    shader.uniforms["tCube"].value = textures
     super(
       new THREE.BoxGeometry(@width, @height, @depth),
       new THREE.ShaderMaterial
@@ -85,32 +82,28 @@ class HeightMap extends THREE.Mesh
       gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) + dirt + sand + grass + rock + snow;
     }
   """
-  constructor: (heightMap) ->
+  constructor: (width, height, textures, scale = 180) ->
+    heightMap = textures.heightMap
     heightMap.wrapS = heightMap.wrapT = THREE.RepeatWrapping
-
-    dirtTexture = new THREE.ImageUtils.loadTexture('textures/dirt-512.jpg')
+    dirtTexture = textures.dirt
     dirtTexture.wrapS = dirtTexture.wrapT = THREE.RepeatWrapping
-
-    sandyTexture = new THREE.ImageUtils.loadTexture('textures/sand-512.jpg')
+    sandyTexture = textures.sand
     sandyTexture.wrapS = sandyTexture.wrapT = THREE.RepeatWrapping
-
-    grassTexture = new THREE.ImageUtils.loadTexture('textures/grass-512.jpg')
+    grassTexture = textures.grass
     grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping
-
-    rockyTexture = new THREE.ImageUtils.loadTexture('textures/rock-512.jpg')
+    rockyTexture = textures.rock
     rockyTexture.wrapS = rockyTexture.wrapT = THREE.RepeatWrapping
-
-    snowyTexture = new THREE.ImageUtils.loadTexture('textures/snow-512.jpg')
+    snowyTexture = textures.snow
     snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping
 
     super(
-      new THREE.PlaneBufferGeometry(512, 512, 100, 100)
+      new THREE.PlaneBufferGeometry(width, height, 100, 100)
       new THREE.ShaderMaterial
         uniforms:
           heightMap:
             type: "t", value: heightMap
           scale:
-            type: "f", value: 180.0
+            type: "f", value: scale
           dirtTexture:
             type: "t", value: dirtTexture
           sandyTexture:

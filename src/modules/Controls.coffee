@@ -13,122 +13,57 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-
-THREE = require("three")
+Key = require("keymaster")
 
 class Controls
-  pointerLocked: false
-  havePointerLock:
-    "pointerLockElement" of document or
-    "mozPointerLockElement" of document or
-    "webkitPointerLockElement" of document
-  blocker: document.getElementById("blocker")
-  instructions: document.getElementById("instructions")
-  keys:
-    SPACE: false
-    A: false
-    D: false
-    S: false
-    W: false
   velocity: new THREE.Vector3
   prevTime: 0
   canJump: true
 
-  constructor: (camera, @enabled=true) ->
-
+  constructor: (camera) ->
     camera.rotation.set(0, 0, 0)
-
     @cameraPitch = camera
-
     @camera = new THREE.Object3D
     @camera.position.y = 50
     @camera.add(camera)
 
-    if @havePointerLock
-      @blocker.addEventListener('click', @handleClick)
-      document.addEventListener('pointerlockchange', @handleLockChange)
-      document.addEventListener('mozpointerlockchange', @handleLockChange)
-      document.addEventListener('webkitpointerlockchange', @handleLockChange)
-      document.addEventListener('mousemove', @handleMouseMove)
-      document.addEventListener("keydown", @handleKeyDown)
-      document.addEventListener("keyup", @handleKeyUp)
-    else
-      @enabled = false
-      @instructions.innerHTML = "Your browser doesn't seem to support Pointer Lock API"
-
   getCamera: ->
     @camera
 
-  render: (height) =>
-    if @enabled and @pointerLocked
+  render: (height) ->
+    time = performance.now()
+    delta = (time - @prevTime) / 1000
 
-      time = performance.now()
+    @velocity.x -= @velocity.x * 10.0 * delta
+    @velocity.z -= @velocity.z * 10.0 * delta
 
-      delta = (time - @prevTime) / 1000
+    @velocity.y -= 9.823 * 3.0 * delta
 
-      @velocity.x -= @velocity.x * 10.0 * delta
-      @velocity.z -= @velocity.z * 10.0 * delta
+    @velocity.z -= 10.0 * delta if Key.isPressed("W")
+    @velocity.z += 10.0 * delta if Key.isPressed("S")
+    @velocity.x -= 10.0 * delta if Key.isPressed("A")
+    @velocity.x += 10.0 * delta if Key.isPressed("D")
 
-      @velocity.y -= 9.823 * 3.0 * delta
+    if Key.isPressed("space")
+      @velocity.y += 7.0 if @canJump
+      @canJump = false
 
-      @velocity.z -= 10.0 * delta if @keys.W
-      @velocity.z += 10.0 * delta if @keys.S
-      @velocity.x -= 10.0 * delta if @keys.A
-      @velocity.x += 10.0 * delta if @keys.D
+    @camera.translateX(@velocity.x)
+    @camera.translateY(@velocity.y)
+    @camera.translateZ(@velocity.z)
 
-      if @keys.SPACE
-        @velocity.y += 7.0 if @canJump
-        @canJump = false
+    if @camera.position.y < height
+      @canJump = true
+      @velocity.y = 0
+      @camera.position.y = height
 
-      @camera.translateX(@velocity.x)
-      @camera.translateY(@velocity.y)
-      @camera.translateZ(@velocity.z)
+    @prevTime = time
 
-      if @camera.position.y < height
-        @canJump = true
-        @velocity.y = 0
-        @camera.position.y = height
-
-      @prevTime = time
-
-
-  handleLockChange: =>
-    @pointerLocked =
-      document["pointerLockElement"] is @blocker or
-      document["mozPointerLockElement"] is @blocker or
-      document["webkitPointerLockElement"] is @blocker
-    @blocker.style.opacity = if @pointerLocked then 0 else 1
-
-  handleClick: =>
-    @blocker.requestPointerLock =
-      @blocker["requestPointerLock"] or
-      @blocker["mozRequestPointerLock"] or
-      @blocker["webkitRequestPointerLock"]
-    @blocker.requestPointerLock()
-
-  handleMouseMove: (event) =>
-    return if not @pointerLocked
+  handleMouseMove: (event) ->
     movementX = event["movementX"] or event["mozMovementX"] or event["webkitMovementX"] or 0
     movementY = event["movementY"] or event["mozMovementY"] or event["webkitMovementY"] or 0
     @camera.rotation.y -= movementX * 0.002
     @cameraPitch.rotation.x -= movementY * 0.002
     @cameraPitch.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, @cameraPitch.rotation.x))
-
-  handleKeyDown: (e) =>
-    switch e.keyCode
-      when 32 then @keys.SPACE = true
-      when 65 then @keys.A = true
-      when 68 then @keys.D = true
-      when 83 then @keys.S = true
-      when 87 then @keys.W = true
-
-  handleKeyUp: (e) =>
-    switch e.keyCode
-      when 32 then @keys.SPACE = false
-      when 65 then @keys.A = false
-      when 68 then @keys.D = false
-      when 83 then @keys.S = false
-      when 87 then @keys.W = false
-
 
 module.exports = Controls
