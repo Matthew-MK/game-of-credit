@@ -1,0 +1,28 @@
+{
+  "textures": {
+    "dirt": "textures/dirt-512.jpg",
+    "grass": "textures/grass-512.jpg",
+    "heightMap": "textures/height_map_1.png",
+    "rock": "textures/rock-512.jpg",
+    "sand": "textures/sand-512.jpg",
+    "skyBox": [
+      "textures/front.jpg",
+      "textures/back.jpg",
+      "textures/up.jpg",
+      "textures/down.jpg",
+      "textures/right.jpg",
+      "textures/left.jpg"
+    ],
+    "snow": "textures/snow-512.jpg"
+  },
+  "models": {
+    "ratamahatta": {
+      "baseUrl": "textures/ratamahatta",
+      "body": "ratamahatta.json",
+      "skins": ["ratamahatta.png"],
+      "weapons": [
+        ["weapon.json", "weapon.png"]
+      ]
+    }
+  }
+}

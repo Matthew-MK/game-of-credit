@@ -17,7 +17,6 @@ Key = require("keymaster")
 
 class Controls
   velocity: new THREE.Vector3
-  prevTime: 0
   canJump: true
 
   constructor: (camera) ->
@@ -30,10 +29,7 @@ class Controls
   getCamera: ->
     @camera
 
-  render: (height) ->
-    time = performance.now()
-    delta = (time - @prevTime) / 1000
-
+  render: (delta, height) ->
     @velocity.x -= @velocity.x * 10.0 * delta
     @velocity.z -= @velocity.z * 10.0 * delta
 
@@ -56,8 +52,6 @@ class Controls
       @canJump = true
       @velocity.y = 0
       @camera.position.y = height
-
-    @prevTime = time
 
   handleMouseMove: (event) ->
     movementX = event["movementX"] or event["mozMovementX"] or event["webkitMovementX"] or 0

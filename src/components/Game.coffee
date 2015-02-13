@@ -22,12 +22,14 @@ Objects = require("../modules/Objects")
 StatsComponent = require("./Stats")
 helpers = require("../modules/helpers")
 
-TextureMapping = require("../texture.mapping.json")
+mapping = require("../mapping.json")
+require("../modules/MD2Character") # three.js extension
 {canvas, div} = React.DOM
 
 Game = React.createClass
   stats: new Stats
   textures: {}
+  prevTime: 0
 
   getInitialState: ->
     frameCount: 0
@@ -46,7 +48,7 @@ Game = React.createClass
     @setState(pointerLocked: state.pointerLocked)
 
   handleLoading: (item, loaded, total) ->
-    console.log "#{Math.round(100 * loaded / total)} %\t #{item}"
+    # console.log "#{Math.round(100 * loaded / total)} %\t #{item}"
     if loaded == total
       @setState(loading: false)
       @heightMapImage = helpers.getImageData(@textures.heightMap.image)
@@ -69,7 +71,7 @@ Game = React.createClass
   init: ->
     # Loading textures
     THREE.DefaultLoadingManager.onProgress = @handleLoading
-    for key, path of TextureMapping
+    for key, path of mapping["textures"]
       if typeof path is 'string'
         @textures[key] = new THREE.ImageUtils.loadTexture(path)
       else
@@ -88,30 +90,49 @@ Game = React.createClass
     @controlsCamera = @controls.getCamera()
 
     # Init scene objects
+    @ambientLight = new THREE.AmbientLight(0x404040)
+    @directionalLight = new THREE.DirectionalLight(0xffffff, 0.7)
+    @directionalLight.position.set(200, 250, 500)
+
     @redCube = new Objects.ColorCube(10, 10, 10, "red")
     @greenCube = new Objects.ColorCube(10, 10, 10, "green")
     @skyBox = new Objects.SkyBox(8000, 8000, 8000, @textures.skyBox)
     @heightMap = new Objects.HeightMap(512, 512, @textures)
+    @heightMap.receiveShadow = true
+    @character = new THREE.MD2Character
+    @character.loadParts(mapping["models"]["ratamahatta"])
+    @character.root.castShadow = true
+    @character.onLoadComplete = =>
+      @character.setWeapon(0)
+      @character.setAnimation("run")
 
     @redCube.position.set(10, 50, -30)
     @greenCube.position.set(-10, 50, -30)
     @camera.position.set(0,0,0)
     @heightMap.rotation.x -= Math.PI / 2
+    @character.root.position.y = 50
 
+    @scene.add(@ambientLight)
+    @scene.add(@directionalLight)
     @scene.add(@controlsCamera)
     @scene.add(@redCube)
     @scene.add(@skyBox)
     @scene.add(@heightMap)
+    @scene.add(@character.root)
 
   ###
   Render single frame.
   ###
   renderFrame: ->
+    time = performance.now()
+    delta = (time - @prevTime) / 1000
     mapX = Math.round(@controlsCamera.position.x) + @heightMapImage.width / 2
     mapY = Math.round(@controlsCamera.position.z) + @heightMapImage.height / 2
     height = helpers.getPixel(@heightMapImage, mapX, mapY).r
-    @controls.render(height)
+    @controls.render(delta, height)
     @renderer.render(@scene, @camera)
+    @character.update(delta)
+    @prevTime = time
 
   ###
   Animate all frames.
