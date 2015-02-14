@@ -73,11 +73,11 @@ class HeightMap extends THREE.Mesh
 
     void main()
     {
-      vec4 dirt = (smoothstep(0.01, 0.25, vAmount) - smoothstep(0.24, 0.26, vAmount)) * texture2D( dirtTexture, vUV * 10.0 );
-      vec4 sand = (smoothstep(0.24, 0.27, vAmount) - smoothstep(0.28, 0.31, vAmount)) * texture2D( sandyTexture, vUV * 10.0 );
-      vec4 grass = (smoothstep(0.28, 0.32, vAmount) - smoothstep(0.35, 0.40, vAmount)) * texture2D( grassTexture, vUV * 20.0 );
-      vec4 rock = (smoothstep(0.30, 0.50, vAmount) - smoothstep(0.40, 0.70, vAmount)) * texture2D( rockyTexture, vUV * 20.0 );
-      vec4 snow = (smoothstep(0.50, 0.65, vAmount))                                   * texture2D( snowyTexture, vUV * 10.0 );
+      vec4 dirt = (smoothstep(0.01, 0.05, vAmount) - smoothstep(0.02, 0.26, vAmount)) * texture2D( dirtTexture, vUV * 10.0 );
+      vec4 sand = (smoothstep(0.08, 0.27, vAmount) - smoothstep(0.30, 0.33, vAmount)) * texture2D( sandyTexture, vUV * 10.0 );
+      vec4 grass = (smoothstep(0.30, 0.33, vAmount) - smoothstep(0.34, 0.35, vAmount)) * texture2D( grassTexture, vUV * 20.0 );
+      vec4 rock = (smoothstep(0.30, 0.38, vAmount) - smoothstep(0.65, 0.75, vAmount)) * texture2D( rockyTexture, vUV * 20.0 );
+      vec4 snow = (smoothstep(0.65, 0.75, vAmount))                                   * texture2D( snowyTexture, vUV * 10.0 );
 
       gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) + dirt + sand + grass + rock + snow;
     }
