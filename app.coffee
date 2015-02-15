@@ -47,7 +47,7 @@ app.get "/", (req, res) ->
   res.render "play",
     title: "Play"
     bundleSrc: bundle[env]
-    dataServer: if env is "production" then config["productionURL"] else "http://localhost:#{app.get("port")}"
+    socketServerPath: config["socketServerPath"][env]
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
