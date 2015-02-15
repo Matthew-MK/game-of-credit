@@ -20,10 +20,8 @@ class Controls
   canJump: true
 
   constructor: (camera) ->
-    camera.rotation.set(0, 0, 0)
     @cameraPitch = camera
     @camera = new THREE.Object3D
-    @camera.position.y = 50
     @camera.add(camera)
 
   getCamera: ->

@@ -2,7 +2,7 @@
   "textures": {
     "dirt": "textures/dirt-512.jpg",
     "grass": "textures/grass-512.jpg",
-    "heightMap": "textures/height_map_1.png",
+    "heightMap": "textures/height_map_1024.png",
     "rock": "textures/rock-512.jpg",
     "sand": "textures/sand-512.jpg",
     "skyBox": [

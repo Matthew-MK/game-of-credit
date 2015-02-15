@@ -82,7 +82,7 @@ class HeightMap extends THREE.Mesh
       gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) + dirt + sand + grass + rock + snow;
     }
   """
-  constructor: (width, height, textures, scale = 180) ->
+  constructor: (width, height, textures, scale = 200) ->
     heightMap = textures.heightMap
     heightMap.wrapS = heightMap.wrapT = THREE.RepeatWrapping
     dirtTexture = textures.dirt

@@ -19,6 +19,7 @@ Stats = require("stats-js")
 Blocker = require("./Blocker")
 Controls = require("../modules/Controls")
 Objects = require("../modules/Objects")
+Player = require("../modules/Player")
 StatsComponent = require("./Stats")
 helpers = require("../modules/helpers")
 
@@ -30,6 +31,7 @@ Game = React.createClass
   stats: new Stats
   textures: {}
   prevTime: 0
+  players: {}
 
   getInitialState: ->
     frameCount: 0
@@ -37,7 +39,6 @@ Game = React.createClass
     windowWidth: window.innerWidth
     windowHeight: window.innerHeight
     pointerLocked: false
-    loading: true
 
   handleResize: ->
     @setState
@@ -46,12 +47,6 @@ Game = React.createClass
 
   handleBlockerState: (state) ->
     @setState(pointerLocked: state.pointerLocked)
-
-  handleLoading: (item, loaded, total) ->
-    # console.log "#{Math.round(100 * loaded / total)} %\t #{item}"
-    if loaded == total
-      @setState(loading: false)
-      @heightMapImage = helpers.getImageData(@textures.heightMap.image)
 
   handleMouseMove: (e) ->
     @controls.handleMouseMove(e) if @state.pointerLocked
@@ -65,18 +60,40 @@ Game = React.createClass
       frameCount: 0
       fps: @state.frameCount
 
+  onPlayersPosition: (players) ->
+    if @socket.id of players
+      delete players[@socket.id]
+
+    for id, data of players
+      if id of @players
+        {x, y, z} = data.position
+        {_x, _y, _z} = data.rotation
+        console.log data.rotation
+        @players[id].root.position.set(x, y, z)
+        @players[id].root.rotation.set(_x, _y, _z)
+        @players[id].root.rotation.y += Math.PI
+      else
+        player = new Player(data.position)
+        player.scale = 0.5
+        @players[id] = player
+        @scene.add(player.root)
+        console.log "CREATE player", @players[id]
+
+  onPlayerDisconnect: (id) ->
+    if id of @players
+      @scene.remove(@players[id].root)
+      console.log "DELETE player", @players[id]
+      delete @players[id]
+
+  initSockets: ->
+    @socket = io.connect()
+    @socket.on("players-position", @onPlayersPosition)
+    @socket.on("player-disconnect", @onPlayerDisconnect)
+
   ###
   Init all three.js stuff here before rendering frames.
   ###
-  init: ->
-    # Loading textures
-    THREE.DefaultLoadingManager.onProgress = @handleLoading
-    for key, path of mapping["textures"]
-      if typeof path is 'string'
-        @textures[key] = new THREE.ImageUtils.loadTexture(path)
-      else
-        @textures[key] = new THREE.ImageUtils.loadTextureCube(path)
-
+  initScene: ->
     @scene = new THREE.Scene
     @camera = new THREE.PerspectiveCamera 45, @state.windowWidth / @state.windowHeight, 1, 10000
     @renderer = new THREE.WebGLRenderer
@@ -86,39 +103,29 @@ Game = React.createClass
 
     # Init controls & camera
     @controls = new Controls(@camera)
-
     @controlsCamera = @controls.getCamera()
+    @controlsCamera.position.x = @props.position.x
+    @controlsCamera.position.y = @props.position.y
+    @controlsCamera.position.z = @props.position.z
 
     # Init scene objects
     @ambientLight = new THREE.AmbientLight(0x404040)
     @directionalLight = new THREE.DirectionalLight(0xffffff, 0.7)
     @directionalLight.position.set(200, 250, 500)
 
-    @redCube = new Objects.ColorCube(10, 10, 10, "red")
-    @greenCube = new Objects.ColorCube(10, 10, 10, "green")
-    @skyBox = new Objects.SkyBox(8000, 8000, 8000, @textures.skyBox)
-    @heightMap = new Objects.HeightMap(512, 512, @textures)
-    @heightMap.receiveShadow = true
-    @character = new THREE.MD2Character
-    @character.loadParts(mapping["models"]["ratamahatta"])
-    @character.root.castShadow = true
-    @character.onLoadComplete = =>
-      @character.setWeapon(0)
-      @character.setAnimation("run")
-
-    @redCube.position.set(10, 50, -30)
-    @greenCube.position.set(-10, 50, -30)
-    @camera.position.set(0,0,0)
+    @skyBox = new Objects.SkyBox(8000, 8000, 8000, @props.textures.skyBox)
+    @heightMap = new Objects.HeightMap(
+      @props.heightMap.width,
+      @props.heightMap.height,
+      @props.textures
+    )
     @heightMap.rotation.x -= Math.PI / 2
-    @character.root.position.y = 50
 
     @scene.add(@ambientLight)
     @scene.add(@directionalLight)
     @scene.add(@controlsCamera)
-    @scene.add(@redCube)
     @scene.add(@skyBox)
     @scene.add(@heightMap)
-    @scene.add(@character.root)
 
   ###
   Render single frame.
@@ -126,23 +133,27 @@ Game = React.createClass
   renderFrame: ->
     time = performance.now()
     delta = (time - @prevTime) / 1000
-    mapX = Math.round(@controlsCamera.position.x) + @heightMapImage.width / 2
-    mapY = Math.round(@controlsCamera.position.z) + @heightMapImage.height / 2
-    height = helpers.getPixel(@heightMapImage, mapX, mapY).r
-    @controls.render(delta, height)
+    mapX = Math.floor(@controlsCamera.position.x) + (@props.heightMap.width / 2)
+    mapZ = Math.floor(@controlsCamera.position.z) + (@props.heightMap.height / 2)
+    height = helpers.getPixel(@props.heightMap, mapX, mapZ).r
+
+    @socket.emit "position",
+      position: @controlsCamera.position
+      rotation: @controlsCamera.rotation
+
+    @controls.render(delta, height) if @state.pointerLocked
     @renderer.render(@scene, @camera)
-    @character.update(delta)
     @prevTime = time
 
   ###
   Animate all frames.
   ###
   animate: ->
-    if @state.pointerLocked and not @loading
-      @setState frameCount: ++@state.frameCount
-      @stats.begin()
-      @renderFrame()
-      @stats.end()
+
+    @setState frameCount: ++@state.frameCount
+    @stats.begin()
+    @renderFrame()
+    @stats.end()
     requestAnimationFrame @animate
 
   ###
@@ -152,7 +163,8 @@ Game = React.createClass
   ###
   componentDidMount: ->
     @resetFrameCount()
-    @init()
+    @initScene()
+    @initSockets()
     window.addEventListener('resize', @handleResize)
     window.addEventListener('mousemove', @handleMouseMove)
     @animate()
@@ -180,6 +192,7 @@ Game = React.createClass
   ###
   componentWillUnmount: ->
     window.removeEventListener('resize', @handleResize)
+    window.addEventListener('mousemove', @handleMouseMove)
 
   render: ->
     div id: "wrapper",

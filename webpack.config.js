@@ -4,7 +4,8 @@ module.exports = {
         filename: 'static/build/bundle.js'
     },
     externals: {
-        three: "THREE"
+        three: "THREE",
+        io: "io"
     },
     module: {
         loaders: [

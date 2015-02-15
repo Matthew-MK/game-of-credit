@@ -17,10 +17,53 @@ limitations under the License.
 
 require("./css/style.css")
 
-
 React = require("react")
 Game = require("./components/Game")
+mapping = require("./mapping.json")
+helpers = require("./modules/helpers")
+{div} = React.DOM
 
-document.body.onload = ->
-  game = Game()
-  React.render(game, document.getElementById("app"))
+App = React.createClass
+
+  textures: {}
+  player: {}
+
+  getInitialState: ->
+    loading: true
+    init: false
+
+  handleLoading: (item, loaded, total) ->
+    # console.log "#{Math.round(100 * loaded / total)} %\t #{item}"
+    if loaded == total and not @state.init
+      @heightMap = helpers.getImageData(@textures.heightMap.image)
+      @setState {init: true}, @init
+
+  componentWillMount: ->
+    # Loading textures
+    THREE.DefaultLoadingManager.onProgress = @handleLoading
+    for key, path of mapping["textures"]
+      if typeof path is 'string'
+        @textures[key] = new THREE.ImageUtils.loadTexture(path)
+      else
+        @textures[key] = new THREE.ImageUtils.loadTextureCube(path)
+
+  init: ->
+    x = Math.floor(Math.random() * @heightMap.width)
+    z = Math.floor(Math.random() * @heightMap.height)
+    y = helpers.getPixel(@heightMap, x, z).r
+    x -= @heightMap.width / 2
+    z -= @heightMap.width / 2
+    @position = new THREE.Vector3(x, y, z)
+    @setState(loading: false)
+    console.log "INIT position", @position
+
+  render: ->
+    if @state.loading
+      div {id: "loading"}, "Loading..."
+    else
+      Game
+        position: @position
+        textures: @textures
+        heightMap: @heightMap
+
+React.render(React.createElement(App), document.getElementById("app"))
