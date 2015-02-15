@@ -15,10 +15,12 @@ limitations under the License.
 ###
 fs = require("fs")
 express = require("express")
+{config} = require('./package.json')
 
 ### Setup ###
 app = express()
 env = app.get('env')
+app.set('port', parseInt(process.env.PORT, 100) or config.port or 3000)
 
 # View engine setup
 app.set("views", __dirname + "/views")
@@ -45,6 +47,7 @@ app.get "/", (req, res) ->
   res.render "play",
     title: "Play"
     bundleSrc: bundle[env]
+    dataServer: if env is "production" then config["productionURL"] else "http://localhost:#{app.get("port")}"
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->

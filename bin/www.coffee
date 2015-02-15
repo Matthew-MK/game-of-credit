@@ -3,16 +3,12 @@
 http = require("http")
 app = require("../app")
 sockets = require("../sockets")
-{config} = require('../package.json')
-
-# Get port from environment and store it in Express
-port = parseInt(process.env.PORT, 100) or config.port or 3000
-app.set('port', port)
 
 # Create HTTP server
 server = http.createServer(app)
 
 # Listen on provided port, on all network interfaces
+port = app.get("port")
 server.listen(port)
 sockets.register(server)
 

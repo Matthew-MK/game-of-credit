@@ -62,6 +62,7 @@ App = React.createClass
       div {id: "loading"}, "Loading..."
     else
       Game
+        dataServer: document.getElementById("bundle").dataset.server
         position: @position
         textures: @textures
         heightMap: @heightMap

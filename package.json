@@ -23,6 +23,7 @@
   ],
   "bin": "./bin/www",
   "config": {
+    "productionURL": "https://svager.cz/game-of-credit/",
     "port": "8000"
   },
   "main": "./app.coffee",

@@ -86,7 +86,7 @@ Game = React.createClass
       delete @players[id]
 
   initSockets: ->
-    @socket = io.connect()
+    @socket = io.connect(@props.dataServer)
     @socket.on("players-position", @onPlayersPosition)
     @socket.on("player-disconnect", @onPlayerDisconnect)
 
