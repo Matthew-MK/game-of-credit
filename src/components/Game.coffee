@@ -28,10 +28,10 @@ require("../modules/MD2Character") # three.js extension
 {canvas, div} = React.DOM
 
 Game = React.createClass
-  stats: new Stats
-  textures: {}
-  prevTime: 0
   players: {}
+  textures: {}
+  clock: new THREE.Clock
+  stats: new Stats
 
   getInitialState: ->
     frameCount: 0
@@ -104,8 +104,7 @@ Game = React.createClass
   Render single frame.
   ###
   renderFrame: ->
-    time = performance.now()
-    delta = (time - @prevTime) / 1000
+    delta = @clock.getDelta()
     mapX = Math.floor(@controlsCamera.position.x) + (@props.heightMap.width / 2)
     mapZ = Math.floor(@controlsCamera.position.z) + (@props.heightMap.height / 2)
     height = helpers.getPixel(@props.heightMap, mapX, mapZ).r
@@ -113,7 +112,6 @@ Game = React.createClass
     @sockets.update(@controlsCamera)
     @controls.update(delta, height) if @state.pointerLocked
     @renderer.render(@scene, @camera)
-    @prevTime = time
 
   ###
   Animate all frames.
