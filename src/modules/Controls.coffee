@@ -27,7 +27,7 @@ class Controls
   getCamera: ->
     @camera
 
-  render: (delta, height) ->
+  update: (delta, height) ->
     @velocity.x -= @velocity.x * 10.0 * delta
     @velocity.z -= @velocity.z * 10.0 * delta
 
