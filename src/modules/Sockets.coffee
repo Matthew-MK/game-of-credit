@@ -21,10 +21,17 @@ class Sockets
     @socket.on("players-position", @onPlayersPosition)
     @socket.on("player-disconnect", @onPlayerDisconnect)
 
-  update: (camera) ->
+  update: (camera, controls) ->
+    event = "stand"
+    event = "crwalk" if controls.moved
+    event = "jump" if controls.jumped
+    event = "run" if  controls.sprinted
+
+
     @socket.emit "position",
       position: camera.position
       rotation: camera.rotation
+      event: event
 
   onPlayersPosition: (players) =>
     if @socket.id of players
@@ -32,16 +39,12 @@ class Sockets
 
     for id, data of players
       if id of @players
-        {x, y, z} = data.position
-        {_x, _y, _z} = data.rotation
-        @players[id].root.position.set(x, y, z)
-        @players[id].root.rotation.set(_x, _y, _z)
-        @players[id].root.rotation.y += Math.PI
+        @players[id].onUpdate(data)
       else
         player = new Player(data.position)
         player.scale = 0.5
-        @players[id] = player
         @scene.add(player.root)
+        @players[id] = player
 
   onPlayerDisconnect: (id) =>
     if id of @players

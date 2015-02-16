@@ -107,8 +107,9 @@ Game = React.createClass
   ###
   renderFrame: ->
     delta = @clock.getDelta()
-    @sockets.update(@controlsCamera)
+    @sockets.update(@controlsCamera, @controls)
     @controls.update(delta, @props.position.y) if @state.pointerLocked
+    player.update(delta) for id, player of @players
     @renderer.render(@scene, @camera)
 
   ###

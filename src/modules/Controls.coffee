@@ -17,7 +17,10 @@ Key = require("keymaster")
 
 class Controls
   velocity: new THREE.Vector3
-  canJump: true
+  jumped: false
+  moved: false
+  sprinted: false
+  speed: 10
 
   constructor: (camera) ->
     @cameraPitch = camera
@@ -28,30 +31,35 @@ class Controls
     @velocity.x -= @velocity.x * 10.0 * delta
     @velocity.z -= @velocity.z * 10.0 * delta
 
+    # Gravity
     @velocity.y -= 9.823 * 3.0 * delta
 
-    @velocity.z -= 10.0 * delta if Key.isPressed("W")
-    @velocity.z -= 20.0 * delta if Key.isPressed("W") & Key.shift
+    # Controls
+    keyW = Key.isPressed("W")
+    keyS = Key.isPressed("S")
+    keyA = Key.isPressed("A")
+    keyD = Key.isPressed("D")
 
-    @velocity.z += 10.0 * delta if Key.isPressed("S")
-    @velocity.z += 20.0 * delta if Key.isPressed("S") & Key.shift
+    @moved = keyW or keyS or keyA or keyD
+    @sprinted = Key.shift
+    speed = if @sprinted then @speed * 2 else @speed
 
-    @velocity.x -= 10.0 * delta if Key.isPressed("A")
-    @velocity.x -= 20.0 * delta if Key.isPressed("A") & Key.shift
-
-    @velocity.x += 10.0 * delta if Key.isPressed("D")
-    @velocity.x += 20.0 * delta if Key.isPressed("D") & Key.shift
+    if @moved
+      @velocity.z -= speed * delta if keyW
+      @velocity.z += speed * delta if keyS
+      @velocity.x -= speed * delta if keyA
+      @velocity.x += speed * delta if keyD
 
     if Key.isPressed("space")
-      @velocity.y += 7.0 if @canJump
-      @canJump = false
+      @velocity.y += 7.0 if not @jumped
+      @jumped = true
 
     @camera.translateX(@velocity.x)
     @camera.translateY(@velocity.y)
     @camera.translateZ(@velocity.z)
 
     if @camera.position.y < height
-      @canJump = true
+      @jumped = false
       @velocity.y = 0
       @camera.position.y = height
 

@@ -22,9 +22,7 @@ exports.register = (server) ->
   io.on 'connection', (socket) ->
 
     socket.on "position", (data) ->
-      players[socket.id] =
-        position: data.position
-        rotation: data.rotation
+      players[socket.id] = data
       io.sockets.emit('players-position', players)
 
     socket.on "disconnect", ->
