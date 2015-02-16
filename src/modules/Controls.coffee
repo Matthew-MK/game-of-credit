@@ -34,9 +34,16 @@ class Controls
     @velocity.y -= 9.823 * 3.0 * delta
 
     @velocity.z -= 10.0 * delta if Key.isPressed("W")
+    @velocity.z -= 20.0 * delta if Key.isPressed("W") & Key.shift
+
     @velocity.z += 10.0 * delta if Key.isPressed("S")
+    @velocity.z += 20.0 * delta if Key.isPressed("S") & Key.shift
+
     @velocity.x -= 10.0 * delta if Key.isPressed("A")
+    @velocity.x -= 20.0 * delta if Key.isPressed("A") & Key.shift
+
     @velocity.x += 10.0 * delta if Key.isPressed("D")
+    @velocity.x += 20.0 * delta if Key.isPressed("D") & Key.shift
 
     if Key.isPressed("space")
       @velocity.y += 7.0 if @canJump

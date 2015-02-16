@@ -15,7 +15,7 @@ limitations under the License.
 ###
 React = require("react")
 Stats = require("stats-js")
-
+Key = require("keymaster")
 Blocker = require("./Blocker")
 Controls = require("../modules/Controls")
 Objects = require("../modules/Objects")
@@ -97,6 +97,7 @@ Game = React.createClass
     @scene.add(@directionalLight)
     @scene.add(@controlsCamera)
     @scene.add(mesh) for key, mesh of @playGround.meshes
+    @shoot = new Objects.Shoot(true)
 
   ###
   Render single frame.
@@ -106,6 +107,11 @@ Game = React.createClass
     @sockets.update(@controlsCamera)
     @controls.update(delta, @props.position.y) if @state.pointerLocked
     @renderer.render(@scene, @camera)
+
+    if @shoot.shootingDelay
+      if Key.isPressed("F")
+        @bullet = new Objects.Bullet(@controlsCamera.position, @controlsCamera.rotation._y, @controls.cameraPitch.rotation.x, @scene, 0.5, "yellow", @shoot)
+        @scene.add(@bullet)
 
   ###
   Animate all frames.
