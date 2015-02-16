@@ -23,7 +23,10 @@
   ],
   "bin": "./bin/www",
   "config": {
-    "productionURL": "https://svager.cz/game-of-credit/",
+    "socketServerPath": {
+      "development": "/socket.io",
+      "production": "/game-of-credit/socket.io"
+    },
     "port": "8000"
   },
   "main": "./app.coffee",
