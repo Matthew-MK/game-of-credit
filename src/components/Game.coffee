@@ -53,6 +53,11 @@ Game = React.createClass
   handleMouseMove: (e) ->
     @controls.handleMouseMove(e) if @state.pointerLocked
 
+  handleFire: ->
+    if @state.pointerLocked
+      bullet = new Objects.Bullet(@scene, @controls, size: 0.4, color: "yellow")
+      bullet.fire()
+
   ###
   Reset frame counter every second and save it as fps
   ###
@@ -76,10 +81,8 @@ Game = React.createClass
 
     # Init controls & camera
     @controls = new Controls(@camera)
-    @controlsCamera = @controls.getCamera()
-    @controlsCamera.position.x = @props.position.x
-    @controlsCamera.position.y = @props.position.y
-    @controlsCamera.position.z = @props.position.z
+    @controlsCamera = @controls.camera
+    @controlsCamera.position.copy(@props.position)
 
     # Init sockets
     @sockets = new Sockets(@props.dataServer, @scene, @players)
@@ -107,10 +110,6 @@ Game = React.createClass
     @sockets.update(@controlsCamera)
     @controls.update(delta, @props.position.y) if @state.pointerLocked
     @renderer.render(@scene, @camera)
-
-    if not @props.shootingDelay & Key.isPressed("F")
-      @bullet = new Objects.Bullet(@controlsCamera.position, @controlsCamera.rotation._y, @controls.cameraPitch.rotation.x, @scene, 0.5, "yellow", @props)
-      @scene.add(@bullet)
 
   ###
   Animate all frames.
@@ -160,7 +159,7 @@ Game = React.createClass
     window.addEventListener('mousemove', @handleMouseMove)
 
   render: ->
-    div id: "wrapper",
+    div id: "wrapper", onClick: @handleFire,
       StatsComponent(stats: @stats)
       Blocker(sendState: @handleBlockerState)
       canvas

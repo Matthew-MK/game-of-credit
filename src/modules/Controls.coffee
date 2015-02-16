@@ -24,9 +24,6 @@ class Controls
     @camera = new THREE.Object3D
     @camera.add(camera)
 
-  getCamera: ->
-    @camera
-
   update: (delta, height) ->
     @velocity.x -= @velocity.x * 10.0 * delta
     @velocity.z -= @velocity.z * 10.0 * delta

@@ -54,34 +54,31 @@ class Plane extends THREE.Mesh
     )
 
 class Bullet extends THREE.Mesh
-  constructor: (position, rotationY, rotationX, scene, @size, @color, @delay) ->
+  constructor: (@scene, controls, opts = {speed: 6}) ->
+    @speed = opts.speed or 6
+    size = opts.size or 1
+    color = opts.color or "white"
     super(
-      new THREE.SphereGeometry(@size, 50, 50),
-      new THREE.MeshBasicMaterial(color: @color)
+      new THREE.SphereGeometry(size, 15, 15),
+      new THREE.MeshBasicMaterial({color})
     )
-    @delay.shootingDelay = true
-    @position.x = position.x
-    @position.y = position.y
-    @position.z = position.z
+    @position.copy(controls.camera.position)
+    @rotationX = controls.cameraPitch.rotation.x
+    @rotationY = controls.camera.rotation._y
 
-    setInterval =>
-      @fire(8, rotationY, rotationX)
-    , 10
-    setTimeout =>
-      @delay.shootingDelay = false
-    , 500
-    setTimeout =>
-      scene.remove(@)
-    , 2500
+  move: =>
+    @position.x -= Math.sin(@rotationY) * @speed
+    @position.y += Math.sin(@rotationX) * @speed
+    @position.z -= Math.cos(@rotationY) * @speed
 
-  fire: (speed, rotY, rotX) ->
-    moveX = Math.sin(rotY) * speed
-    moveZ = Math.cos(rotY) * speed
-    moveY = Math.sin(rotX) * speed
-    x = @position.x - moveX
-    z = @position.z - moveZ
-    y = @position.y + moveY
-    @position.set(x, y, z)
+  destroy: =>
+    @scene.remove(this)
+    delete this
+
+  fire: ->
+    @scene.add(this)
+    setInterval(@move, 10)
+    setTimeout(@destroy, 2500)
 
 class HeightMap extends THREE.Mesh
 
