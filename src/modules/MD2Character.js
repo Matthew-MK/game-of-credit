@@ -42,17 +42,12 @@ THREE.MD2Character = function () {
         var loader = new THREE.JSONLoader();
 
         loader.load(config.baseUrl + "/" + config.body, function (geo) {
-
             geo.computeBoundingBox();
-
             var mesh = createPart(geo, scope.skinsBody[0]);
             mesh.scale.set(scope.scale, scope.scale, scope.scale);
-
             scope.root.add(mesh);
-
             scope.meshBody = mesh;
             scope.activeAnimation = geo.firstAnimation;
-
             checkLoadingComplete();
         });
 
@@ -64,14 +59,10 @@ THREE.MD2Character = function () {
                 var mesh = createPart(geo, scope.skinsWeapon[index]);
                 mesh.scale.set(scope.scale, scope.scale, scope.scale);
                 mesh.visible = false;
-
                 mesh.name = name;
-
                 scope.root.add(mesh);
-
                 scope.weapons[index] = mesh;
                 scope.meshWeapon = mesh;
-
                 checkLoadingComplete();
             }
         };
@@ -111,14 +102,10 @@ THREE.MD2Character = function () {
         if (activeWeapon) {
             activeWeapon.visible = true;
             this.meshWeapon = activeWeapon;
-
             activeWeapon.playAnimation(this.activeAnimation, this.animationFPS);
-
             this.meshWeapon.baseDuration = this.meshWeapon.duration;
-
             this.meshWeapon.time = this.meshBody.time;
             this.meshWeapon.duration = this.meshBody.duration;
-
         }
 
     };

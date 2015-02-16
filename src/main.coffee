@@ -48,22 +48,15 @@ App = React.createClass
         @textures[key] = new THREE.ImageUtils.loadTextureCube(path)
 
   init: ->
-    x = Math.floor(Math.random() * @heightMap.width)
-    z = Math.floor(Math.random() * @heightMap.height)
-    y = helpers.getPixel(@heightMap, x, z).r
-    x -= @heightMap.width / 2
-    z -= @heightMap.width / 2
-    @position = new THREE.Vector3(x, y, z)
     @setState(loading: false)
-    console.log "INIT position", @position
 
   render: ->
     if @state.loading
       div {id: "loading"}, "Loading..."
     else
       Game
-        socketServerPath: document.getElementById("bundle").dataset.server
-        position: @position
+        dataServer: document.getElementById("bundle").dataset.server
+        position: new THREE.Vector3(0, 12, 0)
         textures: @textures
         heightMap: @heightMap
 

@@ -22,6 +22,21 @@ class ColorCube extends THREE.Mesh
       new THREE.MeshBasicMaterial(color: @color)
     )
 
+class TexturedCube extends THREE.Mesh
+  constructor: (@width, @height, @depth, texture, repeat, texX, texY) ->
+    if repeat
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+      texture.repeat.set(texX, texY)
+    super(
+      new THREE.BoxGeometry(@width, @height, @depth),
+      new THREE.MeshPhongMaterial(
+        map: texture
+        specular: 0x111111,
+        shininess: 50,
+        metal: true
+      )
+    )
+
 class SkyBox extends THREE.Mesh
   constructor: (@width, @height, @depth, textures) ->
     shader = THREE.ShaderLib["cube"]
@@ -35,6 +50,51 @@ class SkyBox extends THREE.Mesh
         depthWrite: false
         side: THREE.BackSide
     )
+
+class Plane extends THREE.Mesh
+  constructor: (width, height, texture, texX, texY) ->
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    texture.repeat.set(texX, texY)
+
+    super(
+      new THREE.PlaneBufferGeometry(width, height),
+      new THREE.MeshPhongMaterial(
+        map: texture
+        specular: 0x111111,
+        shininess: 50,
+        morphTargets: true,
+        morphNormals: true,
+        metal: true
+        side: THREE.DoubleSide
+      )
+    )
+
+class Bullet extends THREE.Mesh
+  constructor: (@scene, controls, opts = {}) ->
+    @speed = opts.speed or 6
+    size = opts.size or 1
+    color = opts.color or "white"
+    super(
+      new THREE.SphereGeometry(size, 15, 15),
+      new THREE.MeshBasicMaterial({color})
+    )
+    @position.copy(controls.camera.position)
+    @rotationX = controls.cameraPitch.rotation.x
+    @rotationY = controls.camera.rotation._y
+
+  move: =>
+    @position.x -= Math.sin(@rotationY) * @speed
+    @position.y += Math.sin(@rotationX) * @speed
+    @position.z -= Math.cos(@rotationY) * @speed
+
+  destroy: =>
+    @scene.remove(this)
+    delete this
+
+  fire: ->
+    @scene.add(this)
+    setInterval(@move, 10)
+    setTimeout(@destroy, 2500)
 
 class HeightMap extends THREE.Mesh
 
@@ -120,5 +180,8 @@ class HeightMap extends THREE.Mesh
 
 module.exports =
   ColorCube: ColorCube
+  Plane: Plane
   SkyBox: SkyBox
   HeightMap: HeightMap
+  Bullet: Bullet
+  TexturedCube: TexturedCube

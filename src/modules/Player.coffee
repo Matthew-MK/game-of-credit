@@ -18,13 +18,24 @@ require("../modules/MD2Character")
 mapping = require("../mapping.json")
 
 class Player extends THREE.MD2Character
+
+  lastEvent: null
+
   constructor: (position) ->
     super()
 
     @loadParts(mapping["models"]["ratamahatta"])
-    @onLoadComplete = =>
-      @setWeapon(0)
-      @setAnimation("run")
-    @root.position.set(position.x, position.y, position.z)
+    @root.position.copy(position)
+
+  onUpdate: (data) ->
+    @root.position.copy(data.position)
+    @root.rotation.copy(data.rotation)
+    @root.rotation.y += Math.PI
+
+    if @lastEvent != data.event
+      @lastEvent = data.event
+      @setAnimation(data.event)
+
+
 
 module.exports = Player

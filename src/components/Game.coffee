@@ -15,11 +15,12 @@ limitations under the License.
 ###
 React = require("react")
 Stats = require("stats-js")
-
+Key = require("keymaster")
 Blocker = require("./Blocker")
 Controls = require("../modules/Controls")
 Objects = require("../modules/Objects")
-Player = require("../modules/Player")
+PlayGround = require("../modules/PlayGround")
+Sockets = require("../modules/Sockets")
 StatsComponent = require("./Stats")
 helpers = require("../modules/helpers")
 
@@ -28,10 +29,11 @@ require("../modules/MD2Character") # three.js extension
 {canvas, div} = React.DOM
 
 Game = React.createClass
-  stats: new Stats
-  textures: {}
-  prevTime: 0
   players: {}
+  textures: {}
+  clock: new THREE.Clock
+  stats: new Stats
+  shootingDelay: false
 
   getInitialState: ->
     frameCount: 0
@@ -51,6 +53,11 @@ Game = React.createClass
   handleMouseMove: (e) ->
     @controls.handleMouseMove(e) if @state.pointerLocked
 
+  handleFire: ->
+    if @state.pointerLocked
+      bullet = new Objects.Bullet(@scene, @controls, size: 0.4, color: "yellow")
+      bullet.fire()
+
   ###
   Reset frame counter every second and save it as fps
   ###
@@ -59,36 +66,6 @@ Game = React.createClass
     @setState
       frameCount: 0
       fps: @state.frameCount
-
-  onPlayersPosition: (players) ->
-    if @socket.id of players
-      delete players[@socket.id]
-
-    for id, data of players
-      if id of @players
-        {x, y, z} = data.position
-        {_x, _y, _z} = data.rotation
-        console.log data.rotation
-        @players[id].root.position.set(x, y, z)
-        @players[id].root.rotation.set(_x, _y, _z)
-        @players[id].root.rotation.y += Math.PI
-      else
-        player = new Player(data.position)
-        player.scale = 0.5
-        @players[id] = player
-        @scene.add(player.root)
-        console.log "CREATE player", @players[id]
-
-  onPlayerDisconnect: (id) ->
-    if id of @players
-      @scene.remove(@players[id].root)
-      console.log "DELETE player", @players[id]
-      delete @players[id]
-
-  initSockets: ->
-    @socket = io.connect(path: @props.socketServerPath)
-    @socket.on("players-position", @onPlayersPosition)
-    @socket.on("player-disconnect", @onPlayerDisconnect)
 
   ###
   Init all three.js stuff here before rendering frames.
@@ -100,56 +77,45 @@ Game = React.createClass
       canvas: @refs.render.getDOMNode()
     @renderer.setClearColor(0xFFFFFF)
     @renderer.setSize(@state.windowWidth, @state.windowHeight)
+    @renderer.shadowMapEnabled = true
 
     # Init controls & camera
     @controls = new Controls(@camera)
-    @controlsCamera = @controls.getCamera()
-    @controlsCamera.position.x = @props.position.x
-    @controlsCamera.position.y = @props.position.y
-    @controlsCamera.position.z = @props.position.z
+    @controlsCamera = @controls.camera
+    @controlsCamera.position.copy(@props.position)
+
+    # Init sockets
+    @sockets = new Sockets(@props.dataServer, @scene, @players)
 
     # Init scene objects
     @ambientLight = new THREE.AmbientLight(0x404040)
     @directionalLight = new THREE.DirectionalLight(0xffffff, 0.7)
-    @directionalLight.position.set(200, 250, 500)
+    @directionalLight.position.set(-280, 260, 500)
+    @directionalLight.castShadow = true
+    @directionalLight.shadowCameraVisible = true;
 
-    @skyBox = new Objects.SkyBox(8000, 8000, 8000, @props.textures.skyBox)
-    @heightMap = new Objects.HeightMap(
-      @props.heightMap.width,
-      @props.heightMap.height,
-      @props.textures
-    )
-    @heightMap.rotation.x -= Math.PI / 2
+    # Init playground
+    @playGround = new PlayGround(@props.textures)
 
     @scene.add(@ambientLight)
     @scene.add(@directionalLight)
     @scene.add(@controlsCamera)
-    @scene.add(@skyBox)
-    @scene.add(@heightMap)
+    @scene.add(mesh) for key, mesh of @playGround.meshes
 
   ###
   Render single frame.
   ###
   renderFrame: ->
-    time = performance.now()
-    delta = (time - @prevTime) / 1000
-    mapX = Math.floor(@controlsCamera.position.x) + (@props.heightMap.width / 2)
-    mapZ = Math.floor(@controlsCamera.position.z) + (@props.heightMap.height / 2)
-    height = helpers.getPixel(@props.heightMap, mapX, mapZ).r
-
-    @socket.emit "position",
-      position: @controlsCamera.position
-      rotation: @controlsCamera.rotation
-
-    @controls.render(delta, height) if @state.pointerLocked
+    delta = @clock.getDelta()
+    @sockets.update(@controlsCamera, @controls)
+    @controls.update(delta, @props.position.y) if @state.pointerLocked
+    player.update(delta) for id, player of @players
     @renderer.render(@scene, @camera)
-    @prevTime = time
 
   ###
   Animate all frames.
   ###
   animate: ->
-
     @setState frameCount: ++@state.frameCount
     @stats.begin()
     @renderFrame()
@@ -164,7 +130,6 @@ Game = React.createClass
   componentDidMount: ->
     @resetFrameCount()
     @initScene()
-    @initSockets()
     window.addEventListener('resize', @handleResize)
     window.addEventListener('mousemove', @handleMouseMove)
     @animate()
@@ -195,9 +160,9 @@ Game = React.createClass
     window.addEventListener('mousemove', @handleMouseMove)
 
   render: ->
-    div id: "wrapper",
-      Blocker(sendState: @handleBlockerState)
+    div id: "wrapper", onClick: @handleFire,
       StatsComponent(stats: @stats)
+      Blocker(sendState: @handleBlockerState)
       canvas
         id: "render"
         ref: "render"
