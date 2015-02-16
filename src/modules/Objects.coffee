@@ -36,6 +36,23 @@ class SkyBox extends THREE.Mesh
         side: THREE.BackSide
     )
 
+class Plane extends THREE.Mesh
+  constructor: (width, height, texture) ->
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    texture.repeat.set(16, 16)
+
+    super(
+      new THREE.PlaneBufferGeometry(width, height),
+      new THREE.MeshPhongMaterial(
+        map: texture
+        specular: 0x111111,
+        shininess: 50,
+        morphTargets: true,
+        morphNormals: true,
+        metal: true
+      )
+    )
+
 class HeightMap extends THREE.Mesh
 
   vertexShader: """
@@ -120,5 +137,6 @@ class HeightMap extends THREE.Mesh
 
 module.exports =
   ColorCube: ColorCube
+  Plane: Plane
   SkyBox: SkyBox
   HeightMap: HeightMap

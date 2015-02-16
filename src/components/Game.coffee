@@ -19,6 +19,7 @@ Stats = require("stats-js")
 Blocker = require("./Blocker")
 Controls = require("../modules/Controls")
 Objects = require("../modules/Objects")
+PlayGround = require("../modules/PlayGround")
 Sockets = require("../modules/Sockets")
 StatsComponent = require("./Stats")
 helpers = require("../modules/helpers")
@@ -70,6 +71,7 @@ Game = React.createClass
       canvas: @refs.render.getDOMNode()
     @renderer.setClearColor(0xFFFFFF)
     @renderer.setSize(@state.windowWidth, @state.windowHeight)
+    @renderer.shadowMapEnabled = true
 
     # Init controls & camera
     @controls = new Controls(@camera)
@@ -84,33 +86,25 @@ Game = React.createClass
     # Init scene objects
     @ambientLight = new THREE.AmbientLight(0x404040)
     @directionalLight = new THREE.DirectionalLight(0xffffff, 0.7)
-    @directionalLight.position.set(200, 250, 500)
+    @directionalLight.position.set(-280, 260, 500)
+    @directionalLight.castShadow = true
+    @directionalLight.shadowCameraVisible = true;
 
-    @skyBox = new Objects.SkyBox(8000, 8000, 8000, @props.textures.skyBox)
-    @heightMap = new Objects.HeightMap(
-      @props.heightMap.width,
-      @props.heightMap.height,
-      @props.textures
-    )
-    @heightMap.rotation.x -= Math.PI / 2
+    # Init playground
+    @playGround = new PlayGround(@props.textures)
 
     @scene.add(@ambientLight)
     @scene.add(@directionalLight)
     @scene.add(@controlsCamera)
-    @scene.add(@skyBox)
-    @scene.add(@heightMap)
+    @scene.add(mesh) for key, mesh of @playGround.meshes
 
   ###
   Render single frame.
   ###
   renderFrame: ->
     delta = @clock.getDelta()
-    mapX = Math.floor(@controlsCamera.position.x) + (@props.heightMap.width / 2)
-    mapZ = Math.floor(@controlsCamera.position.z) + (@props.heightMap.height / 2)
-    height = helpers.getPixel(@props.heightMap, mapX, mapZ).r
-
     @sockets.update(@controlsCamera)
-    @controls.update(delta, height) if @state.pointerLocked
+    @controls.update(delta, @props.position.y) if @state.pointerLocked
     @renderer.render(@scene, @camera)
 
   ###
@@ -162,8 +156,8 @@ Game = React.createClass
 
   render: ->
     div id: "wrapper",
-      Blocker(sendState: @handleBlockerState)
       StatsComponent(stats: @stats)
+      Blocker(sendState: @handleBlockerState)
       canvas
         id: "render"
         ref: "render"
