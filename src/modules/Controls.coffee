@@ -46,7 +46,7 @@ class Controls
     @velocity.x += 20.0 * delta if Key.isPressed("D") & Key.shift
 
     if Key.isPressed("space")
-      @velocity.y += 7.0 if @canJump
+      @velocity.y += 15.0 if @canJump
       @canJump = false
 
     @camera.translateX(@velocity.x)

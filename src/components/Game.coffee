@@ -108,6 +108,8 @@ Game = React.createClass
     @controls.update(delta, @props.position.y) if @state.pointerLocked
     @renderer.render(@scene, @camera)
 
+    console.log(@controlsCamera.position.x, @controlsCamera.position.z)
+
     if not @props.shootingDelay & Key.isPressed("F")
       @bullet = new Objects.Bullet(@controlsCamera.position, @controlsCamera.rotation._y, @controls.cameraPitch.rotation.x, @scene, 0.5, "yellow", @props)
       @scene.add(@bullet)

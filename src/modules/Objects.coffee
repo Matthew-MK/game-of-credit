@@ -65,6 +65,7 @@ class Plane extends THREE.Mesh
         morphTargets: true,
         morphNormals: true,
         metal: true
+        side: THREE.DoubleSide
       )
     )
 
