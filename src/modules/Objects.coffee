@@ -54,7 +54,7 @@ class Plane extends THREE.Mesh
     )
 
 class Bullet extends THREE.Mesh
-  constructor: (@scene, controls, opts = {speed: 6}) ->
+  constructor: (@scene, controls, opts = {}) ->
     @speed = opts.speed or 6
     size = opts.size or 1
     color = opts.color or "white"
