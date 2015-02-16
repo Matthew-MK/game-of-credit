@@ -52,17 +52,14 @@ class Plane extends THREE.Mesh
         metal: true
       )
     )
-class Shoot
-  constructor: (@shootingDelay) ->
-    shootingDelay = @shootingDelay
 
 class Bullet extends THREE.Mesh
-  constructor: (position, rotationY, rotationX, scene, @size, @color, @shoot) ->
+  constructor: (position, rotationY, rotationX, scene, @size, @color, @delay) ->
     super(
       new THREE.SphereGeometry(@size, 50, 50),
       new THREE.MeshBasicMaterial(color: @color)
     )
-    @shoot.shootingDelay = false
+    @delay.shootingDelay = true
     @position.x = position.x
     @position.y = position.y
     @position.z = position.z
@@ -71,7 +68,7 @@ class Bullet extends THREE.Mesh
       @fire(8, rotationY, rotationX)
     , 10
     setTimeout =>
-      @shoot.shootingDelay = true
+      @delay.shootingDelay = false
     , 500
     setTimeout =>
       scene.remove(@)
@@ -173,5 +170,4 @@ module.exports =
   Plane: Plane
   SkyBox: SkyBox
   HeightMap: HeightMap
-  Shoot: Shoot
   Bullet: Bullet

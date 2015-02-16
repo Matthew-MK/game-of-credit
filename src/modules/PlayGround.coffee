@@ -24,6 +24,7 @@ class PlayGround
     @meshes.plane = new Objects.Plane(1024, 1024, textures.grass)
     @meshes.redBox = new Objects.ColorCube(20, 20, 20, "red");
     @meshes.skyBox = new Objects.SkyBox(8000, 8000, 8000, textures.skyBox)
+    @meshes.blubox = new Objects.ColorCube(80, 20, 10, "blue");
 
     # Rotations
     @meshes.plane.rotation.x -= Math.PI / 2

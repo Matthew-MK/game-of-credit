@@ -33,6 +33,7 @@ Game = React.createClass
   textures: {}
   clock: new THREE.Clock
   stats: new Stats
+  shootingDelay: false
 
   getInitialState: ->
     frameCount: 0
@@ -97,7 +98,6 @@ Game = React.createClass
     @scene.add(@directionalLight)
     @scene.add(@controlsCamera)
     @scene.add(mesh) for key, mesh of @playGround.meshes
-    @shoot = new Objects.Shoot(true)
 
   ###
   Render single frame.
@@ -108,10 +108,9 @@ Game = React.createClass
     @controls.update(delta, @props.position.y) if @state.pointerLocked
     @renderer.render(@scene, @camera)
 
-    if @shoot.shootingDelay
-      if Key.isPressed("F")
-        @bullet = new Objects.Bullet(@controlsCamera.position, @controlsCamera.rotation._y, @controls.cameraPitch.rotation.x, @scene, 0.5, "yellow", @shoot)
-        @scene.add(@bullet)
+    if not @props.shootingDelay & Key.isPressed("F")
+      @bullet = new Objects.Bullet(@controlsCamera.position, @controlsCamera.rotation._y, @controls.cameraPitch.rotation.x, @scene, 0.5, "yellow", @props)
+      @scene.add(@bullet)
 
   ###
   Animate all frames.
