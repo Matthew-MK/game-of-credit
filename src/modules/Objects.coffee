@@ -22,6 +22,21 @@ class ColorCube extends THREE.Mesh
       new THREE.MeshBasicMaterial(color: @color)
     )
 
+class TexturedCube extends THREE.Mesh
+  constructor: (@width, @height, @depth, texture, repeat, texX, texY) ->
+    if repeat
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+      texture.repeat.set(texX, texY)
+    super(
+      new THREE.BoxGeometry(@width, @height, @depth),
+      new THREE.MeshPhongMaterial(
+        map: texture
+        specular: 0x111111,
+        shininess: 50,
+        metal: true
+      )
+    )
+
 class SkyBox extends THREE.Mesh
   constructor: (@width, @height, @depth, textures) ->
     shader = THREE.ShaderLib["cube"]
@@ -37,9 +52,9 @@ class SkyBox extends THREE.Mesh
     )
 
 class Plane extends THREE.Mesh
-  constructor: (width, height, texture) ->
+  constructor: (width, height, texture, texX, texY) ->
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-    texture.repeat.set(16, 16)
+    texture.repeat.set(texX, texY)
 
     super(
       new THREE.PlaneBufferGeometry(width, height),
@@ -171,3 +186,4 @@ module.exports =
   SkyBox: SkyBox
   HeightMap: HeightMap
   Bullet: Bullet
+  TexturedCube: TexturedCube
