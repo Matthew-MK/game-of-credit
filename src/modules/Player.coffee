@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 require("../modules/MD2Character")
-
 mapping = require("../mapping.json")
 
 class Player extends THREE.MD2Character
@@ -23,9 +22,10 @@ class Player extends THREE.MD2Character
 
   constructor: (position) ->
     super()
-
     @loadParts(mapping["models"]["ratamahatta"])
     @root.position.copy(position)
+    @onLoadComplete = =>
+      @setWeapon(0)
 
   onUpdate: (data) ->
     @root.position.copy(data.position)

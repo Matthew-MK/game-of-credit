@@ -16,6 +16,8 @@ limitations under the License.
 Player = require("../modules/Player")
 
 class Sockets
+  lastEvent: null
+
   constructor: (dataServer, @scene, @players) ->
     @socket = io.connect(path: dataServer)
     @socket.on("players-position", @onPlayersPosition)
@@ -25,13 +27,16 @@ class Sockets
     event = "stand"
     event = "crwalk" if controls.moved
     event = "jump" if controls.jumped
-    event = "run" if  controls.sprinted
+    event = "run" if controls.moved and controls.sprinted
+    event = "attack" if controls.fired
 
+    if not @skip
+      @socket.emit "position",
+        position: camera.position
+        rotation: camera.rotation
+        event: event
 
-    @socket.emit "position",
-      position: camera.position
-      rotation: camera.rotation
-      event: event
+    @skip = event == "stand" and event != @lastEvent
 
   onPlayersPosition: (players) =>
     if @socket.id of players
@@ -39,6 +44,7 @@ class Sockets
 
     for id, data of players
       if id of @players
+        console.log data.rotation
         @players[id].onUpdate(data)
       else
         player = new Player(data.position)

@@ -16,13 +16,17 @@ limitations under the License.
 Key = require("keymaster")
 
 class Controls
+
   objects: []
   offset: 10
   velocity: new THREE.Vector3
+  speed: 10
+
+  # Events
+  fired: false
   jumped: false
   moved: false
   sprinted: false
-  speed: 10
 
   constructor: (camera, @defaultPosition) ->
     @cameraPitch = camera

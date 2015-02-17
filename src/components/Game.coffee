@@ -54,7 +54,7 @@ Game = React.createClass
     @controls.handleMouseMove(e) if @state.pointerLocked
 
   handleFire: ->
-    if @state.pointerLocked
+    if @state.pointerLocked and not @controls.fired
       bullet = new Objects.Bullet(@scene, @controls, size: 0.4, color: "yellow")
       bullet.fire()
 

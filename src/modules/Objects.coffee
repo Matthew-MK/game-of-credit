@@ -64,7 +64,7 @@ class Plane extends THREE.Mesh
     )
 
 class Bullet extends THREE.Mesh
-  constructor: (@scene, controls, opts = {}) ->
+  constructor: (@scene, @controls, opts = {}) ->
     @speed = opts.speed or 6
     size = opts.size or 1
     color = opts.color or "white"
@@ -72,9 +72,9 @@ class Bullet extends THREE.Mesh
       new THREE.SphereGeometry(size, 15, 15),
       new THREE.MeshBasicMaterial({color})
     )
-    @position.copy(controls.camera.position)
-    @rotationX = controls.cameraPitch.rotation.x
-    @rotationY = controls.camera.rotation._y
+    @position.copy(@controls.camera.position)
+    @rotationX = @controls.cameraPitch.rotation.x
+    @rotationY = @controls.camera.rotation._y
 
   move: =>
     @position.x -= Math.sin(@rotationY) * @speed
@@ -85,10 +85,15 @@ class Bullet extends THREE.Mesh
     @scene.remove(this)
     delete this
 
+  stopFire: =>
+    @controls.fired = false
+
   fire: ->
     @scene.add(this)
+    @controls.fired = true
     setInterval(@move, 10)
     setTimeout(@destroy, 2500)
+    setTimeout(@stopFire, 80 * 14)
 
 class HeightMap extends THREE.Mesh
 
