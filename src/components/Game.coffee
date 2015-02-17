@@ -75,9 +75,11 @@ Game = React.createClass
     @camera = new THREE.PerspectiveCamera 45, @state.windowWidth / @state.windowHeight, 1, 10000
     @renderer = new THREE.WebGLRenderer
       canvas: @refs.render.getDOMNode()
+      antialias: true
     @renderer.setClearColor(0xFFFFFF)
     @renderer.setSize(@state.windowWidth, @state.windowHeight)
     @renderer.shadowMapEnabled = true
+    @renderer.shadowMapSoft = true
 
     # Init controls & camera
     @controls = new Controls(@camera)
@@ -89,10 +91,16 @@ Game = React.createClass
 
     # Init scene objects
     @ambientLight = new THREE.AmbientLight(0x404040)
-    @directionalLight = new THREE.DirectionalLight(0xffffff, 0.7)
-    @directionalLight.position.set(-280, 260, 500)
+    @directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+    @directionalLight.position.set(-520, 520, 1000)
     @directionalLight.castShadow = true
-    @directionalLight.shadowCameraVisible = true;
+    @directionalLight.shadowCameraVisible = true
+
+    @directionalLight.shadowCameraLeft = -720
+    @directionalLight.shadowCameraRight = 700
+    @directionalLight.shadowCameraBottom = -300
+    @directionalLight.shadowCameraNear = 550
+    @directionalLight.shadowCameraFar = 1850
 
     # Init playground
     @playGround = new PlayGround(@props.textures)
@@ -161,8 +169,8 @@ Game = React.createClass
 
   render: ->
     div id: "wrapper", onClick: @handleFire,
-      StatsComponent(stats: @stats)
       Blocker(sendState: @handleBlockerState)
+      StatsComponent(stats: @stats)
       canvas
         id: "render"
         ref: "render"
