@@ -81,15 +81,10 @@ Game = React.createClass
     @renderer.shadowMapEnabled = true
     @renderer.shadowMapSoft = true
 
-    # Init controls & camera
-    @controls = new Controls(@camera)
-    @controlsCamera = @controls.camera
-    @controlsCamera.position.copy(@props.position)
-
     # Init sockets
     @sockets = new Sockets(@props.dataServer, @scene, @players)
 
-    # Init scene objects
+    # Init lights
     @ambientLight = new THREE.AmbientLight(0x404040)
     @directionalLight = new THREE.DirectionalLight(0xffffff, 1)
     @directionalLight.position.set(-520, 520, 1000)
@@ -105,19 +100,23 @@ Game = React.createClass
     # Init playground
     @playGround = new PlayGround(@props.textures)
 
+    # Init controls & camera
+    @controls = new Controls(@camera, @props.defaultPosition)
+    @controls.setIntersects(@playGround.meshes)
+
+    # Add meshes to scene
     @scene.add(@ambientLight)
     @scene.add(@directionalLight)
-    @scene.add(@controlsCamera)
+    @scene.add(@controls.camera)
     @scene.add(mesh) for key, mesh of @playGround.meshes
 
   ###
   Render single frame.
   ###
   renderFrame: ->
-    console.log(@controlsCamera.position.x, @controlsCamera.position.z)
     delta = @clock.getDelta()
-    @sockets.update(@controlsCamera, @controls)
-    @controls.update(delta, @props.position.y) if @state.pointerLocked
+    @sockets.update(@controls.camera, @controls)
+    @controls.update(delta) if @state.pointerLocked
     player.update(delta) for id, player of @players
     @renderer.render(@scene, @camera)
 

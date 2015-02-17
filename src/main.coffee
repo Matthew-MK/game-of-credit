@@ -56,7 +56,7 @@ App = React.createClass
     else
       Game
         dataServer: document.getElementById("bundle").dataset.server
-        position: new THREE.Vector3(0, 12, 0)
+        defaultPosition: new THREE.Vector3(0, 12, 0)
         textures: @textures
         heightMap: @heightMap
 

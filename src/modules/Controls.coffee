@@ -16,18 +16,29 @@ limitations under the License.
 Key = require("keymaster")
 
 class Controls
+  collisionsEnabled: false
+  objects: []
   velocity: new THREE.Vector3
   jumped: false
   moved: false
   sprinted: false
   speed: 10
 
-  constructor: (camera) ->
+  constructor: (camera, @defaultPosition) ->
     @cameraPitch = camera
     @camera = new THREE.Object3D
     @camera.add(camera)
+    @camera.position.copy(@defaultPosition)
+    @rayCaster = new THREE.Raycaster()
+    @rayCaster.far = 100
+    @height = @defaultPosition.y
 
-  update: (delta, height) ->
+  setIntersects: (meshes) ->
+    @collisionsEnabled = true
+    @objects.push(mesh) for key, mesh of meshes
+
+  update: (delta) ->
+
     @velocity.x -= @velocity.x * 10.0 * delta
     @velocity.z -= @velocity.z * 10.0 * delta
 
@@ -50,6 +61,13 @@ class Controls
       @velocity.x -= speed * delta if keyA
       @velocity.x += speed * delta if keyD
 
+    if @collisionsEnabled
+      @rayCaster.set(@camera.position, new THREE.Vector3(0, -1, 0))
+      intersections = @rayCaster.intersectObjects(@objects)
+      if intersections.length > 0
+        distance = Math.round(intersections[0].distance)
+        console.log distance
+        
     if Key.isPressed("space")
       @velocity.y += 7.0 if not @jumped
       @jumped = true
@@ -58,10 +76,10 @@ class Controls
     @camera.translateY(@velocity.y)
     @camera.translateZ(@velocity.z)
 
-    if @camera.position.y < height
+    if @camera.position.y < @height
       @jumped = false
       @velocity.y = 0
-      @camera.position.y = height
+      @camera.position.y = @height
 
   handleMouseMove: (event) ->
     movementX = event["movementX"] or event["mozMovementX"] or event["webkitMovementX"] or 0
