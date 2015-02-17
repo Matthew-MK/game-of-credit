@@ -114,6 +114,7 @@ Game = React.createClass
   Render single frame.
   ###
   renderFrame: ->
+    console.log(@controlsCamera.position.x, @controlsCamera.position.z)
     delta = @clock.getDelta()
     @sockets.update(@controlsCamera, @controls)
     @controls.update(delta, @props.position.y) if @state.pointerLocked
