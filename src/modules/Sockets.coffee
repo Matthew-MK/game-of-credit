@@ -17,7 +17,7 @@ Player = require("../modules/Player")
 
 class Sockets
   constructor: (dataServer, @scene, @players) ->
-    @socket = io.connect(dataServer)
+    @socket = io.connect(path: dataServer)
     @socket.on("players-position", @onPlayersPosition)
     @socket.on("player-disconnect", @onPlayerDisconnect)
 
