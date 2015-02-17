@@ -89,7 +89,6 @@ Game = React.createClass
     @directionalLight = new THREE.DirectionalLight(0xffffff, 1)
     @directionalLight.position.set(-520, 520, 1000)
     @directionalLight.castShadow = true
-    @directionalLight.shadowCameraVisible = true
 
     @directionalLight.shadowCameraLeft = -720
     @directionalLight.shadowCameraRight = 700

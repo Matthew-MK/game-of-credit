@@ -16,8 +16,8 @@ limitations under the License.
 Key = require("keymaster")
 
 class Controls
-  collisionsEnabled: false
   objects: []
+  offset: 10
   velocity: new THREE.Vector3
   jumped: false
   moved: false
@@ -30,12 +30,15 @@ class Controls
     @camera.add(camera)
     @camera.position.copy(@defaultPosition)
     @rayCaster = new THREE.Raycaster()
-    @rayCaster.far = 100
     @height = @defaultPosition.y
 
   setIntersects: (meshes) ->
-    @collisionsEnabled = true
     @objects.push(mesh) for key, mesh of meshes
+
+  getIntersect: (direction) ->
+    @rayCaster.set(@camera.position, direction)
+    intersections = @rayCaster.intersectObjects(@objects)
+    return intersections[0] if intersections.length > 0
 
   update: (delta) ->
 
@@ -61,13 +64,10 @@ class Controls
       @velocity.x -= speed * delta if keyA
       @velocity.x += speed * delta if keyD
 
-    if @collisionsEnabled
-      @rayCaster.set(@camera.position, new THREE.Vector3(0, -1, 0))
-      intersections = @rayCaster.intersectObjects(@objects)
-      if intersections.length > 0
-        distance = Math.round(intersections[0].distance)
-        @height = Math.abs(Math.round(@camera.position.y - distance)) + @defaultPosition.y
-        
+    intersect = @getIntersect(new THREE.Vector3(0, -1, 0))
+    distance = Math.round(intersect.distance)
+    @height = Math.abs(Math.round(@camera.position.y - distance)) + @defaultPosition.y
+
     if Key.isPressed("space")
       @velocity.y += 7.0 if not @jumped
       @jumped = true
