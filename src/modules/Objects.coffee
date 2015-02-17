@@ -58,14 +58,8 @@ class Plane extends THREE.Mesh
 
     super(
       new THREE.PlaneBufferGeometry(width, height),
-      new THREE.MeshPhongMaterial(
+      new THREE.MeshLambertMaterial(
         map: texture
-        specular: 0x111111,
-        shininess: 50,
-        morphTargets: true,
-        morphNormals: true,
-        metal: true
-        side: THREE.DoubleSide
       )
     )
 
