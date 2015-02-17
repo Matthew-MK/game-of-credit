@@ -58,15 +58,36 @@ class Controls
     @sprinted = Key.shift
     speed = if @sprinted then @speed * 2 else @speed
 
-    if @moved
-      @velocity.z -= speed * delta if keyW
-      @velocity.z += speed * delta if keyS
-      @velocity.x -= speed * delta if keyA
-      @velocity.x += speed * delta if keyD
-
+    # Intersects
     intersect = @getIntersect(new THREE.Vector3(0, -1, 0))
     distance = Math.round(intersect.distance)
     @height = Math.abs(Math.round(@camera.position.y - distance)) + @defaultPosition.y
+
+    x = -Math.sin(@camera.rotation._y)
+    z = -Math.cos(@camera.rotation._y)
+    distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
+    intersectFront = distance > speed
+
+    x = Math.sin(@camera.rotation._y)
+    z = Math.cos(@camera.rotation._y)
+    distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
+    intersectBack = distance > speed
+
+    x = -Math.sin(@camera.rotation._y + Math.PI/2)
+    z = -Math.cos(@camera.rotation._y + Math.PI/2)
+    distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
+    intersectLeft = distance > speed
+
+    x = Math.sin(@camera.rotation._y + Math.PI/2)
+    z = Math.cos(@camera.rotation._y + Math.PI/2)
+    distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
+    intersectRight = distance > speed
+
+    if @moved
+      @velocity.z -= speed * delta if keyW and intersectFront
+      @velocity.z += speed * delta if keyS and intersectBack
+      @velocity.x -= speed * delta if keyA and intersectLeft
+      @velocity.x += speed * delta if keyD and intersectRight
 
     if Key.isPressed("space")
       @velocity.y += 7.0 if not @jumped
