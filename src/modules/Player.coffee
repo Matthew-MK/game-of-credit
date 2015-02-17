@@ -32,10 +32,8 @@ class Player extends THREE.MD2Character
     @root.rotation.copy(data.rotation)
     @root.rotation.y += Math.PI
 
-    if @lastEvent != data.event
+    if @lastEvent != data.event and @meshWeapon and @meshBody
       @lastEvent = data.event
       @setAnimation(data.event)
-
-
 
 module.exports = Player
