@@ -66,7 +66,7 @@ class Controls
       intersections = @rayCaster.intersectObjects(@objects)
       if intersections.length > 0
         distance = Math.round(intersections[0].distance)
-        console.log distance
+        @height = Math.abs(Math.round(@camera.position.y - distance)) + @defaultPosition.y
         
     if Key.isPressed("space")
       @velocity.y += 7.0 if not @jumped
