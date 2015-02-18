@@ -64,8 +64,12 @@ class Plane extends THREE.Mesh
     )
 
 class Bullet extends THREE.Mesh
-  constructor: (@scene, @controls, opts = {}) ->
-    @speed = opts.speed or 6
+
+  objects: []
+  died: false
+
+  constructor: (@scene, @controls, meshes, opts = {}) ->
+    @speed = opts.speed or 20
     size = opts.size or 1
     color = opts.color or "white"
     super(
@@ -74,14 +78,33 @@ class Bullet extends THREE.Mesh
     )
     @position.copy(@controls.position)
 
+    @objects.push(mesh) for key, mesh of meshes
+    @rayCaster = new THREE.Raycaster()
+    @rayCaster.far = @speed
+    @rayCaster.ray.direction.copy(@getNewPosition())
+
+  getNewPosition: ->
+    x = -Math.sin(@controls.rotation.y)
+    y = Math.sin(@controls.rotation.x)
+    z = -Math.cos(@controls.rotation.y)
+    new THREE.Vector3(x, y, z)
+
   move: =>
-    @position.x -= Math.sin(@controls.rotation.y) * @speed
-    @position.y += Math.sin(@controls.rotation.x) * @speed
-    @position.z -= Math.cos(@controls.rotation.y) * @speed
+    return if @died
+
+    newPosition = @getNewPosition()
+    @position.x += newPosition.x * @speed
+    @position.y += newPosition.y * @speed
+    @position.z += newPosition.z * @speed
+
+    # TODO(jan) find out why intersections array is growing
+    @rayCaster.ray.origin.copy(@position)
+    intersections = @rayCaster.intersectObjects(@objects)
+    @destroy() if intersections.length > 0
 
   destroy: =>
+    @died = true
     @scene.remove(this)
-    delete this
 
   stopFire: =>
     @controls.fired = false
@@ -90,7 +113,6 @@ class Bullet extends THREE.Mesh
     @scene.add(this)
     @controls.fired = true
     setInterval(@move, 10)
-    setTimeout(@destroy, 2500)
     setTimeout(@stopFire, 80 * 14)
 
 class HeightMap extends THREE.Mesh

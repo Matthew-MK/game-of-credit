@@ -55,8 +55,11 @@ Game = React.createClass
 
   handleFire: ->
     if @state.pointerLocked and not @controls.fired
-      bullet = new Objects.Bullet(@scene, @controls, size: 0.4, color: "yellow")
+      opts = size: 0.4, color: "yellow"
+      meshes = @playGround.meshes
+      bullet = new Objects.Bullet(@scene, @controls, meshes, opts)
       bullet.fire()
+      # TODO (jan) check if new instances are deleted by GC
 
   ###
   Reset frame counter every second and save it as fps
