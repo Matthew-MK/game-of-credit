@@ -14,237 +14,200 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 
-Objects = require("./Objects")
+{Plane, TexturedCube, SkyBox} = require("./Objects")
 
 class PlayGround
 
-  meshes: {}
+  meshes: []
 
   constructor: (textures) ->
-    @meshes.plane = new Objects.Plane(1024, 1024, textures.grass, 16, 16)
-    @meshes.skyBox = new Objects.SkyBox(8000, 8000, 8000, textures.skyBox)
 
-    @meshes.planeFront = new Objects.Plane(1024, 128, textures.wall, 16, 2)
-    @meshes.planeLeft = new Objects.Plane(1024, 128, textures.wall, 16, 2)
-    @meshes.planeRight = new Objects.Plane(1024, 128, textures.wall, 16, 2)
-    @meshes.planeBack = new Objects.Plane(1024, 128, textures.wall, 16, 2)
+    vec = (x, y, z) -> new THREE.Vector3(x, y, z)
 
-    @meshes.ramp = new Objects.Plane(64, 132, textures.mud, 1, 4)
+    # SkyBox
+    skyBox = new SkyBox(8000, 8000, 8000, textures.skyBox)
+    @meshes.push(skyBox)
 
-    @meshes.crate = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_2 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_3 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_4 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_5 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_6 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_7 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_8 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_9 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_10 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_11 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_12 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_13 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_14 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_15 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_16 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_17 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_18 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_19 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_20 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
-    @meshes.crate_21 = new Objects.TexturedCube(30, 30, 30, textures.woodCrate, false)
+    # Prison
+    prison = new THREE.Object3D
 
-    @meshes.small_crate_2 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_3 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_4 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_5 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_6 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_7 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_8 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_9 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_10 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_11 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_12 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_13 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
+    planeGround = new Plane(1024, 1024, textures.grass, 16, 16)
+    planeGround.rotation.x -= Math.PI / 2
+    prison.add(planeGround)
+    @meshes.push(planeGround)
 
-    @meshes.small_crate_14 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_15 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_16 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_17 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_18 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_19 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_20 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_21 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_22 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_23 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_24 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_25 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_26 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_27 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_28 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_29 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_30 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_31 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_32 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_33 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_34 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_35 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_36 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_37 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
-    @meshes.small_crate_38 = new Objects.TexturedCube(15, 15, 15, textures.woodCrate, false)
+    planeFront = new Plane(1024, 128, textures.wall, 16, 2)
+    planeFront.rotation.y = Math.PI
+    planeFront.position.set(0, 64, 512)
+    prison.add(planeFront)
+    @meshes.push(planeFront)
 
-    @pyramid = new THREE.Object3D
-    @pyramid.add(@meshes["small_crate_#{i}"]) for i in [14..38]
+    planeLeft = new Plane(1024, 128, textures.wall, 16, 2)
+    planeLeft.rotation.y -= Math.PI / 2
+    planeLeft.position.set(512, 64, 0)
+    prison.add(planeLeft)
+    @meshes.push(planeLeft)
 
-    @meshes.container = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_2 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_3 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_4 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_5 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_6 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_7 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_8 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_9 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_10 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_11 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_12 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_13 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_14 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_15 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_16 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
-    @meshes.container_17 = new Objects.TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
+    planeRight = new Plane(1024, 128, textures.wall, 16, 2)
+    planeRight.rotation.y = Math.PI / 2
+    planeRight.position.set(-512, 64, 0)
+    prison.add(planeRight)
+    @meshes.push(planeRight)
 
-    @meshes.rock = new Objects.TexturedCube(250, 60, 150, textures.rock, true, 12, 5)
-    @meshes.rock_2 = new Objects.TexturedCube(300, 60, 150, textures.rock, true, 12, 5)
-
-    @meshes.step = new Objects.TexturedCube(30, 15, 10, textures.step, true, 1, 1)
-    @meshes.step_2 = new Objects.TexturedCube(30, 15, 10, textures.step, true, 1, 1)
-    @meshes.step_3 = new Objects.TexturedCube(30, 15, 10, textures.step, true, 1, 1)
-    @meshes.step_4 = new Objects.TexturedCube(30, 15, 10, textures.step, true, 1, 1)
-    @meshes.step_5 = new Objects.TexturedCube(30, 15, 10, textures.step, true, 1, 1)
-    @meshes.step_6 = new Objects.TexturedCube(30, 15, 10, textures.step, true, 1, 1)
-    @meshes.step_7 = new Objects.TexturedCube(30, 15, 10, textures.step, true, 1, 1)
-    @meshes.step_8 = new Objects.TexturedCube(30, 15, 10, textures.step, true, 1, 1)
-    @meshes.step_9 = new Objects.TexturedCube(30, 15, 10, textures.step, true, 1, 1)
-
-    # Rotations
-    @meshes.plane.rotation.x -= Math.PI / 2
-    @meshes.planeFront.rotation.y = Math.PI
-    @meshes.planeLeft.rotation.y -= Math.PI / 2
-    @meshes.planeRight.rotation.y = Math.PI / 2
-
-    @meshes.container_11.rotation.y = Math.PI/2
-    @meshes.container_17.rotation.y = Math.PI/2
-    @meshes.ramp.rotation.x -= 2*Math.PI/3
-
-    # Positions
-    @meshes.step.position.set(467, 7.5, -357)
-    @meshes.step_2.position.set(467, 22.5, -357)
-    @meshes.step_3.position.set(467, 37.5, -357)
-    @meshes.step_4.position.set(467, 7.5, -347)
-    @meshes.step_5.position.set(467, 22.5, -347)
-    @meshes.step_6.position.set(467, 7.5, -337)
-    @meshes.step_7.position.set(-342, 67.5, 367)
-    @meshes.step_8.position.set(-282, 67.5, 367)
-    @meshes.step_9.position.set(-232, 67.5, 367)
-
-    @meshes.planeFront.position.set(0, 64, 512)
-    @meshes.planeBack.position.set(0, 64, -512)
-    @meshes.planeLeft.position.set(512, 64, 0)
-    @meshes.planeRight.position.set(-512, 64, 0)
-
-    @meshes.ramp.position.set(-390, 27, 310)
-
-    @meshes.crate.position.set(497, 15, 497)
-    @meshes.crate_2.position.set(497, 45, 497)
-    @meshes.crate_3.position.set(467, 15, 497)
-    @meshes.crate_4.position.set(497, 75, -378)
-    @meshes.crate_5.position.set(437, 75, -378)
-    @meshes.crate_6.position.set(377, 75, -378)
-    @meshes.crate_7.position.set(317, 75, -378)
-    @meshes.crate_8.position.set(276, 75, -378)
-    @meshes.crate_9.position.set(276, 75, -438)
-    @meshes.crate_10.position.set(276, 75, -497)
-    @meshes.crate_11.position.set(467, 15, 437)
-    @meshes.crate_12.position.set(327, 15, 437)
-    @meshes.crate_13.position.set(227, 15, 437)
-    @meshes.crate_14.position.set(127, 15, 437)
-    @meshes.crate_15.position.set(27, 15, 437)
-    @meshes.crate_16.position.set(-27, 15, 437)
-    @meshes.crate_17.position.set(-127, 15, 437)
-    @meshes.crate_18.position.set(-127, 15, 200)
-    @meshes.crate_19.position.set(-127, 15, -350)
-    @meshes.crate_20.position.set(-307, 75, -0)
-    @meshes.crate_21.position.set(395, 15, 262)
-
-    @meshes.small_crate_2.position.set(-254.5, 7.5, 0)
-    @meshes.small_crate_3.position.set(-254.5, 22.5, 0)
-    @meshes.small_crate_4.position.set(-254.5, 37.5, 0)
-    @meshes.small_crate_5.position.set(-239.5, 7.5, 0)
-    @meshes.small_crate_6.position.set(-239.5, 22.5, 0)
-    @meshes.small_crate_7.position.set(-224.5, 7.5, 0)
-    @meshes.small_crate_8.position.set(238, 7.5, 278)
-    @meshes.small_crate_9.position.set(238, 22.5, 278)
-    @meshes.small_crate_10.position.set(238, 37.5, 278)
-    @meshes.small_crate_11.position.set(253, 7.5, 278)
-    @meshes.small_crate_12.position.set(253, 22.5, 278)
-    @meshes.small_crate_13.position.set(268, 7.5, 278)
+    planeBack = new Plane(1024, 128, textures.wall, 16, 2)
+    planeBack.position.set(0, 64, -512)
+    prison.add(planeBack)
+    @meshes.push(planeBack)
 
     # Pyramid
-    @meshes.small_crate_14.position.set(15, 22.5, 0)
-    @meshes.small_crate_15.position.set(0, 22.5, 15)
-    @meshes.small_crate_16.position.set(15, 22.5, 15)
-    @meshes.small_crate_17.position.set(0, 22.5, -15)
-    @meshes.small_crate_18.position.set(-15, 22.5, 0)
-    @meshes.small_crate_19.position.set(-15, 22.5, -15)
-    @meshes.small_crate_20.position.set(-15, 22.5, 15)
-    @meshes.small_crate_21.position.set(15, 22.5, -15)
-    @meshes.small_crate_22.position.set(-30, 7.5, 30)
-    @meshes.small_crate_23.position.set(-30, 7.5, -30)
-    @meshes.small_crate_24.position.set(30, 7.5, -30)
-    @meshes.small_crate_25.position.set(30, 7.5, 30)
-    @meshes.small_crate_26.position.set(15, 7.5, 30)
-    @meshes.small_crate_27.position.set(0, 7.5, 30)
-    @meshes.small_crate_28.position.set(-15, 7.5, 30)
-    @meshes.small_crate_29.position.set(30, 7.5, 15)
-    @meshes.small_crate_30.position.set(30, 7.5, 0)
-    @meshes.small_crate_31.position.set(30, 7.5, -15)
-    @meshes.small_crate_32.position.set(-30, 7.5, -15)
-    @meshes.small_crate_33.position.set(-30, 7.5, 0)
-    @meshes.small_crate_34.position.set(-30, 7.5, 15)
-    @meshes.small_crate_35.position.set(-15, 7.5, -30)
-    @meshes.small_crate_36.position.set(0, 7.5, -30)
-    @meshes.small_crate_37.position.set(15, 7.5, -30)
-    @meshes.small_crate_38.position.set(0, 37.5, 0)
+    @pyramid = new THREE.Object3D
 
-    @pyramid.traverse (mesh) ->
-      mesh.position.z += 100 if mesh instanceof THREE.Mesh
+    positions = [
+      vec(15, 22.5, 0)
+      vec(0, 22.5, 15)
+      vec(15, 22.5, 15)
+      vec(0, 22.5, -15)
+      vec(-15, 22.5, 0)
+      vec(-15, 22.5, -15)
+      vec(-15, 22.5, 15)
+      vec(15, 22.5, -15)
+      vec(-30, 7.5, 30)
+      vec(-30, 7.5, -30)
+      vec(30, 7.5, -30)
+      vec(30, 7.5, 30)
+      vec(15, 7.5, 30)
+      vec(0, 7.5, 30)
+      vec(-15, 7.5, 30)
+      vec(30, 7.5, 15)
+      vec(30, 7.5, 0)
+      vec(30, 7.5, -15)
+      vec(-30, 7.5, -15)
+      vec(-30, 7.5, 0)
+      vec(-30, 7.5, 15)
+      vec(-15, 7.5, -30)
+      vec(0, 7.5, -30)
+      vec(15, 7.5, -30)
+      vec(0, 37.5, 0)
+    ]
+    for position in positions
+      create = new TexturedCube(15, 15, 15, textures.woodCrate, false)
+      position.z += 100
+      create.position.copy(position)
+      @pyramid.add(create)
+      @meshes.push(create)
 
-    @meshes.container.position.set(350, 30, 350)
-    @meshes.container_2.position.set(-250, 30, -352)
-    @meshes.container_3.position.set(-352, 30, 0)
-    @meshes.container_4.position.set(-352, 90, 0)
-    @meshes.container_5.position.set(-292, 30, 0)
-    @meshes.container_6.position.set(-412, 30, 0)
-    @meshes.container_7.position.set(-292, 30, 120)
-    @meshes.container_8.position.set(-352, 90, 120)
-    @meshes.container_9.position.set(-412, 30, 120)
-    @meshes.container_10.position.set(-292, 30, 180)
-    @meshes.container_11.position.set(-337, 30, -90)
-    @meshes.container_12.position.set(337, 30, 165)
-    @meshes.container_13.position.set(337, 90, 165)
-    @meshes.container_14.position.set(397, 30, 165)
-    @meshes.container_15.position.set(455, 30, -50)
-    @meshes.container_16.position.set(200, 30, 228)
-    @meshes.container_17.position.set(-50, 30, -182)
+    # Ramp
+    ramp = new Plane(64, 132, textures.mud, 1, 4)
+    ramp.rotation.x -= 2*Math.PI/3
+    ramp.position.set(-390, 27, 305)
+    @meshes.push(ramp)
 
-    @meshes.rock.position.set(387, 30, -437)
-    @meshes.rock_2.position.set(-362, 30, 437)
+    rock = new TexturedCube(250, 60, 150, textures.rock, true, 12, 5)
+    rock.position.set(387, 30, -437)
+    @meshes.push(rock)
+
+    rock = new TexturedCube(300, 60, 150, textures.rock, true, 12, 5)
+    rock.position.set(-362, 30, 437)
+    @meshes.push(rock)
+
+    # Steps
+    positions = [
+      vec(467, 7.5, -357)
+      vec(467, 22.5, -357)
+      vec(467, 37.5, -357)
+      vec(467, 7.5, -347)
+      vec(467, 22.5, -347)
+      vec(467, 7.5, -337)
+      vec(-342, 67.5, 367)
+      vec(-282, 67.5, 367)
+      vec(-232, 67.5, 367)
+    ]
+    for position in positions
+      step = new TexturedCube(30, 15, 10, textures.step, true, 1, 1)
+      step.position.copy(position)
+      @meshes.push(step)
+
+    # Containers
+    positions = [
+      vec(350, 30, 350)
+      vec(-250, 30, -352)
+      vec(-352, 30, 0)
+      vec(-352, 90, 0)
+      vec(-292, 30, 0)
+      vec(-412, 30, 0)
+      vec(-292, 30, 120)
+      vec(-352, 90, 120)
+      vec(-412, 30, 120)
+      vec(-292, 30, 180)
+      vec(-337, 30, -90)
+      vec(337, 30, 165)
+      vec(337, 90, 165)
+      vec(397, 30, 165)
+      vec(455, 30, -50)
+      vec(200, 30, 228)
+      vec(-50, 30, -182)
+    ]
+    for position, i in positions
+      container = new TexturedCube(60, 60, 120, textures.metal, true, 2, 1)
+      container.position.copy(position)
+      container.rotation.y = Math.PI/2 if i == 10 or i == 16
+      @meshes.push(container)
+
+    # Creates
+    positions = [
+      vec(497, 15, 497)
+      vec(497, 45, 497)
+      vec(467, 15, 497)
+      vec(497, 75, -378)
+      vec(437, 75, -378)
+      vec(377, 75, -378)
+      vec(317, 75, -378)
+      vec(276, 75, -378)
+      vec(276, 75, -438)
+      vec(276, 75, -497)
+      vec(467, 15, 437)
+      vec(327, 15, 437)
+      vec(227, 15, 437)
+      vec(127, 15, 437)
+      vec(27, 15, 437)
+      vec(-27, 15, 437)
+      vec(-127, 15, 437)
+      vec(-127, 15, 200)
+      vec(-127, 15, -350)
+      vec(-307, 75, -0)
+      vec(395, 15, 262)
+    ]
+    for position in positions
+      crate = new TexturedCube(30, 30, 30, textures.woodCrate, false)
+      crate.position.copy(position)
+      @meshes.push(crate)
+
+    # Small creates
+    positions = [
+      vec(-254.5, 7.5, 0)
+      vec(-254.5, 22.5, 0)
+      vec(-254.5, 37.5, 0)
+      vec(-239.5, 7.5, 0)
+      vec(-239.5, 22.5, 0)
+      vec(-224.5, 7.5, 0)
+      vec(238, 7.5, 278)
+      vec(238, 22.5, 278)
+      vec(238, 37.5, 278)
+      vec(253, 7.5, 278)
+      vec(253, 22.5, 278)
+      vec(268, 7.5, 278)
+    ]
+    for position in positions
+      smallCreate = new TexturedCube(15, 15, 15, textures.woodCrate, false)
+      smallCreate.position.copy(position)
+      @meshes.push(smallCreate)
 
     # Shadows
-    @meshes.plane.receiveShadow = true
-
-    for key, mesh of @meshes
+    for mesh in @meshes
       mesh.castShadow = true
       mesh.receiveShadow = true
+
+    # Only planeGround not casting shadows
+    @meshes[1].castShadow = false
 
 module.exports = PlayGround

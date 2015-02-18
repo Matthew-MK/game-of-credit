@@ -114,14 +114,13 @@ Game = React.createClass
     @sockets = new Sockets(@props.dataServer, @scene, @players, @playGround)
 
     # Init controls & camera
-    @controls = new Controls(@camera, @props.defaultPosition)
-    @controls.setIntersects(@playGround.meshes)
+    @controls = new Controls(@camera, @props.defaultPosition, @playGround.meshes)
 
     # Add meshes to scene
     @scene.add(@ambientLight)
     @scene.add(@directionalLight)
     @scene.add(@controls.getCamera())
-    @scene.add(mesh) for key, mesh of @playGround.meshes
+    @scene.add(mesh) for mesh in @playGround.meshes
 
   ###
   Render single frame.

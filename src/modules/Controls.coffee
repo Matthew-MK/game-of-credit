@@ -17,7 +17,6 @@ Key = require("keymaster")
 
 class Controls
 
-  objects: []
   offset: 10
   velocity: new THREE.Vector3
   speed: 10
@@ -29,7 +28,7 @@ class Controls
   moved: false
   sprinted: false
 
-  constructor: (camera, @defaultPosition) ->
+  constructor: (camera, @defaultPosition, @objects) ->
     @cameraPitch = camera
     @cameraYaw = camera
     @cameraYaw = new THREE.Object3D
@@ -50,10 +49,6 @@ class Controls
     @animation = "jump" if @jumped
     @animation = "run" if @moved and @sprinted
     @animation = "attack" if @fired
-
-  setIntersects: (meshes) ->
-    for key, mesh of meshes
-      @objects.push(mesh)
 
   getCamera: ->
     @cameraYaw
