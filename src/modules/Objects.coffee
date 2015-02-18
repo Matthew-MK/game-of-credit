@@ -68,30 +68,37 @@ class Bullet extends THREE.Mesh
   objects: []
   died: false
 
-  constructor: (@scene, @controls, meshes, opts = {}) ->
-    @speed = opts.speed or 20
+  constructor: (@scene, position, rotation, meshes, opts = {}) ->
+    @speed = opts.speed or 10
     size = opts.size or 1
     color = opts.color or "white"
     super(
       new THREE.SphereGeometry(size, 15, 15),
       new THREE.MeshBasicMaterial({color})
     )
-    @position.copy(@controls.position)
+    @position.copy(position)
+    ###@position.x += 8
+    @position.y += 3
+    @position.z += 5###
+
+    @direction = @getDirection(rotation)
 
     @objects.push(mesh) for key, mesh of meshes
     @rayCaster = new THREE.Raycaster()
     @rayCaster.far = @speed
-    @rayCaster.ray.direction.copy(@getDirection())
+    @rayCaster.ray.direction.copy(@direction)
 
-  getDirection: ->
-    x = -Math.sin(@controls.rotation.y)
-    y = Math.sin(@controls.rotation.x)
-    z = -Math.cos(@controls.rotation.y)
+  getDirection: (rotation) ->
+    x = -Math.sin(rotation.y)
+    y = Math.sin(rotation.x)
+    z = -Math.cos(rotation.y)
     new THREE.Vector3(x, y, z)
 
   move: =>
     return if @died
-    @position = @position.add(@getDirection().multiplyScalar(@speed))
+    @position.x += @direction.x * @speed
+    @position.y += @direction.y * @speed
+    @position.z += @direction.z * @speed
 
     # TODO(jan) find out why intersections array is growing
     @rayCaster.ray.origin.copy(@position)
@@ -102,14 +109,9 @@ class Bullet extends THREE.Mesh
     @died = true
     @scene.remove(this)
 
-  stopFire: =>
-    @controls.fired = false
-
   fire: ->
     @scene.add(this)
-    @controls.fired = true
     setInterval(@move, 16)
-    setTimeout(@stopFire, 80 * 14)
 
 class HeightMap extends THREE.Mesh
 

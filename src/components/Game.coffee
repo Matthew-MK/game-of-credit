@@ -55,12 +55,20 @@ Game = React.createClass
 
   handleFire: ->
     if @state.pointerLocked and not @controls.fired
-      opts = size: 0.4, color: "yellow"
+      @controls.fired = true
+      stopFire = => @controls.fired = false
+      setTimeout(stopFire, 80 * 14)
+
+      {position, rotation} = @controls
       meshes = @playGround.meshes
       meshes["player-"+key] = player.meshBody for key, player of @players
-      bullet = new Objects.Bullet(@scene, @controls, meshes, opts)
+      opts = size: 0.4, color: "yellow"
+      bullet = new Objects.Bullet(@scene, position, rotation, meshes, opts)
       bullet.fire()
+
       # TODO (jan) check if new instances are deleted by GC
+
+
 
   ###
   Reset frame counter every second and save it as fps
@@ -85,9 +93,6 @@ Game = React.createClass
     @renderer.shadowMapEnabled = true
     @renderer.shadowMapSoft = true
 
-    # Init sockets
-    @sockets = new Sockets(@props.dataServer, @scene, @players)
-
     # Init lights
     @ambientLight = new THREE.AmbientLight(0x404040)
     @directionalLight = new THREE.DirectionalLight(0xffffff, 1)
@@ -102,6 +107,9 @@ Game = React.createClass
 
     # Init playground
     @playGround = new PlayGround(@props.textures)
+
+    # Init sockets
+    @sockets = new Sockets(@props.dataServer, @scene, @players, @playGround)
 
     # Init controls & camera
     @controls = new Controls(@camera, @props.defaultPosition)
@@ -172,8 +180,15 @@ Game = React.createClass
 
   render: ->
     div id: "wrapper", onClick: @handleFire,
+      div
+        id: "crosshair"
+        style:
+          top: (@state.windowHeight / 2) - 43
+          left: (@state.windowWidth / 2) - 43
+          backgroundImage: "url('crosshair.png')"
       Blocker(sendState: @handleBlockerState)
       StatsComponent(stats: @stats)
+
       canvas
         id: "render"
         ref: "render"

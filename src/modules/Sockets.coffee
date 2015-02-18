@@ -18,7 +18,7 @@ Player = require("../modules/Player")
 class Sockets
   lastEvent: null
 
-  constructor: (dataServer, @scene, @players) ->
+  constructor: (dataServer, @scene, @players, @playground) ->
     @socket = io.connect(path: dataServer)
     @socket.on("players-data", @onPlayersPosition)
     @socket.on("player-disconnect", @onPlayerDisconnect)
@@ -60,9 +60,8 @@ class Sockets
 
     for id, data of players
       data = @unpack(data)
-
       if id of @players
-        @players[id].onUpdate(data)
+        @players[id].onUpdate(data, @scene, @playground, @players)
       else
         player = new Player(data.position)
         player.scale = 0.5

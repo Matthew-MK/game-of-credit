@@ -42,3 +42,10 @@ canvas {
     font-size: 3em;
     display: block;
 }
+
+#crosshair {
+    width: 262px;
+    height: 262px;
+    position: absolute;
+    background-repeat: no-repeat;
+}
