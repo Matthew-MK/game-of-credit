@@ -18,7 +18,7 @@ mapping = require("../mapping.json")
 
 class Player extends THREE.MD2Character
 
-  lastEvent: null
+  lastAnimation: null
 
   constructor: (position) ->
     super()
@@ -29,11 +29,10 @@ class Player extends THREE.MD2Character
 
   onUpdate: (data) ->
     @root.position.copy(data.position)
-    @root.rotation.copy(data.rotation)
-    @root.rotation.y += Math.PI
+    @root.rotation.y = data.rotation.y + Math.PI
 
-    if @lastEvent != data.event and @meshWeapon and @meshBody
-      @lastEvent = data.event
-      @setAnimation(data.event)
+    if @lastAnimation != data.animation and @meshWeapon and @meshBody
+      @lastAnimation = data.animation
+      @setAnimation(data.animation)
 
 module.exports = Player

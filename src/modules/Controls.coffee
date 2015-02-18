@@ -23,6 +23,7 @@ class Controls
   speed: 10
 
   # Events
+  animation: "stand"
   fired: false
   jumped: false
   moved: false
@@ -30,25 +31,39 @@ class Controls
 
   constructor: (camera, @defaultPosition) ->
     @cameraPitch = camera
-    @camera = new THREE.Object3D
-    @camera.add(camera)
-    @camera.position.copy(@defaultPosition)
+    @cameraYaw = camera
+    @cameraYaw = new THREE.Object3D
+    @cameraYaw.add(@cameraPitch)
+    @cameraYaw.position.copy(@defaultPosition)
+    @setProps()
+
     @rayCaster = new THREE.Raycaster()
     @height = @defaultPosition.y
 
+  setProps: ->
+    @position = @cameraYaw.position
+    x = @cameraPitch.rotation._x
+    y = @cameraYaw.rotation._y
+    @rotation = new THREE.Vector3(x, y, 0)
+    @animation = "stand"
+    @animation = "crwalk" if @moved
+    @animation = "jump" if @jumped
+    @animation = "run" if @moved and @sprinted
+    @animation = "attack" if @fired
+
   setIntersects: (meshes) ->
-    @objects.push(mesh) for key, mesh of meshes
+    for key, mesh of meshes
+      @objects.push(mesh)
+
+  getCamera: ->
+    @cameraYaw
 
   getIntersect: (direction) ->
-    @rayCaster.set(@camera.position, direction)
+    @rayCaster.set(@cameraYaw.position, direction)
     intersections = @rayCaster.intersectObjects(@objects)
     return intersections[0] if intersections.length > 0
 
-  update: (delta) ->
-
-    @velocity.x -= @velocity.x * 10.0 * delta
-    @velocity.z -= @velocity.z * 10.0 * delta
-
+  update: (delta, pointerLocked) ->
     # Gravity
     @velocity.y -= 9.823 * 3.0 * delta
 
@@ -58,6 +73,7 @@ class Controls
     keyA = Key.isPressed("A")
     keyD = Key.isPressed("D")
 
+    # Check if moving with sprint
     @moved = keyW or keyS or keyA or keyD
     @sprinted = Key.shift
     speed = if @sprinted then @speed * 2 else @speed
@@ -65,51 +81,60 @@ class Controls
     # Intersects
     intersect = @getIntersect(new THREE.Vector3(0, -1, 0))
     distance = Math.round(intersect.distance)
-    @height = Math.abs(Math.round(@camera.position.y - distance)) + @defaultPosition.y
+    @height = Math.abs(Math.round(@cameraYaw.position.y - distance)) + @defaultPosition.y
 
-    x = -Math.sin(@camera.rotation._y)
-    z = -Math.cos(@camera.rotation._y)
+    x = -Math.sin(@cameraYaw.rotation._y)
+    z = -Math.cos(@cameraYaw.rotation._y)
     distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
     intersectFront = distance > speed
 
-    x = Math.sin(@camera.rotation._y)
-    z = Math.cos(@camera.rotation._y)
+    x = Math.sin(@cameraYaw.rotation._y)
+    z = Math.cos(@cameraYaw.rotation._y)
     distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
     intersectBack = distance > speed
 
-    x = -Math.sin(@camera.rotation._y + Math.PI/2)
-    z = -Math.cos(@camera.rotation._y + Math.PI/2)
+    x = -Math.sin(@cameraYaw.rotation._y + Math.PI/2)
+    z = -Math.cos(@cameraYaw.rotation._y + Math.PI/2)
     distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
     intersectLeft = distance > speed
 
-    x = Math.sin(@camera.rotation._y + Math.PI/2)
-    z = Math.cos(@camera.rotation._y + Math.PI/2)
+    x = Math.sin(@cameraYaw.rotation._y + Math.PI/2)
+    z = Math.cos(@cameraYaw.rotation._y + Math.PI/2)
     distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
     intersectRight = distance > speed
 
-    if @moved
+    if @moved and pointerLocked
       @velocity.z -= speed * delta if keyW and intersectFront
       @velocity.z += speed * delta if keyS and intersectBack
       @velocity.x -= speed * delta if keyA and intersectLeft
       @velocity.x += speed * delta if keyD and intersectRight
 
+    # Jumping
     if Key.isPressed("space")
       @velocity.y += 7.0 if not @jumped
       @jumped = true
 
-    @camera.translateX(@velocity.x)
-    @camera.translateY(@velocity.y)
-    @camera.translateZ(@velocity.z)
+    # Actual moving of player
+    @cameraYaw.translateX(@velocity.x)
+    @cameraYaw.translateY(@velocity.y)
+    @cameraYaw.translateZ(@velocity.z)
 
-    if @camera.position.y < @height
+    # Ground check
+    if @cameraYaw.position.y < @height
       @jumped = false
       @velocity.y = 0
-      @camera.position.y = @height
+      @cameraYaw.position.y = @height
+
+    @velocity.x -= @velocity.x * 10.0 * delta
+    @velocity.z -= @velocity.z * 10.0 * delta
+
+    # Set class properties based on class states
+    @setProps()
 
   handleMouseMove: (event) ->
     movementX = event["movementX"] or event["mozMovementX"] or event["webkitMovementX"] or 0
     movementY = event["movementY"] or event["mozMovementY"] or event["webkitMovementY"] or 0
-    @camera.rotation.y -= movementX * 0.002
+    @cameraYaw.rotation.y -= movementX * 0.002
     @cameraPitch.rotation.x -= movementY * 0.002
     @cameraPitch.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, @cameraPitch.rotation.x))
 

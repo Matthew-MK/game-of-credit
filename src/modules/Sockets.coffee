@@ -20,31 +20,48 @@ class Sockets
 
   constructor: (dataServer, @scene, @players) ->
     @socket = io.connect(path: dataServer)
-    @socket.on("players-position", @onPlayersPosition)
+    @socket.on("players-data", @onPlayersPosition)
     @socket.on("player-disconnect", @onPlayerDisconnect)
+    setInterval(@sendUpdate, 16)
 
-  update: (camera, controls) ->
-    event = "stand"
-    event = "crwalk" if controls.moved
-    event = "jump" if controls.jumped
-    event = "run" if controls.moved and controls.sprinted
-    event = "attack" if controls.fired
+  update: (controls) ->
+    @controls = controls
 
-    if not @skip
-      @socket.emit "position",
-        position: camera.position
-        rotation: camera.rotation
-        event: event
+  pack: (data) ->
+    return [
+      data.position.x
+      data.position.y
+      data.position.z
+      data.rotation.x
+      data.rotation.y
+      data.animation
+    ]
 
-    @skip = event == "stand" and event != @lastEvent
+  unpack: (data) ->
+    return {
+      position: new THREE.Vector3(data[0], data[1], data[2])
+      rotation: new THREE.Vector3(data[3], data[4], 0)
+      animation: data[5]
+    }
+
+  sendUpdate: =>
+    return if not @controls
+
+    data = @pack
+      position: @controls.position
+      rotation: @controls.rotation
+      animation: @controls.animation
+
+    @socket.emit("data", data)
 
   onPlayersPosition: (players) =>
     if @socket.id of players
       delete players[@socket.id]
 
     for id, data of players
+      data = @unpack(data)
+
       if id of @players
-        console.log data.rotation
         @players[id].onUpdate(data)
       else
         player = new Player(data.position)

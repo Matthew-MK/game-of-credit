@@ -72,14 +72,12 @@ class Bullet extends THREE.Mesh
       new THREE.SphereGeometry(size, 15, 15),
       new THREE.MeshBasicMaterial({color})
     )
-    @position.copy(@controls.camera.position)
-    @rotationX = @controls.cameraPitch.rotation.x
-    @rotationY = @controls.camera.rotation._y
+    @position.copy(@controls.position)
 
   move: =>
-    @position.x -= Math.sin(@rotationY) * @speed
-    @position.y += Math.sin(@rotationX) * @speed
-    @position.z -= Math.cos(@rotationY) * @speed
+    @position.x -= Math.sin(@controls.rotation.y) * @speed
+    @position.y += Math.sin(@controls.rotation.x) * @speed
+    @position.z -= Math.cos(@controls.rotation.y) * @speed
 
   destroy: =>
     @scene.remove(this)

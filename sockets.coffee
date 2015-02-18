@@ -21,9 +21,9 @@ exports.register = (server) ->
 
   io.on 'connection', (socket) ->
 
-    socket.on "position", (data) ->
+    socket.on "data", (data) ->
       players[socket.id] = data
-      io.sockets.emit('players-position', players)
+      io.sockets.emit('players-data', players)
 
     socket.on "disconnect", ->
       io.sockets.emit('player-disconnect', socket.id)

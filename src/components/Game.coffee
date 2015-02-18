@@ -106,7 +106,7 @@ Game = React.createClass
     # Add meshes to scene
     @scene.add(@ambientLight)
     @scene.add(@directionalLight)
-    @scene.add(@controls.camera)
+    @scene.add(@controls.getCamera())
     @scene.add(mesh) for key, mesh of @playGround.meshes
 
   ###
@@ -114,8 +114,8 @@ Game = React.createClass
   ###
   renderFrame: ->
     delta = @clock.getDelta()
-    @sockets.update(@controls.camera, @controls)
-    @controls.update(delta) if @state.pointerLocked
+    @controls.update(delta, @state.pointerLocked)
+    @sockets.update(@controls)
     player.update(delta) for id, player of @players
     @renderer.render(@scene, @camera)
 
