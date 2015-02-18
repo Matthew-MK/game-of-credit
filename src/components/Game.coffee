@@ -56,10 +56,8 @@ Game = React.createClass
   handleFire: ->
     if @state.pointerLocked and not @controls.fired
       opts = size: 0.4, color: "yellow"
-      console.log(@players)
       meshes = @playGround.meshes
-      meshes[key+""] = player.meshBody for key, player of @players
-      console.log(meshes)
+      meshes["player-"+key] = player.meshBody for key, player of @players
       bullet = new Objects.Bullet(@scene, @controls, meshes, opts)
       bullet.fire()
       # TODO (jan) check if new instances are deleted by GC
