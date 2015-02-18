@@ -37,6 +37,7 @@ class Controls
     @setProps()
 
     @rayCaster = new THREE.Raycaster()
+    @rayCaster_under = new THREE.Raycaster()
     @height = @defaultPosition.y
 
   setProps: ->
@@ -54,9 +55,11 @@ class Controls
     @cameraYaw
 
   getIntersect: (direction) ->
-    @rayCaster.set(@cameraYaw.position, direction)
+    @rayCaster.set(new THREE.Vector3(@cameraYaw.position.x, @cameraYaw.position.y-5, @cameraYaw.position.z), direction)
+    @rayCaster.far = if @sprinted then @speed * 2 else @speed
     intersections = @rayCaster.intersectObjects(@objects)
-    return intersections[0] if intersections.length > 0
+    console.log(@cameraYaw.position.y-11)
+    return true if intersections.length > 0
 
   update: (delta, pointerLocked) ->
     # Gravity
@@ -74,29 +77,56 @@ class Controls
     speed = if @sprinted then @speed * 2 else @speed
 
     # Intersects
-    intersect = @getIntersect(new THREE.Vector3(0, -1, 0))
+    @rayCaster_under.set(@cameraYaw.position, new THREE.Vector3(0, -1, 0))
+    intersections = @rayCaster_under.intersectObjects(@objects)
+    intersect = intersections[0] if intersections.length > 0
     distance = Math.round(intersect.distance)
     @height = Math.abs(Math.round(@cameraYaw.position.y - distance)) + @defaultPosition.y
 
     x = -Math.sin(@cameraYaw.rotation._y)
     z = -Math.cos(@cameraYaw.rotation._y)
-    distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
-    intersectFront = distance > speed
+    x30 = -Math.sin(@cameraYaw.rotation._y + Math.PI/6)
+    z30 = -Math.cos(@cameraYaw.rotation._y + Math.PI/6)
+    x30m = -Math.sin(@cameraYaw.rotation._y - Math.PI/6)
+    z30m = -Math.cos(@cameraYaw.rotation._y - Math.PI/6)
+    if (@getIntersect(new THREE.Vector3(x, 0, z)) or @getIntersect(new THREE.Vector3(x30, 0, z30)) or @getIntersect(new THREE.Vector3(x30m, 0, z30m)))
+      console.log(x30)
+      intersectFront = false
+    else
+      intersectFront = true
 
     x = Math.sin(@cameraYaw.rotation._y)
     z = Math.cos(@cameraYaw.rotation._y)
-    distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
-    intersectBack = distance > speed
+    x30 = Math.sin(@cameraYaw.rotation._y + Math.PI/6)
+    z30 = Math.cos(@cameraYaw.rotation._y + Math.PI/6)
+    x30m = Math.sin(@cameraYaw.rotation._y - Math.PI/6)
+    z30m = Math.cos(@cameraYaw.rotation._y - Math.PI/6)
+    if (@getIntersect(new THREE.Vector3(x, 0, z)) or @getIntersect(new THREE.Vector3(x30, 0, z30)) or @getIntersect(new THREE.Vector3(x30m, 0, z30m)))
+      intersectBack = false
+    else
+      intersectBack = true
 
     x = -Math.sin(@cameraYaw.rotation._y + Math.PI/2)
     z = -Math.cos(@cameraYaw.rotation._y + Math.PI/2)
-    distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
-    intersectLeft = distance > speed
+    x30 = -Math.sin(@cameraYaw.rotation._y + Math.PI/2 + Math.PI/6)
+    z30 = -Math.cos(@cameraYaw.rotation._y + Math.PI/2 + Math.PI/6)
+    x30m = -Math.sin(@cameraYaw.rotation._y + Math.PI/2 - Math.PI/6)
+    z30m = -Math.cos(@cameraYaw.rotation._y + Math.PI/2 - Math.PI/6)
+    if (@getIntersect(new THREE.Vector3(x, 0, z)) or @getIntersect(new THREE.Vector3(x30, 0, z30)) or @getIntersect(new THREE.Vector3(x30m, 0, z30m)))
+      intersectLeft = false
+    else
+      intersectLeft = true
 
     x = Math.sin(@cameraYaw.rotation._y + Math.PI/2)
     z = Math.cos(@cameraYaw.rotation._y + Math.PI/2)
-    distance = @getIntersect(new THREE.Vector3(x, 0, z)).distance
-    intersectRight = distance > speed
+    x30 = Math.sin(@cameraYaw.rotation._y + Math.PI/2 + Math.PI/6)
+    z30 = Math.cos(@cameraYaw.rotation._y + Math.PI/2 + Math.PI/6)
+    x30m = Math.sin(@cameraYaw.rotation._y + Math.PI/2 - Math.PI/6)
+    z30m = Math.cos(@cameraYaw.rotation._y + Math.PI/2 - Math.PI/6)
+    if (@getIntersect(new THREE.Vector3(x, 0, z)) or @getIntersect(new THREE.Vector3(x30, 0, z30)) or @getIntersect(new THREE.Vector3(x30m, 0, z30m)))
+      intersectRight = false
+    else
+      intersectRight = true
 
     if @moved and pointerLocked
       @velocity.z -= speed * delta if keyW and intersectFront
