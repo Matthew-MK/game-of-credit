@@ -55,7 +55,7 @@ Game = React.createClass
 
   handleFire: ->
     if @state.pointerLocked
-      bullet = new Objects.Bullet(@scene, @controls, size: 0.4, color: "yellow")
+      bullet = new Objects.Bullet(@scene, @controls, size: 0.4, color: "yellow", meshes: @playGround.meshes)
       bullet.fire()
 
   ###

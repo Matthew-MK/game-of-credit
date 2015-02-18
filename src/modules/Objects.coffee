@@ -64,8 +64,11 @@ class Plane extends THREE.Mesh
     )
 
 class Bullet extends THREE.Mesh
+  objects: []
   constructor: (@scene, controls, opts = {}) ->
-    @speed = opts.speed or 6
+    @speed = opts.speed or 20
+    @rayCaster = new THREE.Raycaster()
+    @objects.push(mesh) for key, mesh of opts.meshes
     size = opts.size or 1
     color = opts.color or "white"
     super(
@@ -80,15 +83,27 @@ class Bullet extends THREE.Mesh
     @position.x -= Math.sin(@rotationY) * @speed
     @position.y += Math.sin(@rotationX) * @speed
     @position.z -= Math.cos(@rotationY) * @speed
+    @rayCaster.set(@position, new THREE.Vector3(-Math.sin(@rotationY), Math.sin(@rotationX), -Math.cos(@rotationY)))
+    intersections = @rayCaster.intersectObjects(@objects)
+
+    if intersections.length > 0
+      if Math.round(intersections[0].distance) <= 10+@speed
+        console.log(Math.round(intersections[0].distance))
+        console.log("mizim")
+        @scene.remove(this)
+
+
+
 
   destroy: =>
     @scene.remove(this)
     delete this
+    console.log("die")
 
   fire: ->
     @scene.add(this)
-    setInterval(@move, 10)
-    setTimeout(@destroy, 2500)
+    setInterval(@move, (1/60) / 20)
+    setTimeout(@destroy, 1000)
 
 class HeightMap extends THREE.Mesh
 
