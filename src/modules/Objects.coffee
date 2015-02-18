@@ -69,7 +69,7 @@ class Bullet extends THREE.Mesh
   died: false
 
   constructor: (@scene, position, rotation, meshes, opts = {}) ->
-    @speed = opts.speed or 10
+    @speed = opts.speed or 20
     size = opts.size or 1
     color = opts.color or "white"
     super(
@@ -77,10 +77,6 @@ class Bullet extends THREE.Mesh
       new THREE.MeshBasicMaterial({color})
     )
     @position.copy(position)
-    ###@position.x += 8
-    @position.y += 3
-    @position.z += 5###
-
     @direction = @getDirection(rotation)
 
     @objects.push(mesh) for key, mesh of meshes
@@ -103,15 +99,21 @@ class Bullet extends THREE.Mesh
     # TODO(jan) find out why intersections array is growing
     @rayCaster.ray.origin.copy(@position)
     intersections = @rayCaster.intersectObjects(@objects)
-    @destroy() if intersections.length > 0
+    if intersections.length > 0
+      obj = intersections[0].object
+      @killed?(obj) if obj instanceof THREE.MorphAnimMesh
+      @destroy()
 
   destroy: =>
+    return if @died
     @died = true
     @scene.remove(this)
 
-  fire: ->
+  fire: (cb) ->
+    @killed = cb
     @scene.add(this)
     setInterval(@move, 16)
+    setTimeout(@destroy, 2000)
 
 class HeightMap extends THREE.Mesh
 

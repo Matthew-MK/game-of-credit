@@ -25,6 +25,9 @@ exports.register = (server) ->
       players[socket.id] = data
       io.sockets.emit('players-data', players)
 
+    socket.on "kill", (id) ->
+      io.sockets.emit('kill', id)
+
     socket.on "disconnect", ->
       io.sockets.emit('player-disconnect', socket.id)
       delete players[socket.id]

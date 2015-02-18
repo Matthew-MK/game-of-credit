@@ -22,7 +22,11 @@ class Sockets
     @socket = io.connect(path: dataServer)
     @socket.on("players-data", @onPlayersPosition)
     @socket.on("player-disconnect", @onPlayerDisconnect)
+    @socket.on("kill", @onKill)
     setInterval(@sendUpdate, 16)
+
+  kill: (id) ->
+    @socket.emit("kill", id)
 
   update: (controls) ->
     @controls = controls
@@ -53,6 +57,10 @@ class Sockets
       animation: @controls.animation
 
     @socket.emit("data", data)
+
+  onKill: (id) =>
+    return if id is @socket.id
+    @players[id].onKill()
 
   onPlayersPosition: (players) =>
     if @socket.id of players

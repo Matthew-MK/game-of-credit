@@ -62,13 +62,15 @@ Game = React.createClass
       {position, rotation} = @controls
       meshes = @playGround.meshes
       meshes["player-"+key] = player.meshBody for key, player of @players
-      opts = size: 0.4, color: "yellow"
+      opts =
+        size: 0.4
+        color: "yellow"
       bullet = new Objects.Bullet(@scene, position, rotation, meshes, opts)
-      bullet.fire()
-
+      bullet.fire (playerMesh) =>
+        {uuid} = playerMesh
+        playerID = key for key, player of @players when player.meshBody.uuid is uuid
+        @sockets.kill(playerID)
       # TODO (jan) check if new instances are deleted by GC
-
-
 
   ###
   Reset frame counter every second and save it as fps
@@ -185,6 +187,7 @@ Game = React.createClass
         style:
           top: (@state.windowHeight / 2) - 43
           left: (@state.windowWidth / 2) - 43
+          opacity: if @state.pointerLocked then 1 else 0
           backgroundImage: "url('crosshair.png')"
       Blocker(sendState: @handleBlockerState)
       StatsComponent(stats: @stats)

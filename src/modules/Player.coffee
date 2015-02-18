@@ -20,6 +20,7 @@ Objects = require("../modules/Objects")
 
 class Player extends THREE.MD2Character
 
+  animation: null
   lastAnimation: null
 
   constructor: (position) ->
@@ -33,17 +34,24 @@ class Player extends THREE.MD2Character
     @root.position.copy(data.position)
     @root.rotation.y = data.rotation.y + Math.PI
 
-    if @lastAnimation != data.animation and @meshWeapon and @meshBody
-      @lastAnimation = data.animation
-      @setAnimation(data.animation)
+    @animation = data.animation
 
-      if data.animation == "attack"
+    if @lastAnimation != @animation and @meshWeapon and @meshBody
 
-        console.log true
-
+      if @animation == "attack"
         meshes = playground.meshes
         meshes["player-"+key] = player.meshBody for key, player of players
         bullet = new Objects.Bullet(scene, data.position, data.rotation, meshes)
         bullet.fire()
+
+      @lastAnimation = @animation
+      @setAnimation(@animation)
+
+  onKill: ->
+    @setAnimation("crdeath")
+    setTimeout(@afterKill, 40*16)
+
+  afterKill: =>
+    @setAnimation("stand")
 
 module.exports = Player
