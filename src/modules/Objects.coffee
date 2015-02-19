@@ -65,10 +65,9 @@ class Plane extends THREE.Mesh
 
 class Bullet extends THREE.Mesh
 
-  objects: []
   died: false
 
-  constructor: (@scene, position, rotation, meshes, opts = {}) ->
+  constructor: (@scene, position, rotation, @objects, opts = {}) ->
     @speed = opts.speed or 20
     size = opts.size or 1
     color = opts.color or "white"
@@ -79,7 +78,6 @@ class Bullet extends THREE.Mesh
     @position.copy(position)
     @direction = @getDirection(rotation)
 
-    @objects.push(mesh) for key, mesh of meshes
     @rayCaster = new THREE.Raycaster()
     @rayCaster.far = @speed
     @rayCaster.ray.direction.copy(@direction)

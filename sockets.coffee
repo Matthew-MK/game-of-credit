@@ -23,7 +23,7 @@ exports.register = (server) ->
 
     socket.on "data", (data) ->
       players[socket.id] = data
-      io.sockets.emit('players-data', players)
+      io.sockets.emit('data', players)
 
     socket.on "kill", (id) ->
       io.sockets.emit('kill', id)

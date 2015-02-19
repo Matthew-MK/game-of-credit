@@ -61,12 +61,11 @@ Game = React.createClass
 
       {position, rotation} = @controls
       meshes = @playGround.meshes
-      meshes["player-"+key] = player.meshBody for key, player of @players
       opts =
         size: 0.4
         color: "yellow"
-      bullet = new Objects.Bullet(@scene, position, rotation, meshes, opts)
-      bullet.fire (playerMesh) =>
+      @bullet = new Objects.Bullet(@scene, position, rotation, meshes, opts)
+      @bullet.fire (playerMesh) =>
         {uuid} = playerMesh
         playerID = key for key, player of @players when player.meshBody.uuid is uuid
         @sockets.kill(playerID)
