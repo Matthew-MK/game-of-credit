@@ -28,6 +28,14 @@ class Controls
   moved: false
   sprinted: false
 
+  intersects: []
+
+  directions: {
+    axe: new THREE.Vector3(0, 1, 0)
+    default: new THREE.Vector3(0, 0, 1)
+    down: new THREE.Vector3(0, -1, 0)
+  }
+
   constructor: (camera, @defaultPosition, @objects) ->
     @cameraPitch = camera
     @cameraYaw = camera
@@ -37,7 +45,6 @@ class Controls
     @setProps()
 
     @rayCaster = new THREE.Raycaster()
-    @rayCaster_under = new THREE.Raycaster()
     @height = @defaultPosition.y
 
   setProps: ->
@@ -54,14 +61,16 @@ class Controls
   getCamera: ->
     @cameraYaw
 
-  getIntersect: (direction) ->
-    @rayCaster.set(new THREE.Vector3(@cameraYaw.position.x, @cameraYaw.position.y-5, @cameraYaw.position.z), direction)
-    @rayCaster.far = if @sprinted then @speed * 2 else @speed
+  getIntersect: (direction, far = Infinity) ->
+    @rayCaster.set(@cameraYaw.position, direction)
+    @rayCaster.far = far
     intersections = @rayCaster.intersectObjects(@objects)
-    console.log(@cameraYaw.position.y-11)
-    return true if intersections.length > 0
+    return if intersections.length > 0 then intersections[0] else false
 
   update: (delta, pointerLocked) ->
+    # Set class properties based on class states
+    @setProps()
+
     # Gravity
     @velocity.y -= 9.823 * 3.0 * delta
 
@@ -77,62 +86,27 @@ class Controls
     speed = if @sprinted then @speed * 2 else @speed
 
     # Intersects
-    @rayCaster_under.set(@cameraYaw.position, new THREE.Vector3(0, -1, 0))
-    intersections = @rayCaster_under.intersectObjects(@objects)
-    intersect = intersections[0] if intersections.length > 0
-    distance = Math.round(intersect.distance)
-    @height = Math.abs(Math.round(@cameraYaw.position.y - distance)) + @defaultPosition.y
+    distance = @getIntersect(@directions.down).distance
+    @height = Math.abs(Math.round(@position.y - distance)) + @defaultPosition.y
 
-    x = -Math.sin(@cameraYaw.rotation._y)
-    z = -Math.cos(@cameraYaw.rotation._y)
-    x30 = -Math.sin(@cameraYaw.rotation._y + Math.PI/6)
-    z30 = -Math.cos(@cameraYaw.rotation._y + Math.PI/6)
-    x30m = -Math.sin(@cameraYaw.rotation._y - Math.PI/6)
-    z30m = -Math.cos(@cameraYaw.rotation._y - Math.PI/6)
-    if (@getIntersect(new THREE.Vector3(x, 0, z)) or @getIntersect(new THREE.Vector3(x30, 0, z30)) or @getIntersect(new THREE.Vector3(x30m, 0, z30m)))
-      console.log(x30)
-      intersectFront = false
-    else
-      intersectFront = true
+    angle = Math.PI / 4
+    direction = @directions.default.clone().applyAxisAngle(@directions.axe, @rotation.y)
+    @intersects[0] = !!@getIntersect(direction, speed)
 
-    x = Math.sin(@cameraYaw.rotation._y)
-    z = Math.cos(@cameraYaw.rotation._y)
-    x30 = Math.sin(@cameraYaw.rotation._y + Math.PI/6)
-    z30 = Math.cos(@cameraYaw.rotation._y + Math.PI/6)
-    x30m = Math.sin(@cameraYaw.rotation._y - Math.PI/6)
-    z30m = Math.cos(@cameraYaw.rotation._y - Math.PI/6)
-    if (@getIntersect(new THREE.Vector3(x, 0, z)) or @getIntersect(new THREE.Vector3(x30, 0, z30)) or @getIntersect(new THREE.Vector3(x30m, 0, z30m)))
-      intersectBack = false
-    else
-      intersectBack = true
+    for idx in [1..7]
+      direction = direction.applyAxisAngle(@directions.axe, angle)
+      @intersects[idx] = !!@getIntersect(direction, speed)
 
-    x = -Math.sin(@cameraYaw.rotation._y + Math.PI/2)
-    z = -Math.cos(@cameraYaw.rotation._y + Math.PI/2)
-    x30 = -Math.sin(@cameraYaw.rotation._y + Math.PI/2 + Math.PI/6)
-    z30 = -Math.cos(@cameraYaw.rotation._y + Math.PI/2 + Math.PI/6)
-    x30m = -Math.sin(@cameraYaw.rotation._y + Math.PI/2 - Math.PI/6)
-    z30m = -Math.cos(@cameraYaw.rotation._y + Math.PI/2 - Math.PI/6)
-    if (@getIntersect(new THREE.Vector3(x, 0, z)) or @getIntersect(new THREE.Vector3(x30, 0, z30)) or @getIntersect(new THREE.Vector3(x30m, 0, z30m)))
-      intersectLeft = false
-    else
-      intersectLeft = true
-
-    x = Math.sin(@cameraYaw.rotation._y + Math.PI/2)
-    z = Math.cos(@cameraYaw.rotation._y + Math.PI/2)
-    x30 = Math.sin(@cameraYaw.rotation._y + Math.PI/2 + Math.PI/6)
-    z30 = Math.cos(@cameraYaw.rotation._y + Math.PI/2 + Math.PI/6)
-    x30m = Math.sin(@cameraYaw.rotation._y + Math.PI/2 - Math.PI/6)
-    z30m = Math.cos(@cameraYaw.rotation._y + Math.PI/2 - Math.PI/6)
-    if (@getIntersect(new THREE.Vector3(x, 0, z)) or @getIntersect(new THREE.Vector3(x30, 0, z30)) or @getIntersect(new THREE.Vector3(x30m, 0, z30m)))
-      intersectRight = false
-    else
-      intersectRight = true
+    intersectBack = @intersects[7] or @intersects[0] or @intersects[1]
+    intersectRight = @intersects[1] or @intersects[2] or @intersects[3]
+    intersectFront = @intersects[3] or @intersects[4] or @intersects[5]
+    intersectLeft =  @intersects[5] or @intersects[6] or @intersects[7]
 
     if @moved and pointerLocked
-      @velocity.z -= speed * delta if keyW and intersectFront
-      @velocity.z += speed * delta if keyS and intersectBack
-      @velocity.x -= speed * delta if keyA and intersectLeft
-      @velocity.x += speed * delta if keyD and intersectRight
+      @velocity.z -= speed * delta if keyW and not intersectFront
+      @velocity.z += speed * delta if keyS and not intersectBack
+      @velocity.x -= speed * delta if keyA and not intersectLeft
+      @velocity.x += speed * delta if keyD and not intersectRight
 
     # Jumping
     if Key.isPressed("space")
@@ -153,8 +127,6 @@ class Controls
     @velocity.x -= @velocity.x * 10.0 * delta
     @velocity.z -= @velocity.z * 10.0 * delta
 
-    # Set class properties based on class states
-    @setProps()
 
   handleMouseMove: (event) ->
     movementX = event["movementX"] or event["mozMovementX"] or event["webkitMovementX"] or 0
