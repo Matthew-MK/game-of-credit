@@ -88,7 +88,7 @@ Game = React.createClass
     @camera = new THREE.PerspectiveCamera 45, @state.windowWidth / @state.windowHeight, 1, 10000
     @renderer = new THREE.WebGLRenderer
       canvas: @refs.render.getDOMNode()
-      antialias: true
+      antialias: false
     @renderer.setClearColor(0xFFFFFF)
     @renderer.setSize(@state.windowWidth, @state.windowHeight)
     @renderer.shadowMapEnabled = true
@@ -113,7 +113,7 @@ Game = React.createClass
     @sockets = new Sockets(@props.dataServer, @scene, @players, @playGround)
 
     # Init controls & camera
-    @controls = new Controls(@camera, @props.defaultPosition, @playGround.meshes)
+    @controls = new Controls(@camera, @props.player, @playGround.meshes)
 
     # Add meshes to scene
     @scene.add(@ambientLight)

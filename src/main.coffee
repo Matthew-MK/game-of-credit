@@ -33,7 +33,6 @@ App = React.createClass
     init: false
 
   handleLoading: (item, loaded, total) ->
-    # console.log "#{Math.round(100 * loaded / total)} %\t #{item}"
     if loaded == total and not @state.init
       @heightMap = helpers.getImageData(@textures.heightMap.image)
       @setState {init: true}, @init
@@ -48,6 +47,10 @@ App = React.createClass
         @textures[key] = new THREE.ImageUtils.loadTextureCube(path)
 
   init: ->
+    respawns = mapping["respawns"]
+    randomRespawn = respawns[Math.floor((Math.random() * respawns.length))]
+    @player.position = new THREE.Vector3(randomRespawn.position...)
+    @player.rotation = new THREE.Vector3(0, randomRespawn.rotation, 0)
     @setState(loading: false)
 
   render: ->
@@ -56,7 +59,7 @@ App = React.createClass
     else
       Game
         dataServer: document.getElementById("bundle").dataset.server
-        defaultPosition: new THREE.Vector3(0, 12, 0)
+        player: @player
         textures: @textures
         heightMap: @heightMap
 

@@ -20,6 +20,7 @@ class Controls
   offset: 10
   velocity: new THREE.Vector3
   speed: 10
+  defaultHeight: 12
 
   # Events
   animation: "stand"
@@ -36,16 +37,17 @@ class Controls
     down: new THREE.Vector3(0, -1, 0)
   }
 
-  constructor: (camera, @defaultPosition, @objects) ->
+  constructor: (camera, @player, @objects) ->
     @cameraPitch = camera
     @cameraYaw = camera
     @cameraYaw = new THREE.Object3D
     @cameraYaw.add(@cameraPitch)
-    @cameraYaw.position.copy(@defaultPosition)
+    @cameraYaw.position.copy(@player.position)
+    @cameraYaw.rotation.y = @player.rotation.y
     @setProps()
 
     @rayCaster = new THREE.Raycaster()
-    @height = @defaultPosition.y
+    @height = @player.position.clone().y
 
   setProps: ->
     @position = @cameraYaw.position
@@ -86,8 +88,8 @@ class Controls
     speed = if @sprinted then @speed * 2 else @speed
 
     # Intersects
-    distance = @getIntersect(@directions.down).distance
-    @height = Math.abs(Math.round(@position.y - distance)) + @defaultPosition.y
+    distance = @getIntersect(@directions.down, 1000).distance
+    @height = Math.abs(Math.round(@position.y - distance)) + @defaultHeight
 
     angle = Math.PI / 4
     direction = @directions.default.clone().applyAxisAngle(@directions.axe, @rotation.y)

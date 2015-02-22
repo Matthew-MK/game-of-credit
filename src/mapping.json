@@ -29,5 +29,20 @@
         ["weapon.json", "weapon.png"]
       ]
     }
-  }
+  },
+  "respawns": [
+    {"position": [-279, 72, 426], "rotation": -1.57},
+    {"position": [100, 14, 0], "rotation": 0},
+    {"position": [0, 14, 300], "rotation": 0},
+    {"position": [243, 14, -493], "rotation": 3.14},
+    {"position": [-357, 14, 96], "rotation": 3.14},
+    {"position": [497, 14, 465], "rotation": 0},
+    {"position": [-470, 14, -481], "rotation": 3.14},
+    {"position": [-464, 14, 115], "rotation": 0},
+    {"position": [-185, 14, 479], "rotation": 0},
+    {"position": [498, 14, -46], "rotation": 0},
+    {"position": [341, 144, 200], "rotation": 1.57},
+    {"position": [-46, 72, -180], "rotation": -1.57},
+    {"position": [474, 72, -466], "rotation": 1.57}
+  ]
 }
