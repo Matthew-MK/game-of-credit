@@ -15,7 +15,6 @@ limitations under the License.
 ###
 React = require("react")
 Stats = require("stats-js")
-Key = require("keymaster")
 Blocker = require("./Blocker")
 Controls = require("../modules/Controls")
 Objects = require("../modules/Objects")
@@ -91,8 +90,7 @@ Game = React.createClass
       antialias: false
     @renderer.setClearColor(0xFFFFFF)
     @renderer.setSize(@state.windowWidth, @state.windowHeight)
-    @renderer.shadowMapEnabled = true
-    @renderer.shadowMapSoft = true
+    @renderer.shadowMapEnabled = on
 
     # Init lights
     @ambientLight = new THREE.AmbientLight(0x404040)
