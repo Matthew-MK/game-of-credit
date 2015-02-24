@@ -18,7 +18,8 @@
     "woodCrate": "textures/crate.gif",
     "metal": "textures/metal.jpg",
     "step": "textures/step.jpg",
-    "mud": "textures/mud.jpg"
+    "mud": "textures/mud.jpg",
+    "ammoBox": "textures/ammobox.png"
   },
   "models": {
     "ratamahatta": {

@@ -23,19 +23,32 @@ class ColorCube extends THREE.Mesh
     )
 
 class TexturedCube extends THREE.Mesh
-  constructor: (@width, @height, @depth, texture, repeat, texX, texY) ->
-    if repeat
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-      texture.repeat.set(texX, texY)
+  constructor: (@width, @height, @depth, @texture, @repeat, texX, texY) ->
+    if @repeat
+      @texture.wrapS = @texture.wrapT = THREE.RepeatWrapping
+      @texture.repeat.set(texX, texY)
     super(
       new THREE.BoxGeometry(@width, @height, @depth),
       new THREE.MeshPhongMaterial(
-        map: texture
+        map: @texture
         specular: 0x111111,
         shininess: 50,
         metal: true
       )
     )
+
+class AmmoBox extends TexturedCube
+  constructor: (texture) ->
+    super(
+      TexturedCube.depth = 5
+      TexturedCube.height = 5
+      TexturedCube.width = 5
+      TexturedCube.texture = texture
+      TexturedCube.repeat = false
+    )
+
+  rotate: (delta) ->
+    @rotation.set(0, @rotation.y + delta, 0)
 
 class SkyBox extends THREE.Mesh
   constructor: (@width, @height, @depth, textures) ->
@@ -202,3 +215,4 @@ module.exports =
   HeightMap: HeightMap
   Bullet: Bullet
   TexturedCube: TexturedCube
+  AmmoBox: AmmoBox
