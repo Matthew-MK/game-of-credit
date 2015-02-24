@@ -182,6 +182,10 @@ class PlayGround
       crate.position.copy(position)
       @meshes.push(crate)
 
+    @ammo = new AmmoBox(textures.ammoBox)
+    @ammo.position.set(0, 5, 0)
+    @meshes.push(@ammo)
+
     # Small creates
     positions = [
       vec(-254.5, 7.5, 0)
@@ -209,5 +213,8 @@ class PlayGround
 
     # Only planeGround not casting shadows
     @meshes[1].castShadow = false
+
+  update: (delta) ->
+    @ammo.rotate(delta)
 
 module.exports = PlayGround

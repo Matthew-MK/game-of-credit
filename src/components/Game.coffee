@@ -121,9 +121,7 @@ Game = React.createClass
     @scene.add(@controls.getCamera())
     @scene.add(mesh) for mesh in @playGround.meshes
 
-    @ammo = new Objects.AmmoBox(@props.textures.ammoBox)
-    @ammo.position.set(0, 5, 0)
-    @scene.add(@ammo)
+
   ###
   Render single frame.
   ###
@@ -133,8 +131,7 @@ Game = React.createClass
     @sockets.update(@controls)
     player.update(delta) for id, player of @players
     @renderer.render(@scene, @camera)
-    @ammo.rotate(delta)
-
+    @playGround.update(delta)
 
   ###
   Animate all frames.
