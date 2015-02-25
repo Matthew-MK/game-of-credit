@@ -20,20 +20,19 @@ mapping = require("../mapping.json")
 
 class Player extends THREE.MD2Character
 
-  animation: null
-  lastAnimation: null
-
-  constructor: (position, playground) ->
+  constructor: (data, @scene, @playground) ->
     super()
     @loadParts(mapping["models"]["ratamahatta"])
-    @root.position.copy(position)
+    @root.position.copy(data.position)
+    @scale = 0.5
+    @scene.add(@root)
 
     @onLoadComplete = =>
       @setWeapon(0)
-      playground.meshes.push(@meshBody)
-      playground.meshes.push(@meshWeapon)
+      @playground.meshes.push(@meshBody)
+      @playground.meshes.push(@meshWeapon)
 
-  onUpdate: (data, scene, playground) ->
+  onUpdate: (data) ->
     @root.position.copy(data.position)
     @root.rotation.y = data.rotation.y + Math.PI
 
@@ -42,7 +41,7 @@ class Player extends THREE.MD2Character
     if @lastAnimation != @animation and @meshWeapon and @meshBody
 
       if @animation == "attack"
-        bullet = new Bullet(scene, data.position, data.rotation, playground.meshes)
+        bullet = new Bullet(@scene, data.position, data.rotation, @playground.meshes)
         bullet.fire()
 
       @lastAnimation = @animation

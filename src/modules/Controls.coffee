@@ -17,10 +17,11 @@ Key = require("keymaster")
 
 class Controls
 
-  offset: 10
-  velocity: new THREE.Vector3
-  speed: 10
   defaultHeight: 12
+  defaultSpeed: 10
+
+  rayCaster: new THREE.Raycaster
+  velocity: new THREE.Vector3
 
   # Events
   animation: "stand"
@@ -37,23 +38,28 @@ class Controls
     down: new THREE.Vector3(0, -1, 0)
   }
 
-  constructor: (camera, @player, @objects) ->
+  constructor: (camera, player, @objects) ->
     @cameraPitch = camera
-    @cameraYaw = camera
     @cameraYaw = new THREE.Object3D
     @cameraYaw.add(@cameraPitch)
-    @cameraYaw.position.copy(@player.position)
-    @cameraYaw.rotation.y = @player.rotation.y
-    @setProps()
 
-    @rayCaster = new THREE.Raycaster()
-    @height = @player.position.clone().y
+    # Add default height to default player position
+    player.position.y += @defaultHeight
 
-  setProps: ->
+    # Set camera default position & rotation
+    @cameraYaw.position.copy(player.position)
+    @cameraYaw.rotation.y = player.rotation.y
+
+    @updateProps()
+
+  ###
+  Update class properties based on class states
+  ###
+  updateProps: ->
     @position = @cameraYaw.position
     x = @cameraPitch.rotation._x
     y = @cameraYaw.rotation._y
-    @rotation = new THREE.Vector3(x, y, 0)
+    @rotation = new THREE.Vector3(x, y)
     @animation = "stand"
     @animation = "crwalk" if @moved
     @animation = "jump" if @jumped
@@ -70,11 +76,12 @@ class Controls
     return if intersections.length > 0 then intersections[0] else false
 
   update: (delta, pointerLocked) ->
-    # Set class properties based on class states
-    @setProps()
+    return if not pointerLocked
+
+    @updateProps()
 
     # Gravity
-    @velocity.y -= 9.823 * 3.0 * delta
+    @velocity.y -= 9.823 * delta
 
     # Controls
     keyW = Key.isPressed("W")
@@ -85,7 +92,7 @@ class Controls
     # Check if moving with sprint
     @moved = keyW or keyS or keyA or keyD
     @sprinted = Key.shift
-    speed = if @sprinted then @speed * 2 else @speed
+    speed = if @sprinted then @defaultSpeed * 2 else @defaultSpeed
 
     # Intersects
     distance = @getIntersect(@directions.down, 1000).distance
@@ -104,7 +111,7 @@ class Controls
     intersectFront = @intersects[3] or @intersects[4] or @intersects[5]
     intersectLeft =  @intersects[5] or @intersects[6] or @intersects[7]
 
-    if @moved and pointerLocked
+    if @moved
       @velocity.z -= speed * delta if keyW and not intersectFront
       @velocity.z += speed * delta if keyS and not intersectBack
       @velocity.x -= speed * delta if keyA and not intersectLeft
@@ -112,7 +119,7 @@ class Controls
 
     # Jumping
     if Key.isPressed("space")
-      @velocity.y += 7.0 if not @jumped
+      @velocity.y += 3.0 if not @jumped
       @jumped = true
 
     # Actual moving of player
@@ -126,8 +133,8 @@ class Controls
       @velocity.y = 0
       @cameraYaw.position.y = @height
 
-    @velocity.x -= @velocity.x * 10.0 * delta
-    @velocity.z -= @velocity.z * 10.0 * delta
+    @velocity.x -= @velocity.x * @defaultSpeed * delta
+    @velocity.z -= @velocity.z * @defaultSpeed * delta
 
 
   handleMouseMove: (event) ->

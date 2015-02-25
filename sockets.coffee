@@ -17,17 +17,14 @@ socketIO = require('socket.io')
 
 exports.register = (server) ->
   io = socketIO(server)
-  players = {}
 
   io.on 'connection', (socket) ->
 
     socket.on "data", (data) ->
-      players[socket.id] = data
-      io.sockets.emit('data', players)
+      socket.broadcast.emit('data', data)
 
     socket.on "kill", (id) ->
       io.sockets.emit('kill', id)
 
     socket.on "disconnect", ->
-      io.sockets.emit('player-disconnect', socket.id)
-      delete players[socket.id]
+      socket.broadcast.emit('leave', socket.id)

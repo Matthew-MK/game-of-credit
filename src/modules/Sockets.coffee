@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 Player = require("../modules/Player")
+{eventType} = require("../mapping.json")
 
 class Sockets
-  lastEvent: null
 
   constructor: (dataServer, @scene, @players, @playground) ->
     @socket = io.connect(path: dataServer)
-    @socket.on("data", @onPlayersPosition)
-    @socket.on("player-disconnect", @onPlayerDisconnect)
+    @socket.on("data", @onDataUpdate)
+    @socket.on("leave", @onLeave)
     @socket.on("kill", @onKill)
     setInterval(@sendUpdate, 16)
 
@@ -31,30 +31,50 @@ class Sockets
   update: (controls) ->
     @controls = controls
 
+  ###
+  Pack data object to binary buffer
+  ###
   pack: (data) ->
-    return [
-      data.position.x
-      data.position.y
-      data.position.z
-      data.rotation.x
-      data.rotation.y
-      data.animation
-    ]
+    buffer = new ArrayBuffer(41)
+    idView = new Uint8Array(buffer, 0, 20)
+    posView = new Float32Array(buffer, 20, 3)
+    rotView = new Float32Array(buffer, 32, 2)
+    eventView = new Uint8Array(buffer, 40, 1)
 
-  unpack: (data) ->
+    idView[idx] = @socket.id.charCodeAt(idx) for idx in [0..20]
+    posView[0] = data.position.x
+    posView[1] = data.position.y
+    posView[2] = data.position.z
+    rotView[0] = data.rotation.x
+    rotView[1] = data.rotation.y
+    eventView[0] = eventType[data.event]
+    return buffer
+
+  ###
+  Unpack binary buffer to data object
+  ###
+  unpack: (buffer) ->
+    eventTypeLookup = Object.keys(eventType)
+
+    idArray = new Uint8Array(buffer.slice(0, 20))
+    posArray = new Float32Array(buffer.slice(20, 32))
+    rotArray = new Float32Array(buffer.slice(32, 40))
+    eventArray = new Uint8Array(buffer.slice(40, 41))
+
     return {
-      position: new THREE.Vector3(data[0], data[1], data[2])
-      rotation: new THREE.Vector3(data[3], data[4], 0)
-      animation: data[5]
+      id: String.fromCharCode.apply(null, idArray)
+      position: new THREE.Vector3(posArray...)
+      rotation: new THREE.Vector3(rotArray...)
+      animation: eventTypeLookup[eventArray[0]]
     }
 
   sendUpdate: =>
-    return if not @controls
+    return if not @controls or not @socket.id
 
     data = @pack
       position: @controls.position
       rotation: @controls.rotation
-      animation: @controls.animation
+      event: @controls.animation
 
     @socket.emit("data", data)
 
@@ -62,21 +82,16 @@ class Sockets
     return if id is @socket.id
     @players[id]?.onKill()
 
-  onPlayersPosition: (players) =>
-    if @socket.id of players
-      delete players[@socket.id]
+  onDataUpdate: (buffer) =>
+    data = @unpack(buffer)
+    {id} = data
 
-    for id, data of players
-      data = @unpack(data)
-      if id of @players
-        @players[id].onUpdate(data, @scene, @playground)
-      else
-        player = new Player(data.position, @playground)
-        player.scale = 0.5
-        @scene.add(player.root)
-        @players[id] = player
+    if id of @players
+      @players[id].onUpdate(data)
+    else
+      @players[id] = new Player(data, @scene, @playground)
 
-  onPlayerDisconnect: (id) =>
+  onLeave: (id) =>
     if id of @players
       @scene.remove(@players[id].root)
       delete @players[id]
