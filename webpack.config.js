@@ -5,7 +5,8 @@ module.exports = {
     },
     externals: {
         three: "THREE",
-        io: "io"
+        io: "io",
+        react: "React"
     },
     module: {
         loaders: [

@@ -31,23 +31,14 @@ app.use(express.static(__dirname + "/static"))
 
 # Load all resources only from current origin (but not its sub-domains)
 app.use (req, res, next) ->
-#  res.setHeader("Content-Security-Policy","
-#    default-src 'self';
-#    style-src 'self' 'unsafe-inline';
-#    script-src 'self' cdnjs.cloudflare.com
-#  ")
-#  res.setHeader("X-Frame-Options", "sameorigin")
+  # TODO Content-Security-Policy
+  res.setHeader("X-Frame-Options", "sameorigin")
   next()
 
 app.get "/", (req, res) ->
-  bundle =
-    development: "http://localhost:8080/static/build/bundle.js"
-    production: "build/bundle.js"
-
   res.render "play",
     title: "Play"
-    bundleSrc: bundle[env]
-    socketServerPath: config["socketServerPath"][env]
+    env: env
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
