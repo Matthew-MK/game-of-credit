@@ -17,6 +17,9 @@ React = require("react")
 {div, span} = React.DOM
 
 Blocker = React.createClass
+
+  locked: false
+
   getInitialState: ->
     havePointerLock: false
     pointerLocked: false
@@ -35,9 +38,11 @@ Blocker = React.createClass
       document["pointerLockElement"] is blocker or
       document["mozPointerLockElement"] is blocker or
       document["webkitPointerLockElement"] is blocker
-    @setState
-      pointerLocked: pointerLocked
-    @props.sendState(@state)
+
+    if @locked != pointerLocked
+      @locked = pointerLocked
+      @setState(pointerLocked: pointerLocked)
+      @props.sendState(pointerLocked)
 
   componentDidMount: ->
     havePointerLock =
@@ -75,4 +80,4 @@ Blocker = React.createClass
         span {}, title
         span {}, message
 
-module.exports = (props = null) -> React.createElement(Blocker, props)
+module.exports = (props) -> React.createElement(Blocker, props)
