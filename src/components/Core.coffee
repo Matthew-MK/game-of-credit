@@ -62,7 +62,7 @@ Core = React.createClass
       canvas: @refs.render.getDOMNode()
       antialias: off
     @renderer.setSize(@props.width, @props.height)
-#    @renderer.shadowMapEnabled = on
+    @renderer.shadowMapEnabled = on
 
     # Init lights
     @ambientLight = new THREE.AmbientLight(0x404040)
