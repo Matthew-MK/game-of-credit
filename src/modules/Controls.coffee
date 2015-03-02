@@ -1,5 +1,5 @@
 ###
-Copyright 2015 Jan Svager & Michael Muller
+Copyright 2015 Jan Svager
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,9 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 Key = require("keymaster")
+
+Base = require("./Base")
 {Bullet} = require("../modules/Objects")
 
-class Controls
+class Controls extends Base
 
   defaultHeight: 12
   defaultSpeed: 10
@@ -39,8 +41,8 @@ class Controls
     down: new THREE.Vector3(0, -1, 0)
   }
 
-  constructor: (@scene, camera, @sockets, player, @players, @objects) ->
-    @cameraPitch = camera
+  init: (player) ->
+    @cameraPitch = @camera
     @cameraYaw = new THREE.Object3D
     @cameraYaw.add(@cameraPitch)
 
@@ -53,6 +55,7 @@ class Controls
     @cameraYaw.rotation.y = player.rotation.y
 
     @updateProps()
+    @scene.add(@cameraYaw)
 
   ###
   Update class properties based on class states
@@ -151,7 +154,7 @@ class Controls
       for id, player of @players
         {meshBody, meshWeapon} = player
         if uuid is meshBody.uuid or uuid is meshWeapon.uuid
-          @sockets.kill(id)
+          @sockets.sendKill(id)
           break
 
   handleMouseMove: (event) ->

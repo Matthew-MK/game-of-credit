@@ -13,23 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
+Base = require("./Base")
 Player = require("../modules/Player")
 {eventType} = require("../mapping.json")
 
-class Sockets
+class Sockets extends Base
 
-  constructor: (dataServer, @scene, @players, @playground) ->
+  init: (dataServer) ->
     @socket = io.connect(path: dataServer)
     @socket.on("data", @onDataUpdate)
     @socket.on("leave", @onLeave)
-    @socket.on("kill", @onKill)
+    @socket.on("death", @onDeath)
     setInterval(@sendUpdate, 16)
-
-  kill: (id) ->
-    @socket.emit("kill", id)
-
-  update: (controls) ->
-    @controls = controls
 
   ###
   Pack data object to binary buffer
@@ -68,6 +63,9 @@ class Sockets
       animation: eventTypeLookup[eventArray[0]]
     }
 
+  sendKill: (id) ->
+    @socket.emit("kill", id)
+
   sendUpdate: =>
     return if not @controls or not @socket.id
 
@@ -78,9 +76,11 @@ class Sockets
 
     @socket.emit("data", data)
 
-  onKill: (id) =>
-    return if id is @socket.id
-    @players[id]?.onDeath()
+  onDeath: (id) =>
+    if id is @socket.id
+      console.log """ I died """
+    else
+      @players[id]?.onDeath()
 
   onDataUpdate: (buffer) =>
     data = @unpack(buffer)
@@ -89,17 +89,19 @@ class Sockets
     if id of @players
       @players[id].onUpdate(data)
     else
-      @players[id] = new Player(data, @scene, @playground)
+      player = new Player(@scene, @playGround)
+      player.init(data)
+      @players[id] = player
 
   onLeave: (id) =>
     if id of @players
       player = @players[id]
 
-      idxBody = @playground.meshes.indexOf(player.meshBody)
-      @playground.meshes.splice(idxBody, 1) if idxBody
+      idxBody = @playGround.meshes.indexOf(player.meshBody)
+      @playGround.meshes.splice(idxBody, 1) if idxBody
 
-      idxWeapon = @playground.meshes.indexOf(player.meshWeapon)
-      @playground.meshes.splice(idxWeapon, 1) if idxWeapon
+      idxWeapon = @playGround.meshes.indexOf(player.meshWeapon)
+      @playGround.meshes.splice(idxWeapon, 1) if idxWeapon
 
       @scene.remove(player.root)
       delete @players[id]

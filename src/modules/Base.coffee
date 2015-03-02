@@ -13,16 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-React = require("react")
-{div} = React.DOM
 
-Stats = React.createClass
-  render: ->
-    div
-      id: "stats",
-      style:
-        position: "absolute"
-      dangerouslySetInnerHTML:
-        __html: @props.stats.domElement.innerHTML
+class Base
+  register: (modules) ->
+    @[name] = module for name, module of modules
+    @_registered = true
 
-module.exports = React.createFactory(Stats)
+module.exports = Base

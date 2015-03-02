@@ -17,13 +17,11 @@ limitations under the License.
 # Libraries
 React = require("react")
 
-# Components
-StatsComponent = require("./Stats")
-
 # Modules
 Controls = require("../modules/Controls")
 {Bullet} = require("../modules/Objects")
 PlayGround = require("../modules/PlayGround")
+Lights = require("../modules/Lights")
 Sockets = require("../modules/Sockets")
 
 # Others
@@ -35,8 +33,13 @@ Core = React.createClass
   mixins: [PureRenderMixin]
 
   players: {}
-  textures: {}
   clock: new THREE.Clock
+
+  # modules
+  controls: new Controls
+  playGround: new PlayGround
+  lights: new Lights
+  sockets: new Sockets
 
   getInitialState: ->
     frameCount: 0
@@ -64,32 +67,31 @@ Core = React.createClass
     @renderer.setSize(@props.width, @props.height)
     @renderer.shadowMapEnabled = on
 
-    # Init lights
-    @ambientLight = new THREE.AmbientLight(0x404040)
-    @directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-    @directionalLight.position.set(-520, 520, 1000)
-    @directionalLight.castShadow = true
+    # Register dependencies
+    @playGround.register
+      scene: @scene
 
-    @directionalLight.shadowCameraLeft = -720
-    @directionalLight.shadowCameraRight = 700
-    @directionalLight.shadowCameraBottom = -300
-    @directionalLight.shadowCameraNear = 550
-    @directionalLight.shadowCameraFar = 1850
+    @lights.register
+      scene: @scene
 
-    # Init playground
-    @playGround = new PlayGround(@props.textures)
+    @sockets.register
+      controls: @controls
+      playGround: @playGround
+      players: @players
+      scene: @scene
 
-    # Init sockets
-    @sockets = new Sockets(@props.dataServer, @scene, @players, @playGround)
+    @controls.register
+      camera: @camera
+      objects: @playGround.meshes
+      players: @players
+      scene: @scene
+      sockets: @sockets
 
-    # Init controls & camera
-    @controls = new Controls(@scene, @camera, @sockets, @props.player, @players, @playGround.meshes)
-
-    # Add meshes to scene
-    @scene.add(@ambientLight)
-    @scene.add(@directionalLight)
-    @scene.add(@controls.getCamera())
-    @scene.add(mesh) for mesh in @playGround.meshes
+    # Init modules
+    @playGround.init(@props.textures)
+    @lights.init()
+    @sockets.init(@props.dataServer)
+    @controls.init(@props.player)
 
   ###
   Render single frame.
@@ -97,7 +99,6 @@ Core = React.createClass
   renderFrame: ->
     delta = @clock.getDelta()
     @controls.update(delta, @props.playing)
-    @sockets.update(@controls)
     player.update(delta) for id, player of @players
     @renderer.render(@scene, @camera)
 

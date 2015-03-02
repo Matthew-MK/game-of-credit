@@ -24,7 +24,6 @@ UI = require("./UI")
 
 # Others
 mapping = require("../mapping.json")
-helpers = require("../modules/helpers")
 
 # Others
 {PureRenderMixin} = React["addons"]

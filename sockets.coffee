@@ -24,7 +24,7 @@ exports.register = (server) ->
       socket.broadcast.emit('data', data)
 
     socket.on "kill", (id) ->
-      io.sockets.emit('kill', id)
+      io.sockets.emit('death', id)
 
     socket.on "disconnect", ->
       socket.broadcast.emit('leave', socket.id)

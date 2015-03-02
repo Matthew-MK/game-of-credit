@@ -13,23 +13,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-require("../modules/MD2Character")
+require("../modules/js/MD2Character")
 mapping = require("../mapping.json")
 
 {Bullet} = require("../modules/Objects")
 
 class Player extends THREE.MD2Character
 
-  constructor: (data, @scene, @playground) ->
+  constructor: (@scene, @playGround) ->
     super()
+
+  init: (data) ->
     @loadParts(mapping["models"]["ratamahatta"])
     @root.position.copy(data.position)
     @scale = 0.5
 
     @onLoadComplete = =>
       @setWeapon(0)
-      @playground.meshes.push(@meshBody)
-      @playground.meshes.push(@meshWeapon)
+      @playGround.meshes.push(@meshBody)
+      @playGround.meshes.push(@meshWeapon)
       @scene.add(@root)
 
   onUpdate: (data) ->
@@ -41,7 +43,7 @@ class Player extends THREE.MD2Character
     if @lastAnimation != @animation and @meshWeapon and @meshBody
 
       if @animation == "attack"
-        bullet = new Bullet(@scene, data.position, data.rotation, @playground.meshes)
+        bullet = new Bullet(@scene, data.position, data.rotation, @playGround.meshes)
         bullet.fire()
 
       @lastAnimation = @animation

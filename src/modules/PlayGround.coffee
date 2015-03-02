@@ -14,13 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 
+Base = require("./Base")
 {Plane, TexturedCube, SkyBox} = require("./Objects")
 
-class PlayGround
+class PlayGround extends Base
 
   meshes: []
 
-  constructor: (textures) ->
+  init: (textures) ->
 
     vec = (x, y, z) -> new THREE.Vector3(x, y, z)
 
@@ -206,6 +207,7 @@ class PlayGround
     for mesh in @meshes
       mesh.castShadow = true
       mesh.receiveShadow = true
+      @scene.add(mesh)
 
     # Only planeGround not casting shadows
     @meshes[1].castShadow = false
