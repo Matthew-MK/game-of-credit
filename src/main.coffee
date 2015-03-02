@@ -15,52 +15,23 @@ limitations under the License.
 ###
 "use strict"
 
+# Libraries
+React = require("react")
+
+# Components
+App = require("./components/App")
+
+# Selector
+$ = (id) -> document.getElementById(id)
+
+# Get elements with environment based data from server
+AppElement = $("app")
+BundleElement = $("bundle")
+{env} = AppElement.dataset
+{server} = BundleElement.dataset
+
+# Init css module to head of page
 require("./css/style.css")
 
-React = require("react")
-Game = require("./components/Game")
-mapping = require("./mapping.json")
-helpers = require("./modules/helpers")
-{div} = React.DOM
-
-App = React.createClass
-
-  textures: {}
-  player: {}
-
-  getInitialState: ->
-    loading: true
-    init: false
-
-  handleLoading: (item, loaded, total) ->
-    if loaded == total and not @state.init
-      @heightMap = helpers.getImageData(@textures.heightMap.image)
-      @setState {init: true}, @init
-
-  componentWillMount: ->
-    # Loading textures
-    THREE.DefaultLoadingManager.onProgress = @handleLoading
-    for key, path of mapping["textures"]
-      if typeof path is 'string'
-        @textures[key] = new THREE.ImageUtils.loadTexture(path)
-      else
-        @textures[key] = new THREE.ImageUtils.loadTextureCube(path)
-
-  init: ->
-    respawns = mapping["respawns"]
-    randomRespawn = respawns[Math.floor((Math.random() * respawns.length))]
-    @player.position = new THREE.Vector3(randomRespawn.position...)
-    @player.rotation = new THREE.Vector3(0, randomRespawn.rotation, 0)
-    @setState(loading: false)
-
-  render: ->
-    if @state.loading
-      div {id: "loading"}, "Loading..."
-    else
-      Game
-        dataServer: document.getElementById("bundle").dataset.server
-        player: @player
-        textures: @textures
-        heightMap: @heightMap
-
-React.render(React.createElement(App), document.getElementById("app"))
+# Render main component
+React.render(App({env, server}), AppElement)

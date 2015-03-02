@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 Key = require("keymaster")
+{Bullet} = require("../modules/Objects")
 
 class Controls
 
@@ -38,13 +39,14 @@ class Controls
     down: new THREE.Vector3(0, -1, 0)
   }
 
-  constructor: (camera, player, @objects) ->
+  constructor: (@scene, camera, @sockets, player, @players, @objects) ->
     @cameraPitch = camera
     @cameraYaw = new THREE.Object3D
     @cameraYaw.add(@cameraPitch)
 
     # Add default height to default player position
     player.position.y += @defaultHeight
+    player.onClick = @handleFire
 
     # Set camera default position & rotation
     @cameraYaw.position.copy(player.position)
@@ -75,8 +77,8 @@ class Controls
     intersections = @rayCaster.intersectObjects(@objects)
     return if intersections.length > 0 then intersections[0] else false
 
-  update: (delta, pointerLocked) ->
-    return if not pointerLocked
+  update: (delta, playing) ->
+    return if not playing
 
     @updateProps()
 
@@ -136,6 +138,21 @@ class Controls
     @velocity.x -= @velocity.x * @defaultSpeed * delta
     @velocity.z -= @velocity.z * @defaultSpeed * delta
 
+  handleFire: =>
+    return if @fired
+
+    @fired = true
+    stopFire = => @fired = false
+    setTimeout(stopFire, 80 * 14)
+
+    bullet = new Bullet(@scene, @position, @rotation, @objects)
+    bullet.fire (killedMesh) =>
+      {uuid} = killedMesh
+      for id, player of @players
+        {meshBody, meshWeapon} = player
+        if uuid is meshBody.uuid or uuid is meshWeapon.uuid
+          @sockets.kill(id)
+          break
 
   handleMouseMove: (event) ->
     movementX = event["movementX"] or event["mozMovementX"] or event["webkitMovementX"] or 0

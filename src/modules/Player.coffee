@@ -25,12 +25,12 @@ class Player extends THREE.MD2Character
     @loadParts(mapping["models"]["ratamahatta"])
     @root.position.copy(data.position)
     @scale = 0.5
-    @scene.add(@root)
 
     @onLoadComplete = =>
       @setWeapon(0)
       @playground.meshes.push(@meshBody)
       @playground.meshes.push(@meshWeapon)
+      @scene.add(@root)
 
   onUpdate: (data) ->
     @root.position.copy(data.position)
@@ -47,7 +47,7 @@ class Player extends THREE.MD2Character
       @lastAnimation = @animation
       @setAnimation(@animation)
 
-  onKill: ->
+  onDeath: ->
     @setAnimation("crdeath")
     setTimeout(@afterKill, 40*16)
 

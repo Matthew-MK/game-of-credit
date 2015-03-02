@@ -80,7 +80,7 @@ class Sockets
 
   onKill: (id) =>
     return if id is @socket.id
-    @players[id]?.onKill()
+    @players[id]?.onDeath()
 
   onDataUpdate: (buffer) =>
     data = @unpack(buffer)
@@ -93,7 +93,15 @@ class Sockets
 
   onLeave: (id) =>
     if id of @players
-      @scene.remove(@players[id].root)
+      player = @players[id]
+
+      idxBody = @playground.meshes.indexOf(player.meshBody)
+      @playground.meshes.splice(idxBody, 1) if idxBody
+
+      idxWeapon = @playground.meshes.indexOf(player.meshWeapon)
+      @playground.meshes.splice(idxWeapon, 1) if idxWeapon
+
+      @scene.remove(player.root)
       delete @players[id]
 
 module.exports = Sockets

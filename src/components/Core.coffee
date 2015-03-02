@@ -13,84 +13,56 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
+
+# Libraries
 React = require("react")
-Stats = require("stats-js")
-Blocker = require("./Blocker")
+
+# Components
+StatsComponent = require("./Stats")
+
+# Modules
 Controls = require("../modules/Controls")
-Objects = require("../modules/Objects")
+{Bullet} = require("../modules/Objects")
 PlayGround = require("../modules/PlayGround")
 Sockets = require("../modules/Sockets")
-StatsComponent = require("./Stats")
-helpers = require("../modules/helpers")
 
-mapping = require("../mapping.json")
-require("../modules/MD2Character") # three.js extension
-{canvas, div} = React.DOM
+# Others
+{PureRenderMixin} = React["addons"]
+{canvas} = React.DOM
 
-Game = React.createClass
+Core = React.createClass
+
+  mixins: [PureRenderMixin]
+
   players: {}
   textures: {}
   clock: new THREE.Clock
-  stats: new Stats
-  shootingDelay: false
 
   getInitialState: ->
     frameCount: 0
-    fps: 0
-    windowWidth: window.innerWidth
-    windowHeight: window.innerHeight
-    pointerLocked: false
-
-  handleResize: ->
-    @setState
-      windowWidth: window.innerWidth
-      windowHeight: window.innerHeight
-
-  handleBlockerState: (state) ->
-    @setState(pointerLocked: state.pointerLocked)
 
   handleMouseMove: (e) ->
-    @controls.handleMouseMove(e) if @state.pointerLocked
-
-  handleFire: ->
-    if @state.pointerLocked and not @controls.fired
-      @controls.fired = true
-      stopFire = => @controls.fired = false
-      setTimeout(stopFire, 80 * 14)
-
-      {position, rotation} = @controls
-      meshes = @playGround.meshes
-      opts =
-        size: 0.4
-        color: "yellow"
-      @bullet = new Objects.Bullet(@scene, position, rotation, meshes, opts)
-      @bullet.fire (playerMesh) =>
-        {uuid} = playerMesh
-        playerID = key for key, player of @players when player.meshBody.uuid is uuid
-        @sockets.kill(playerID)
-      # TODO (jan) check if new instances are deleted by GC
+    @controls.handleMouseMove(e) if @props.playing
 
   ###
   Reset frame counter every second and save it as fps
   ###
   resetFrameCount: ->
     setTimeout(@resetFrameCount, 1000)
-    @setState
-      frameCount: 0
-      fps: @state.frameCount
+    @fps = @state.frameCount
+    @setState(frameCount: 0)
 
   ###
   Init all three.js stuff here before rendering frames.
   ###
   initScene: ->
     @scene = new THREE.Scene
-    @camera = new THREE.PerspectiveCamera 45, @state.windowWidth / @state.windowHeight, 1, 10000
+    @camera = new THREE.PerspectiveCamera 45, @props.width / @props.height, 1, 10000
     @renderer = new THREE.WebGLRenderer
       canvas: @refs.render.getDOMNode()
-      antialias: false
-    @renderer.setClearColor(0xFFFFFF)
-    @renderer.setSize(@state.windowWidth, @state.windowHeight)
-    @renderer.shadowMapEnabled = on
+      antialias: off
+    @renderer.setSize(@props.width, @props.height)
+#    @renderer.shadowMapEnabled = on
 
     # Init lights
     @ambientLight = new THREE.AmbientLight(0x404040)
@@ -111,7 +83,7 @@ Game = React.createClass
     @sockets = new Sockets(@props.dataServer, @scene, @players, @playGround)
 
     # Init controls & camera
-    @controls = new Controls(@camera, @props.player, @playGround.meshes)
+    @controls = new Controls(@scene, @camera, @sockets, @props.player, @players, @playGround.meshes)
 
     # Add meshes to scene
     @scene.add(@ambientLight)
@@ -124,7 +96,7 @@ Game = React.createClass
   ###
   renderFrame: ->
     delta = @clock.getDelta()
-    @controls.update(delta, @state.pointerLocked)
+    @controls.update(delta, @props.playing)
     @sockets.update(@controls)
     player.update(delta) for id, player of @players
     @renderer.render(@scene, @camera)
@@ -133,10 +105,8 @@ Game = React.createClass
   Animate all frames.
   ###
   animate: ->
-    @setState frameCount: ++@state.frameCount
-    @stats.begin()
+    @setState(frameCount: ++@state.frameCount)
     @renderFrame()
-    @stats.end()
     requestAnimationFrame @animate
 
   ###
@@ -147,25 +117,21 @@ Game = React.createClass
   componentDidMount: ->
     @resetFrameCount()
     @initScene()
-    window.addEventListener('resize', @handleResize)
     window.addEventListener('mousemove', @handleMouseMove)
     @animate()
-
-  ###
-  Invoked before rendering when new props or state are being received.
-  This method is not called for the initial render or when forceUpdate is used.
-  ###
-  shouldComponentUpdate: ->
-    return true
 
   ###
   Invoked immediately before rendering when new props or state are being
   received. This method is not called for the initial render.
   ###
   componentWillUpdate: ->
-    @camera.aspect = window.innerWidth / window.innerHeight
-    @camera.updateProjectionMatrix()
-    @renderer.setSize(window.innerWidth, window.innerHeight)
+    # Update only if width or height changed
+    if @width != @props.width or @height != @props.height
+      @width = @props.width
+      @height = @props.height
+      @camera.aspect = @width / @height
+      @camera.updateProjectionMatrix()
+      @renderer.setSize(@width, @height)
 
   ###
   Invoked immediately before a component is unmounted from the DOM.
@@ -173,26 +139,11 @@ Game = React.createClass
   or cleaning up any DOM elements that were created in componentDidMount.
   ###
   componentWillUnmount: ->
-    window.removeEventListener('resize', @handleResize)
-    window.addEventListener('mousemove', @handleMouseMove)
+    window.removeEventListener('mousemove', @handleMouseMove)
 
   render: ->
-    div id: "wrapper", onClick: @handleFire,
-      div
-        id: "crosshair"
-        style:
-          top: (@state.windowHeight / 2) - 43
-          left: (@state.windowWidth / 2) - 43
-          opacity: if @state.pointerLocked then 1 else 0
-          backgroundImage: "url('crosshair.png')"
-      Blocker(sendState: @handleBlockerState)
-      StatsComponent(stats: @stats)
+    canvas
+      id: "render"
+      ref: "render"
 
-      canvas
-        id: "render"
-        ref: "render"
-        style:
-          width: @state.windowWidth
-          height: @state.windowHeight
-
-module.exports = (props = null) -> React.createElement(Game, props)
+module.exports = React.createFactory(Core)

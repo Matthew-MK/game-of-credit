@@ -1,17 +1,18 @@
 extends layout
 
 block head
-    link(rel="icon", href="favicon.ico")
+    link(rel="icon", href="static/favicon.ico")
+    meta(name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0")
 
 block content
-    #app
+    #app(data-env=env)
     if env == "development"
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0-rc1/react.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0-rc1/react-with-addons.js")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.js")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.4/socket.io.js")
-        script(src="http://localhost:8080/static/build/bundle.js", id="bundle", data-server="/socket.io")
+        script(src="http://localhost:8080/static/build/bundle.js", id="bundle", data-server=socketServer)
     else
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0-rc1/react.min.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0-rc1/react-with-addons.min.js")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.min.js")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.4/socket.io.min.js")
-        script(src="build/bundle.js", id="bundle", data-server="/game-of-credit/socket.io")
+        script(src="static/build/bundle.js", id="bundle", data-server=socketServer)

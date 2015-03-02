@@ -7,29 +7,32 @@
     "attack": 4
   },
   "textures": {
-    "dirt": "textures/dirt-512.jpg",
-    "grass": "textures/grass-512.jpg",
-    "heightMap": "textures/height_map_1024.png",
-    "rock": "textures/rock-512.jpg",
-    "sand": "textures/sand-512.jpg",
-    "skyBox": [
-      "textures/front.jpg",
-      "textures/back.jpg",
-      "textures/up.jpg",
-      "textures/down.jpg",
-      "textures/right.jpg",
-      "textures/left.jpg"
-    ],
-    "snow": "textures/snow-512.jpg",
-    "wall": "textures/wall.JPG",
-    "woodCrate": "textures/crate.gif",
-    "metal": "textures/metal.jpg",
-    "step": "textures/step.jpg",
-    "mud": "textures/mud.jpg"
+    "baseUrl": "static/textures/",
+    "items": {
+      "dirt": "dirt-512.jpg",
+      "grass": "grass-512.jpg",
+      "heightMap": "height_map_1024.png",
+      "rock": "rock-512.jpg",
+      "sand": "sand-512.jpg",
+      "skyBox": [
+        "front.jpg",
+        "back.jpg",
+        "up.jpg",
+        "down.jpg",
+        "right.jpg",
+        "left.jpg"
+      ],
+      "snow": "snow-512.jpg",
+      "wall": "wall.JPG",
+      "woodCrate": "crate.gif",
+      "metal": "metal.jpg",
+      "step": "step.jpg",
+      "mud": "mud.jpg"
+    }
   },
   "models": {
     "ratamahatta": {
-      "baseUrl": "textures/ratamahatta",
+      "baseUrl": "static/textures/ratamahatta",
       "body": "ratamahatta.json",
       "skins": ["ratamahatta.png"],
       "weapons": [
@@ -51,5 +54,8 @@
     {"position": [341, 120, 200], "rotation": 1.57},
     {"position": [-46, 60, -180], "rotation": -1.57},
     {"position": [474, 60, -466], "rotation": 1.57}
-  ]
+  ],
+  "ui": {
+    "crosshair": "static/ui/crosshair.png"
+  }
 }

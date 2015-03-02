@@ -27,7 +27,7 @@ app.set("views", __dirname + "/views")
 app.set("view engine", "jade")
 
 # Serve all static files from static folder
-app.use(express.static(__dirname + "/static"))
+app.use("/static", express.static(__dirname + "/static"))
 
 # Load all resources only from current origin (but not its sub-domains)
 app.use (req, res, next) ->
@@ -39,6 +39,7 @@ app.get "/", (req, res) ->
   res.render "play",
     title: "Play"
     env: env
+    socketServer: req.headers['uri'] or '/' + "socket.io"
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->

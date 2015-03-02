@@ -14,18 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 React = require("react")
+{PureRenderMixin} = React["addons"]
 {div, span} = React.DOM
 
 Blocker = React.createClass
 
+  mixins: [PureRenderMixin]
   locked: false
 
   getInitialState: ->
-    havePointerLock: false
     pointerLocked: false
 
   handleClick: ->
-    blocker = @refs.blocker.getDOMNode()
+    return if @locked or not @havePointerLock
+    blocker = @refs["blocker"].getDOMNode()
     blocker.requestPointerLock =
       blocker["requestPointerLock"] or
       blocker["mozRequestPointerLock"] or
@@ -33,7 +35,7 @@ Blocker = React.createClass
     blocker.requestPointerLock()
 
   handleLockChange: ->
-    blocker = @refs.blocker.getDOMNode()
+    blocker = @refs["blocker"].getDOMNode()
     pointerLocked =
       document["pointerLockElement"] is blocker or
       document["mozPointerLockElement"] is blocker or
@@ -45,24 +47,24 @@ Blocker = React.createClass
       @props.sendState(pointerLocked)
 
   componentDidMount: ->
-    havePointerLock =
-      "pointerLockElement" of document or
-      "mozPointerLockElement" of document or
-      "webkitPointerLockElement" of document
-    @setState(havePointerLock: havePointerLock)
-
-    if havePointerLock
-      document.addEventListener('pointerlockchange', @handleLockChange)
-      document.addEventListener('mozpointerlockchange', @handleLockChange)
-      document.addEventListener('webkitpointerlockchange', @handleLockChange)
+    return if not @havePointerLock
+    document.addEventListener('pointerlockchange', @handleLockChange)
+    document.addEventListener('mozpointerlockchange', @handleLockChange)
+    document.addEventListener('webkitpointerlockchange', @handleLockChange)
 
   componentWillUnmount: ->
+    return if not @havePointerLock
     document.removeEventListener('pointerlockchange', @handleLockChange)
     document.removeEventListener('mozpointerlockchange', @handleLockChange)
     document.removeEventListener('webkitpointerlockchange', @handleLockChange)
 
   render: ->
-    if @state.havePointerLock
+    @havePointerLock =
+      "pointerLockElement" of document or
+      "mozPointerLockElement" of document or
+      "webkitPointerLockElement" of document
+
+    if @havePointerLock
       title = "Click to play"
       message = "(W, A, S, D = Move, SPACE = Jump, MOUSE = Look around)"
     else
@@ -74,10 +76,10 @@ Blocker = React.createClass
       ref: "blocker"
       onClick: @handleClick
       style:
-        opacity: if @state.pointerLocked then 0 else 1
+        opacity: +!@state.pointerLocked
       },
       div {id: "instructions"},
         span {}, title
         span {}, message
 
-module.exports = (props) -> React.createElement(Blocker, props)
+module.exports = React.createFactory(Blocker)
