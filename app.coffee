@@ -39,7 +39,7 @@ app.get "/", (req, res) ->
   res.render "play",
     title: "Play"
     env: env
-    socketServer: req.headers['uri'] or '/' + "socket.io"
+    socketServer: (req.headers['uri'] or '/') + "socket.io"
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
