@@ -44,6 +44,7 @@ App = React.createClass
 
   getInitialState: ->
     next: @LOADING
+    ammo: 10
     windowWidth: window.innerWidth
     windowHeight: window.innerHeight
 
@@ -56,8 +57,17 @@ App = React.createClass
     if loaded == total and @state.next is @LOADING
       @setState(next: @INITIATING, @init)
 
-  handleClick: ->
-    @player.onClick() if @state.next is @PLAYING
+  handleClick: (e) ->
+    return if e.target.id != "blocker" or @player.fired or @state.ammo <= 0
+
+    @setState {ammo: @state.ammo - 1}, =>
+      @player.fired = true
+      @player.onFire() if @state.next is @PLAYING
+      stopFire = =>
+        @player.fired = false
+        @player.onStopFire()
+      setTimeout(stopFire, 80 * 14)
+
 
   handleBlockerState: (pointerLocked) ->
     @setState(next: if pointerLocked then @PLAYING else @MENU)
@@ -113,6 +123,7 @@ App = React.createClass
           onClick: @handleClick
         },
         UI
+          ammo: @state.ammo
           width: @state.windowWidth
           height: @state.windowHeight
           playing: @state.next is @PLAYING

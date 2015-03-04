@@ -48,7 +48,8 @@ class Controls extends Base
 
     # Add default height to default player position
     player.position.y += @defaultHeight
-    player.onClick = @handleFire
+    player.onFire = @handleFire
+    player.onStopFire = => @fired = false
 
     # Set camera default position & rotation
     @cameraYaw.position.copy(player.position)
@@ -142,12 +143,7 @@ class Controls extends Base
     @velocity.z -= @velocity.z * @defaultSpeed * delta
 
   handleFire: =>
-    return if @fired
-
     @fired = true
-    stopFire = => @fired = false
-    setTimeout(stopFire, 80 * 14)
-
     bullet = new Bullet(@scene, @position, @rotation, @objects)
     bullet.fire (killedMesh) =>
       {uuid} = killedMesh

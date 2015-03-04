@@ -49,3 +49,19 @@ canvas {
     position: absolute;
     background-repeat: no-repeat;
 }
+
+.ui-box {
+    padding: 10px;
+    position: absolute;
+    margin: 10px;
+    color: #ffffff;
+    text-align: center;
+    background: rgba(0,0,0,0.5);
+}
+
+.ui-box div:first-child {
+    font-size: 1em;
+}
+.ui-box div:last-child {
+    font-size: 3em;
+}

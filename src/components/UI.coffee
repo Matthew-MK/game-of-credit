@@ -39,6 +39,28 @@ Crosshair = React.createFactory React.createClass
         opacity: if @props.playing then 1 else 0
         backgroundImage: "url('#{@crosshairUrl}')"
 
+
+UIBox = React.createFactory React.createClass
+  mixins: [PureRenderMixin]
+
+  getDefaultProps: ->
+    top: "auto"
+    left: "auto"
+    right: "auto"
+    bottom: "auto"
+
+  render: ->
+    count = @props.count or @props.defaultCount
+    style =
+      top: @props.top
+      left: @props.left
+      right: @props.right
+      bottom: @props.bottom
+
+    div {className: "ui-box", style: style},
+      div {}, @props.title
+      div {}, count
+
 ###
   All player UI components together
 ###
@@ -52,6 +74,17 @@ UI = React.createClass
         width: @props.width
         height: @props.height
         playing: @props.playing
+      UIBox
+        defaultCount: 100
+        title: "Hitpoints"
+        left: 0
+        bottom: 0
+      UIBox
+        defaultCount: 0
+        count: @props.ammo
+        title: "Ammo"
+        right: 0
+        bottom: 0
 
 
 module.exports = React.createFactory(UI)
