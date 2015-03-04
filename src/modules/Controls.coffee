@@ -78,7 +78,7 @@ class Controls extends Base
   getIntersect: (direction, far = Infinity) ->
     @rayCaster.set(@cameraYaw.position, direction)
     @rayCaster.far = far
-    intersections = @rayCaster.intersectObjects(@objects)
+    intersections = @rayCaster.intersectObjects(@playGround.meshes)
     return if intersections.length > 0 then intersections[0] else false
 
   update: (delta, playing) ->
@@ -144,7 +144,7 @@ class Controls extends Base
 
   handleFire: =>
     @fired = true
-    bullet = new Bullet(@scene, @position, @rotation, @objects)
+    bullet = new Bullet(@scene, @position, @rotation, @playGround.meshes)
     bullet.fire (killedMesh) =>
       {uuid} = killedMesh
       for id, player of @players

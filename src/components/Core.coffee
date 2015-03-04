@@ -64,6 +64,7 @@ Core = React.createClass
     @renderer = new THREE.WebGLRenderer
       canvas: @refs.render.getDOMNode()
       antialias: off
+      precision: "mediump"
     @renderer.setSize(@props.width, @props.height)
     @renderer.shadowMapEnabled = on
 
@@ -82,7 +83,7 @@ Core = React.createClass
 
     @controls.register
       camera: @camera
-      objects: @playGround.meshes
+      playGround: @playGround
       players: @players
       scene: @scene
       sockets: @sockets

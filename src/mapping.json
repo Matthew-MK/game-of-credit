@@ -40,6 +40,398 @@
       ]
     }
   },
+  "playGround": {
+    "containers": {
+      "items": [
+        {
+          "mesh": "containerBox",
+          "position": [350, 30, 350],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [-250, 30, -340],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [-352, 30, 0],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [-352, 90, 0],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [-292, 30, 0],
+          "rotation": [0, 0, 0],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [-412, 30, 0],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+
+        {
+          "mesh": "containerBox",
+          "position": [-352, 90, 120],
+          "rotation": [0, 0, 0]
+        },
+        {
+          "mesh": "containerBox",
+          "position": [-412, 30, 120],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [-292, 30, 180],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [-337, 30, -90],
+          "rotation": [0, 1.5707963267948966, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [337, 30, 165],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [337, 90, 165],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [397, 30, 165],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [455, 30, -50],
+          "rotation": [0, 1.5707963267948966, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [200, 30, 228],
+          "rotation": [0, 0, 0],
+          "castShadow": true
+        },
+        {
+          "mesh": "containerBox",
+          "position": [-50, 30, -182],
+          "rotation": [0, 1.5707963267948966, 0],
+          "castShadow": true
+        }
+      ]
+    },
+    "fortress": {
+      "items": [
+        {
+          "position": [387, 30, -437],
+          "mesh": "rockBox",
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "position": [467, 7.5, -357],
+          "mesh": "stepBox",
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "position": [467, 22.5, -357],
+          "mesh": "stepBox",
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "position": [467, 37.5, -357],
+          "mesh": "stepBox",
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "position": [467, 7.5, -347],
+          "mesh": "stepBox",
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "position": [467, 22.5, -347],
+          "mesh": "stepBox",
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "position": [467, 7.5, -337],
+          "mesh": "stepBox",
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "position": [277, 67.5, -367],
+          "mesh": "stepBox",
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "position": [337, 67.5, -367],
+          "mesh": "stepBox",
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "position": [397, 67.5, -367],
+          "mesh": "stepBox",
+          "castShadow": true,
+          "receiveShadow": true
+        }
+      ]
+    },
+    "prison": {
+      "items": [
+        {
+          "mesh": "groundPlane",
+          "position": [0, 0, 0],
+          "rotation": [-1.5707963267948966, 0, 0],
+          "receiveShadow": true
+        },
+        {
+          "mesh": "wallPlane",
+          "position": [0, 64, -512],
+          "rotation": [0, 0, 0],
+          "receiveShadow": true
+        },
+        {
+          "mesh": "wallPlane",
+          "position": [-500, 64, 0],
+          "rotation": [0, 1.5707963267948966, 0],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "wallPlane",
+          "position": [512, 64, 0],
+          "rotation": [0, -1.5707963267948966, 0],
+          "receiveShadow": true
+        },
+        {
+          "mesh": "wallPlane",
+          "position": [0, 64, 512],
+          "rotation": [0, 3.141592653589793, 0],
+          "receiveShadow": true,
+          "castShadow": true
+        }
+      ]
+    },
+    "pyramid": {
+      "position": [150, 0, -100],
+      "items": [
+        {
+          "mesh": "woodenBox",
+          "position": [15, 22.5, 0],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [0, 22.5, 15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [15, 22.5, 15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [0, 22.5, -15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-15, 22.5, 0],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-15, 22.5, -15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-15, 22.5, 15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [15, 22.5, -15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-30, 7.5, 30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-30, 7.5, -30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [30, 7.5, -30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [30, 7.5, 30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [15, 7.5, 30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [0, 7.5, 30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-15, 7.5, 30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [30, 7.5, 15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [30, 7.5, 0],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [30, 7.5, -15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-30, 7.5, -15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-30, 7.5, 0],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-30, 7.5, 15],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [-15, 7.5, -30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [0, 7.5, -30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [15, 7.5, -30],
+          "castShadow": true,
+          "receiveShadow": true
+        },
+        {
+          "mesh": "woodenBox",
+          "position": [0, 37.5, 0],
+          "castShadow": true,
+          "receiveShadow": true
+        }
+      ]
+    },
+    "crates": {
+      "items": [
+        {"mesh": "woodenBox", "position": [497, 15, 497], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [497, 45, 497], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [467, 15, 497], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [467, 15, 437], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [327, 15, 437], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [227, 15, 437], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [127, 15, 437], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [27, 15, 437], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [-27, 15, 437], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [-127, 15, 437], "scale": [2, 2, 2]},
+        {"mesh": "woodenBox", "position": [-127, 15, 200], "scale": [2, 2, 2], "castShadow": true},
+        {"mesh": "woodenBox", "position": [-127, 15, -350], "scale": [2, 2, 2], "castShadow": true},
+        {"mesh": "woodenBox", "position": [-307, 75, 0], "scale": [2, 2, 2], "castShadow": true},
+        {"mesh": "woodenBox", "position": [365, 15, 275], "scale": [2, 2, 2]}
+      ]
+    },
+    "smallCrates": {
+      "items": [
+        {"mesh": "woodenBox", "position": [-254.5, 7.5, 0], "castShadow": true},
+        {"mesh": "woodenBox", "position": [-254.5, 22.5, 0], "castShadow": true},
+        {"mesh": "woodenBox", "position": [-254.5, 37.5, 0], "castShadow": true},
+        {"mesh": "woodenBox", "position": [-239.5, 7.5, 0], "castShadow": true},
+        {"mesh": "woodenBox", "position": [-239.5, 22.5, 0], "castShadow": true},
+        {"mesh": "woodenBox", "position": [-224.5, 7.5, 0], "castShadow": true},
+        {"mesh": "woodenBox", "position": [238, 7.5, 278], "castShadow": true},
+        {"mesh": "woodenBox", "position": [238, 22.5, 278], "castShadow": true},
+        {"mesh": "woodenBox", "position": [238, 37.5, 278], "castShadow": true},
+        {"mesh": "woodenBox", "position": [253, 7.5, 278], "castShadow": true},
+        {"mesh": "woodenBox", "position": [253, 22.5, 278], "castShadow": true},
+        {"mesh": "woodenBox", "position": [268, 7.5, 278], "castShadow": true}
+      ]
+    }
+  },
   "respawns": [
     {"position": [-279, 60, 426], "rotation": -1.57},
     {"position": [100, 0, 0], "rotation": 0},
