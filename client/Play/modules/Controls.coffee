@@ -16,7 +16,7 @@ limitations under the License.
 Key = require("keymaster")
 
 Base = require("./Base")
-{Bullet} = require("../modules/Objects")
+{Bullet} = require("./Objects")
 
 class Controls extends Base
 

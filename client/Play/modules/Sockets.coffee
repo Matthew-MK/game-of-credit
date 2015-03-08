@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 Base = require("./Base")
-Player = require("../modules/Player")
+Player = require("./Player")
 {eventType} = require("../mapping.json")
 
 class Sockets extends Base

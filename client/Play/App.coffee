@@ -18,12 +18,12 @@ limitations under the License.
 React = require("react")
 
 # Components
-Blocker = require("./Blocker")
-Core = require("./Core")
-UI = require("./UI")
+Blocker = require("./components/Blocker")
+Core = require("./components/Core")
+UI = require("./components/UI")
 
 # Others
-mapping = require("../mapping.json")
+mapping = require("./mapping")
 
 # Others
 {PureRenderMixin} = React["addons"]

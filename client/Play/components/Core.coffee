@@ -32,15 +32,6 @@ Core = React.createClass
 
   mixins: [PureRenderMixin]
 
-  players: {}
-  clock: new THREE.Clock
-
-  # modules
-  controls: new Controls
-  playGround: new PlayGround
-  lights: new Lights
-  sockets: new Sockets
-
   getInitialState: ->
     frameCount: 0
 
@@ -59,6 +50,14 @@ Core = React.createClass
   Init all three.js stuff here before rendering frames.
   ###
   initScene: ->
+    @players = {}
+    @clock = new THREE.Clock
+
+    @controls = new Controls
+    @playGround = new PlayGround
+    @lights = new Lights
+    @sockets = new Sockets
+
     @scene = new THREE.Scene
     @camera = new THREE.PerspectiveCamera 45, @props.width / @props.height, 1, 10000
     @renderer = new THREE.WebGLRenderer

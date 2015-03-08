@@ -13,10 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-require("../modules/js/MD2Character")
+require("./js/MD2Character")
 mapping = require("../mapping.json")
 
-{Bullet} = require("../modules/Objects")
+{Bullet} = require("./Objects")
 
 class Player extends THREE.MD2Character
 

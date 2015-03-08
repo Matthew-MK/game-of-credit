@@ -19,7 +19,7 @@ limitations under the License.
 React = require("react")
 
 # Components
-App = require("./components/App")
+App = require("./Play/App")
 
 # Selector
 $ = (id) -> document.getElementById(id)
@@ -31,7 +31,7 @@ BundleElement = $("bundle")
 {server} = BundleElement.dataset
 
 # Init css module to head of page
-require("./css/style.css")
+require("./Play/css/style.css")
 
 # Render main component
 React.render(App({env, server}), AppElement)
