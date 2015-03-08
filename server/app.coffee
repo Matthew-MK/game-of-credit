@@ -21,14 +21,18 @@ express = require("express")
 ### Setup ###
 app = express()
 env = app.get('env')
-app.set('port', parseInt(process.env.PORT, 100) or config.port or 3000)
+app.set('port', parseInt(process.env["PORT"], 100) or config.port or 3000)
+
+paths =
+  views: path.join(__dirname, "/views")
+  static: path.join(__dirname, "..", "static")
 
 # View engine setup
-app.set("views", path.join(__dirname, "/views"))
+app.set("views", paths.views)
 app.set("view engine", "jade")
 
 # Serve all static files from static folder
-app.use("/static", express.static(path.join(__dirname, "..", "static")))
+app.use("/static", express.static(paths.static))
 
 # Load all resources only from current origin (but not its sub-domains)
 app.use (req, res, next) ->
