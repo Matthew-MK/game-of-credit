@@ -1,4 +1,4 @@
-app = require("../app")
+app = require("../server/app")
 assert = require("assert")
 request = require('supertest')
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env coffee
 
 http = require("http")
-app = require("../app")
-sockets = require("../sockets")
+app = require("../server/app")
+sockets = require("../server/sockets")
 
 # Create HTTP server
 server = http.createServer(app)

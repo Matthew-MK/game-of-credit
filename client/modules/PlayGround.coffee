@@ -1,5 +1,5 @@
 ###
-Copyright 2015 Jan Svager & Michael Muller
+Copyright 2015 Jan Svager
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ class PlayGround extends Base
   objects: []
 
   init: (textures) ->
-
     baseMeshes =
       groundPlane: new Plane(1024, 1024, textures.grass, 16, 16)
       wallPlane: new Plane(1024, 128, textures.wall, 16, 2)

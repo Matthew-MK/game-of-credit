@@ -1,5 +1,5 @@
 ###
-Copyright 2015 Jan Svager & Michael Muller
+Copyright 2015 Jan Svager
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 fs = require("fs")
+path = require("path")
 express = require("express")
-{config} = require('./package.json')
+{config} = require('./../package.json')
 
 ### Setup ###
 app = express()
@@ -23,11 +24,11 @@ env = app.get('env')
 app.set('port', parseInt(process.env.PORT, 100) or config.port or 3000)
 
 # View engine setup
-app.set("views", __dirname + "/views")
+app.set("views", path.join(__dirname, "/views"))
 app.set("view engine", "jade")
 
 # Serve all static files from static folder
-app.use("/static", express.static(__dirname + "/static"))
+app.use("/static", express.static(path.join(__dirname, "..", "static")))
 
 # Load all resources only from current origin (but not its sub-domains)
 app.use (req, res, next) ->
