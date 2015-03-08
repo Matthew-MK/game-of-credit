@@ -15,23 +15,18 @@ limitations under the License.
 ###
 "use strict"
 
+# Normalize & common css
+require("../static/css/normalize.css")
+require("./common.css")
+
 # Libraries
 React = require("react")
 
 # Components
-App = require("./Play/App")
-
-# Selector
-$ = (id) -> document.getElementById(id)
+Play = require("./Play/App")
 
 # Get elements with environment based data from server
-AppElement = $("app")
-BundleElement = $("bundle")
-{env} = AppElement.dataset
-{server} = BundleElement.dataset
-
-# Init css module to head of page
-require("./Play/css/style.css")
+AppElement = document.getElementById("app")
 
 # Render main component
-React.render(App({env, server}), AppElement)
+React.render(Play(AppElement.dataset), AppElement)

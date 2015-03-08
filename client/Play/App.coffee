@@ -29,6 +29,9 @@ mapping = require("./mapping")
 {PureRenderMixin} = React["addons"]
 {div} = React.DOM
 
+# Component css
+require("./app.css")
+
 App = React.createClass
 
   mixins: [PureRenderMixin]

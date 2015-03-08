@@ -18,21 +18,16 @@ path = require("path")
 express = require("express")
 {config} = require('./../package.json')
 
+React = require("react")
+Html = require("./components/Html")
+
 ### Setup ###
 app = express()
 env = app.get('env')
 app.set('port', parseInt(process.env["PORT"], 100) or config.port or 3000)
 
-paths =
-  views: path.join(__dirname, "/views")
-  static: path.join(__dirname, "..", "static")
-
-# View engine setup
-app.set("views", paths.views)
-app.set("view engine", "jade")
-
 # Serve all static files from static folder
-app.use("/static", express.static(paths.static))
+app.use("/static", express.static(path.join(__dirname, "..", "static")))
 
 # Load all resources only from current origin (but not its sub-domains)
 app.use (req, res, next) ->
@@ -40,23 +35,16 @@ app.use (req, res, next) ->
   res.setHeader("X-Frame-Options", "sameorigin")
   next()
 
-app.get "/", (req, res) ->
-  res.render "play",
-    title: "Play"
+app.get "*", (req, res) ->
+  component = Html
     env: env
+    name: "Game of credit"
+    path: req.path
+    title: "Play"
     socketServer: (req.headers['uri'] or '/') + "socket.io"
 
-# catch 404 and forward to error handler
-app.use (req, res, next) ->
-  err = new Error("Not Found")
-  err.status = 404
-  next(err)
-
-# error handler
-app.use (err, req, res, next) ->
-  res.status err.status or 500
-  res.render 'error',
-    message: err.message
-    error: if env is "development" then err else {}
+  markup = React.renderToStaticMarkup(component)
+  res.type('html')
+  res.send(markup)
 
 module.exports = app
