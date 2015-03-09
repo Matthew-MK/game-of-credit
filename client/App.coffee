@@ -13,20 +13,35 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-"use strict"
-
-# Normalize & common css
-require("../static/css/normalize.css")
-require("../static/css/common.css")
 
 # Libraries
 React = require("react")
 
-# Main application component
-App = require("./App")
+# Components
+PlayComponent = require("./Play/component")
 
-# Get elements with environment based data from server
-AppElement = document.getElementById("app")
+# Store
+store = require("./store")
 
-# Render main component
-React.render(App(element: AppElement), AppElement)
+App = React.createClass
+
+  propTypes:
+    element: React.PropTypes.object
+
+  defaultStore:
+    player:
+      ammo: 10
+
+  componentDidMount: ->
+    store.set(@defaultStore)
+    store.on 'change', =>
+      console.time('App re-rendered')
+      @forceUpdate =>
+        console.timeEnd('App re-rendered')
+
+  render: ->
+    # TODO Router instead
+    {env, server} = @props.element.dataset
+    PlayComponent {env, server}
+
+module.exports = React.createFactory(App)

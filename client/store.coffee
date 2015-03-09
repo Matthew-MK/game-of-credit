@@ -13,20 +13,34 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-"use strict"
 
-# Normalize & common css
-require("../static/css/normalize.css")
-require("../static/css/common.css")
+dispatcher = require("./dispatcher")
+actions = require("./actions")
+events = require('events')
 
-# Libraries
-React = require("react")
+class Store extends events.EventEmitter
 
-# Main application component
-App = require("./App")
+  constructor: ->
+    @_state = null
+    super
 
-# Get elements with environment based data from server
-AppElement = document.getElementById("app")
+  get: ->
+    return @_state
 
-# Render main component
-React.render(App(element: AppElement), AppElement)
+  set: (state) ->
+    return if state is @_state
+    @_state = state
+    @emit('change', @_state)
+
+store = new Store
+
+dispatcher.register (payload) ->
+  {action, data} = payload
+
+  switch action
+    when "playerFired"
+      {ammo} = store.get().player
+      store.set {player: ammo: --ammo} if ammo > 0
+      break
+
+module.exports = store

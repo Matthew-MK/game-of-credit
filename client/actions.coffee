@@ -13,20 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-"use strict"
 
-# Normalize & common css
-require("../static/css/normalize.css")
-require("../static/css/common.css")
+dispatcher = require("./dispatcher")
 
-# Libraries
-React = require("react")
-
-# Main application component
-App = require("./App")
-
-# Get elements with environment based data from server
-AppElement = document.getElementById("app")
-
-# Render main component
-React.render(App(element: AppElement), AppElement)
+module.exports =
+  playerFired: ->
+    dispatcher.dispatch("playerFired")
