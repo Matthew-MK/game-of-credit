@@ -52,7 +52,7 @@ App = React.createClass
     return if e.target.id != "blocker" or not canFire
 
     actions.playerDidFire()
-    setTimeout(actions.playerCanFire, 80 * 14)
+    setTimeout(actions.playerCanFire, 16 * 60)
 
   initiation: ->
     respawns = mapping["respawns"]

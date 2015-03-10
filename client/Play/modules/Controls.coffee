@@ -54,8 +54,6 @@ class Controls extends Base
     rotation = @player.get("rotation")
 
     position.y += @defaultHeight
-#    player.onFire = @handleFire
-#    player.onStopFire = => @fired = false
 
     # Set camera default position & rotation
     @cameraYaw.position.copy(position)
@@ -76,7 +74,7 @@ class Controls extends Base
     @animation = "crwalk" if @moved
     @animation = "jump" if @jumped
     @animation = "run" if @moved and @sprinted
-    @animation = "attack" if @fired
+    @animation = "attack" if not store.state.get("player").get("canFire")
 
   getCamera: ->
     @cameraYaw
@@ -148,14 +146,12 @@ class Controls extends Base
     @velocity.x -= @velocity.x * @defaultSpeed * delta
     @velocity.z -= @velocity.z * @defaultSpeed * delta
 
-    state = store.get()
-    {fired} = state.get("player").toJS()
+    fired = store.state.get("player").get("fired")
     if fired
       @fireBullet()
       actions.playerEndFire()
 
   fireBullet: =>
-    @fired = true
     bullet = new Bullet(@scene, @position, @rotation, @playGround.meshes)
     bullet.fire (killedMesh) =>
       {uuid} = killedMesh
