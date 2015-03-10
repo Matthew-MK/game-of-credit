@@ -17,9 +17,7 @@ fs = require("fs")
 path = require("path")
 express = require("express")
 {config} = require('./../package.json')
-
-React = require("react")
-Html = require("./components/Html")
+render = require("./render")
 
 ### Setup ###
 app = express()
@@ -36,15 +34,16 @@ app.use (req, res, next) ->
   next()
 
 app.get "*", (req, res) ->
-  component = Html
+  render {
     env: env
-    name: "Game of credit"
     path: req.path
-    title: "Play"
     socketServer: (req.headers['uri'] or '/') + "socket.io"
-
-  markup = React.renderToStaticMarkup(component)
-  res.type('html')
-  res.send(markup)
+  }
+  .then (result) ->
+    res.type("html").status(result.status).send(result.html)
+  .catch (error) ->
+    msg = error.stack or error
+    console.error(msg)
+    res.status(500).send("500: #{msg}")
 
 module.exports = app
