@@ -18,6 +18,9 @@ Key = require("keymaster")
 Base = require("./Base")
 {Bullet} = require("./Objects")
 
+actions = require("../../actions")
+store = require("../../store")
+
 class Controls extends Base
 
   defaultHeight: 12
@@ -41,19 +44,22 @@ class Controls extends Base
     down: new THREE.Vector3(0, -1, 0)
   }
 
-  init: (player) ->
+  init: (@player) ->
     @cameraPitch = @camera
     @cameraYaw = new THREE.Object3D
     @cameraYaw.add(@cameraPitch)
 
     # Add default height to default player position
-    player.position.y += @defaultHeight
-    player.onFire = @handleFire
-    player.onStopFire = => @fired = false
+    position = @player.get("position")
+    rotation = @player.get("rotation")
+
+    position.y += @defaultHeight
+#    player.onFire = @handleFire
+#    player.onStopFire = => @fired = false
 
     # Set camera default position & rotation
-    @cameraYaw.position.copy(player.position)
-    @cameraYaw.rotation.y = player.rotation.y
+    @cameraYaw.position.copy(position)
+    @cameraYaw.rotation.y = rotation.y
 
     @updateProps()
     @scene.add(@cameraYaw)
@@ -142,7 +148,13 @@ class Controls extends Base
     @velocity.x -= @velocity.x * @defaultSpeed * delta
     @velocity.z -= @velocity.z * @defaultSpeed * delta
 
-  handleFire: =>
+    state = store.get()
+    {fired} = state.get("player").toJS()
+    if fired
+      @fireBullet()
+      actions.playerEndFire()
+
+  fireBullet: =>
     @fired = true
     bullet = new Bullet(@scene, @position, @rotation, @playGround.meshes)
     bullet.fire (killedMesh) =>

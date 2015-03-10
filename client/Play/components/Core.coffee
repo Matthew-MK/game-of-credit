@@ -90,7 +90,7 @@ Core = React.createClass
     # Init modules
     @playGround.init(@props.textures)
     @lights.init()
-    @sockets.init(@props.dataServer)
+    @sockets.init(@props.socketServer)
     @controls.init(@props.player)
 
   ###

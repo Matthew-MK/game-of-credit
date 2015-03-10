@@ -16,6 +16,7 @@ limitations under the License.
 
 # Libraries
 React = require("react")
+Immutable = require("immutable")
 
 # Components
 Blocker = require("./components/Blocker")
@@ -28,6 +29,7 @@ actions = require("../actions")
 store = require("../store")
 
 {PureRenderMixin} = React["addons"]
+{Map} = Immutable
 {div} = React.DOM
 
 # Component css
@@ -35,60 +37,44 @@ require("./component.css")
 
 App = React.createClass
 
-  propTypes:
-    env: React.PropTypes.string
-    server: React.PropTypes.string
-
-  # Game states
-  LOADING: 0
-  INITIATING: 1
-  MENU: 2
-  PLAYING: 3
+#  mixins: [PureRenderMixin]
 
   textures: {}
-  player: {}
-
-  getInitialState: ->
-    next: @LOADING
-    windowWidth: window.innerWidth
-    windowHeight: window.innerHeight
-
-  handleResize: ->
-    @setState
-      windowWidth: window.innerWidth
-      windowHeight: window.innerHeight
 
   handleLoading: (item, loaded, total) ->
-    if loaded == total and @state.next is @LOADING
-      @setState(next: @INITIATING, @init)
+    gameState = store.state.get("gameState")
+    if loaded == total and gameState is "loading"
+      actions.gameStateDidChange("initiating")
+      @initiation()
 
   handleClick: (e) ->
-    return if e.target.id != "blocker" or @player.fired or @state.ammo <= 0
+    canFire = store.state.get("player").get("canFire")
+    return if e.target.id != "blocker" or not canFire
 
-    actions.playerFired()
-    @player.fired = true
-    @player.onFire() if @state.next is @PLAYING
-    stopFire = =>
-      @player.fired = false
-      @player.onStopFire()
-    setTimeout(stopFire, 80 * 14)
+    actions.playerDidFire()
+    setTimeout(actions.playerCanFire, 80 * 14)
 
-
-  handleBlockerState: (pointerLocked) ->
-    @setState(next: if pointerLocked then @PLAYING else @MENU)
-
-  init: ->
+  initiation: ->
     respawns = mapping["respawns"]
     randomRespawn = respawns[Math.floor((Math.random() * respawns.length))]
-    @player.position = new THREE.Vector3(randomRespawn.position...)
-    @player.rotation = new THREE.Vector3(0, randomRespawn.rotation)
-    @setState(next: @MENU)
+
+    player = Map
+      canFire: true
+      fired: false
+      ammo: 10
+      position: new THREE.Vector3(randomRespawn.position...)
+      rotation: new THREE.Vector3(0, randomRespawn.rotation)
+
+    actions.playerInit(player)
+    actions.gameStateDidChange("menu")
 
   ###
   Invoked once, both on the client and server, immediately before the initial
   rendering occurs.
   ###
   componentWillMount: ->
+    actions.gameStateDidChange("loading")
+
     # Loading textures
     THREE.DefaultLoadingManager.onProgress = @handleLoading
 
@@ -102,48 +88,40 @@ App = React.createClass
         files = (baseUrl + path for path in file)
         @textures[key] = new THREE.ImageUtils.loadTextureCube(files)
 
-
-  ###
-  Invoked once, only on the client (not on the server), immediately after
-  the initial rendering occurs.
-  At this point in the lifecycle, the component has a DOM representation.
-  ###
-  componentDidMount: ->
-    window.addEventListener('resize', @handleResize)
-
-  ###
-  Invoked immediately before a component is unmounted from the DOM.
-  Perform any necessary cleanup in this method, such as invalidating timers
-  or cleaning up any DOM elements that were created in componentDidMount.
-  ###
-  componentWillUnmount: ->
-    window.removeEventListener('resize', @handleResize)
-
   render: ->
-    if @state.next is @LOADING or @state.next is @INITIATING
-      div {id: "loading"}, "Loading..."
-    else
-      # Load data from store
-      {player} = store.get()
+    # Get state from store
+    {state} = store
+    gameState = state.get("gameState")
 
-      div {
-          id: "wrapper",
-          onClick: @handleClick
-        },
-        UI
-          ammo: player.ammo
-          width: @state.windowWidth
-          height: @state.windowHeight
-          playing: @state.next is @PLAYING
-        Blocker
-          sendState: @handleBlockerState
-        Core
-          width: @state.windowWidth
-          height: @state.windowHeight
-          playing: @state.next is @PLAYING
-          dataServer: @props.server
-          player: @player
-          textures: @textures
+    switch gameState
+      when "loading"
+        return div {id: "loading"}, "Loading..."
+      when "initiating"
+        return div {id: "initiating"}, "Initiating..."
+      else
+
+        # Load data from state
+        {width, height} = state.get("window").toJS()
+        player = state.get("player")
+
+        return div {
+            id: "wrapper",
+            onClick: @handleClick
+          },
+          UI
+            ammo: player.get("ammo")
+            width: width
+            height: height
+            playing: gameState is "playing"
+          Blocker
+            enabled: state.get("pointerLocked")
+          Core
+            width: width
+            height: height
+            playing: gameState is "playing"
+            socketServer: state.get("socketServer")
+            player: player
+            textures: @textures
 
 
 module.exports = React.createFactory(App)

@@ -17,8 +17,7 @@ flux = require('flux')
 
 class Dispatcher extends flux.Dispatcher
   dispatch: (action, data) ->
-    console.log "Dispatching", action
+    console.log "Dispatching action -> #{action}"
     super {action, data}
-
 
 module.exports = new Dispatcher

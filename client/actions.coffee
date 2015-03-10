@@ -15,7 +15,31 @@ limitations under the License.
 ###
 
 dispatcher = require("./dispatcher")
+store = require("./store")
 
-module.exports =
-  playerFired: ->
-    dispatcher.dispatch("playerFired")
+actions =
+  windowDidResize: ->
+    dispatcher.dispatch("windowDidResize")
+
+  playerInit: (player) ->
+    dispatcher.dispatch("playerInit", player)
+
+  playerDidFire: ->
+    {canFire, fired} = store.state.get("player").toJS()
+    dispatcher.dispatch("playerDidFire") if canFire and not fired
+
+  playerEndFire: ->
+    dispatcher.dispatch("playerEndFire")
+
+  playerCanFire: ->
+    ammo = store.state.get("player").get("ammo")
+    dispatcher.dispatch("playerCanFire") if ammo > 0
+
+  gameStateDidChange: (state) ->
+    dispatcher.dispatch("gameStateDidChange", state)
+
+  pointerLockDidChange: (enabled) ->
+    actions.gameStateDidChange(if enabled then "playing" else "menu")
+    dispatcher.dispatch("pointerLockDidChange", enabled)
+
+module.exports = actions

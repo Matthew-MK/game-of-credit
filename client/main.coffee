@@ -15,18 +15,36 @@ limitations under the License.
 ###
 "use strict"
 
+console.time("App starting")
+
 # Normalize & common css
 require("../static/css/normalize.css")
 require("../static/css/common.css")
 
 # Libraries
 React = require("react")
+{Map} = require("immutable")
 
 # Main application component
 App = require("./App")
 
+# Store
+store = require("./store")
+
 # Get elements with environment based data from server
 AppElement = document.getElementById("app")
 
+# Default store state
+defaultState = Map
+  env: AppElement.dataset.env
+  socketServer: AppElement.dataset.server
+  window: Map
+    width: window.innerWidth
+    height: window.innerHeight
+
+# Set default state
+store.set(defaultState)
+
+console.timeEnd("App starting")
 # Render main component
-React.render(App(element: AppElement), AppElement)
+React.render(App(), AppElement)

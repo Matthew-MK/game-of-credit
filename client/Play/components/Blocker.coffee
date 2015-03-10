@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 React = require("react")
+actions = require("../../actions")
 {PureRenderMixin} = React["addons"]
 {div, span} = React.DOM
 
@@ -21,9 +22,6 @@ Blocker = React.createClass
 
   mixins: [PureRenderMixin]
   locked: false
-
-  getInitialState: ->
-    pointerLocked: false
 
   handleClick: ->
     return if @locked or not @havePointerLock
@@ -43,8 +41,7 @@ Blocker = React.createClass
 
     if @locked != pointerLocked
       @locked = pointerLocked
-      @setState(pointerLocked: pointerLocked)
-      @props.sendState(pointerLocked)
+      actions.pointerLockDidChange(pointerLocked)
 
   componentDidMount: ->
     return if not @havePointerLock
@@ -76,7 +73,7 @@ Blocker = React.createClass
       ref: "blocker"
       onClick: @handleClick
       style:
-        opacity: +!@state.pointerLocked
+        opacity: +!@props.enabled
       },
       div {id: "instructions"},
         span {}, title

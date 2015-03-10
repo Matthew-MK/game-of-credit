@@ -16,32 +16,44 @@ limitations under the License.
 
 # Libraries
 React = require("react")
+Immutable = require("immutable")
 
 # Components
 PlayComponent = require("./Play/component")
 
-# Store
+# Others
 store = require("./store")
+actions = require("./actions")
+{Map} = Immutable
+{PureRenderMixin} = React["addons"]
+
 
 App = React.createClass
 
-  propTypes:
-    element: React.PropTypes.object
+  mixins: [PureRenderMixin]
 
-  defaultStore:
-    player:
-      ammo: 10
-
+  ###
+  Invoked once, only on the client (not on the server), immediately after
+  the initial rendering occurs.
+  At this point in the lifecycle, the component has a DOM representation.
+  ###
   componentDidMount: ->
-    store.set(@defaultStore)
     store.on 'change', =>
       console.time('App re-rendered')
       @forceUpdate =>
         console.timeEnd('App re-rendered')
+    window.addEventListener('resize', actions.windowDidResize)
+
+  ###
+  Invoked immediately before a component is unmounted from the DOM.
+  Perform any necessary cleanup in this method, such as invalidating timers
+  or cleaning up any DOM elements that were created in componentDidMount.
+  ###
+  componentWillUnmount: ->
+    window.removeEventListener('resize', actions.windowDidResize)
 
   render: ->
     # TODO Router instead
-    {env, server} = @props.element.dataset
-    PlayComponent {env, server}
+    PlayComponent()
 
 module.exports = React.createFactory(App)
