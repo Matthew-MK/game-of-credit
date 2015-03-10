@@ -25,7 +25,6 @@
   "config": {
     "port": "8000"
   },
-  "main": "./app.coffee",
   "os": [
     "win32",
     "darwin"
