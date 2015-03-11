@@ -13,18 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-socketIO = require('socket.io')
+io = require('socket.io')()
 
-exports.register = (server) ->
-  io = socketIO(server)
+io.on 'connection', (socket) ->
 
-  io.on 'connection', (socket) ->
+  socket.on "data", (data) ->
+    socket.broadcast.emit('data', data)
 
-    socket.on "data", (data) ->
-      socket.broadcast.emit('data', data)
+  socket.on "kill", (id) ->
+    io.sockets.emit('death', id)
 
-    socket.on "kill", (id) ->
-      io.sockets.emit('death', id)
+  socket.on "disconnect", ->
+    socket.broadcast.emit('leave', socket.id)
 
-    socket.on "disconnect", ->
-      socket.broadcast.emit('leave', socket.id)
+module.exports = io

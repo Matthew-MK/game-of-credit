@@ -10,7 +10,7 @@ server = http.createServer(app)
 # Listen on provided port, on all network interfaces
 port = app.get("port")
 server.listen(port)
-sockets.register(server)
+sockets.listen(server)
 
 # Event listener for HTTP server "listening" event
 server.on "listening", ->
