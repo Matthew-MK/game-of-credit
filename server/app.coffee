@@ -30,7 +30,7 @@ env = app.get('env')
 app.set('port', parseInt(process.env["PORT"], 100) or config.port or 3000)
 
 # Live bundle reloading in development
-if env is not "production"
+if env != "production"
   compiler = webpack(webpackConfig)
   compiler.plugin("done", io.onInvalided)
   webpackDevMiddleware = webpackDevMiddleware compiler,
