@@ -6,16 +6,20 @@
 [![devDependency Status](https://david-dm.org/svagi/Game-of-credit/dev-status.png)](https://david-dm.org/svagi/Game-of-credit#info=devDependencies)
 
 # Installation
-Install global CoffeeScript, Webpack & Webpack-dev-server
 
-    npm install coffee-script -g
-    npm install webpack -g
-    npm install webpack-dev-server -g
+First install [iojs](https://www.google.com).
+The easiest way is with [nvm](https://github.com/creationix/nvm).
 
+---
 Then install all dependencies
 
     npm install
 
-Finally run application in development mode with
+---
+Finally run application in development mode with bundle watcher
 
     npm start
+
+
+## TODO
+- Hot module & server specific files reloading
