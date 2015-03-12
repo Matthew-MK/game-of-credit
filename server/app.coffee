@@ -28,10 +28,14 @@ webpackConfig = require("../webpack.config")
 app = express()
 env = app.get('env')
 app.set('port', parseInt(process.env["PORT"], 100) or config.port or 3000)
+compiler = webpack(webpackConfig(env))
 
-# Live bundle reloading in development
-if env != "production"
-  compiler = webpack(webpackConfig)
+# Webpack bundling
+if env == "production"
+  compiler.run (err) ->
+    console.error(err) if err
+    console.log "Production bundle created."
+else
   compiler.plugin("done", io.onInvalided)
   webpackDevMiddleware = webpackDevMiddleware compiler,
     stats:

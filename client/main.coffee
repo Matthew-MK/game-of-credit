@@ -36,7 +36,6 @@ AppElement = document.getElementById("app")
 
 # Default store state
 defaultState = Map
-  env: AppElement.dataset.env
   socketServer: AppElement.dataset.server
   window: Map
     width: window.innerWidth

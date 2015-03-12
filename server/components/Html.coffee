@@ -53,7 +53,7 @@ Html = React.createClass
           name:"viewport"
           content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
       body {},
-        div {id: "app", "data-env": @props.env, "data-server": @props.socketServer},
+        div {id: "app", "data-server": @props.socketServer},
           @props.children
         scripts[@props.env]
 
