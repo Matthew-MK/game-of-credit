@@ -30,16 +30,15 @@ env = app.get('env')
 app.set('port', parseInt(process.env["PORT"], 100) or config.port or 3000)
 
 # Live bundle reloading in development
-if env is "development"
+if env is not "production"
   compiler = webpack(webpackConfig)
-  webpackDevMiddleware = webpackDevMiddleware(compiler,
+  compiler.plugin("done", io.onInvalided)
+  webpackDevMiddleware = webpackDevMiddleware compiler,
     stats:
       assets: false
       colors: true
       chunks: false
       version: false
-  )
-  compiler.plugin("done", io.onInvalided)
   app.use(webpackDevMiddleware)
 
 # Serve all static files from static folder
