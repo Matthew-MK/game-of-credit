@@ -16,23 +16,36 @@ limitations under the License.
 fs = require("fs")
 path = require("path")
 express = require("express")
+webpack = require("webpack")
+webpackDevMiddleware = require("webpack-dev-middleware")
+
 {config} = require('./../package.json')
 render = require("./render")
+io = require("./sockets")
+webpackConfig = require("../webpack.config")
 
 ### Setup ###
 app = express()
 env = app.get('env')
 app.set('port', parseInt(process.env["PORT"], 100) or config.port or 3000)
 
+# Live bundle reloading in development
+if env is "development"
+  compiler = webpack(webpackConfig)
+  webpackDevMiddleware = webpackDevMiddleware(compiler,
+    stats:
+      assets: false
+      colors: true
+      chunks: false
+      version: false
+  )
+  compiler.plugin("done", io.onInvalided)
+  app.use(webpackDevMiddleware)
+
 # Serve all static files from static folder
 app.use("/static", express.static(path.join(__dirname, "..", "static")))
 
-# Load all resources only from current origin (but not its sub-domains)
-app.use (req, res, next) ->
-  # TODO Content-Security-Policy
-  res.setHeader("X-Frame-Options", "sameorigin")
-  next()
-
+# Redirect all requests to react or respond with 500 if failed
 app.get "*", (req, res) ->
   render {
     env: env

@@ -2,7 +2,7 @@
 
 http = require("http")
 app = require("../server/app")
-sockets = require("../server/sockets")
+io = require("../server/sockets")
 
 # Create HTTP server
 server = http.createServer(app)
@@ -10,7 +10,7 @@ server = http.createServer(app)
 # Listen on provided port, on all network interfaces
 port = app.get("port")
 server.listen(port)
-sockets.listen(server)
+io.listen(server)
 
 # Event listener for HTTP server "listening" event
 server.on "listening", ->

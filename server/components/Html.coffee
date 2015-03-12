@@ -24,7 +24,7 @@ scripts =
     script(key: 1, src: "https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons.js")
     script(key: 2, src: "https://cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.js")
     script(key: 3, src: "https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.4/socket.io.js")
-    script(key: 4, src: "http://localhost:8080/static/build/bundle.js")
+    script(key: 4, src: "bundle.js")
   ]
   production: [
     script(key: 1, src: "https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons.min.js")

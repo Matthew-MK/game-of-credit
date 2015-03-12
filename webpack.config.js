@@ -1,7 +1,8 @@
 module.exports = {
-    entry: './client/main.coffee',
+    entry: __dirname + '/client/main.coffee',
     output: {
-        filename: 'static/build/bundle.js'
+        path: __dirname + "/static/build/",
+        filename: "bundle.js"
     },
     externals: {
         three: "THREE",

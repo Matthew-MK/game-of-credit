@@ -30,10 +30,8 @@
     "darwin"
   ],
   "scripts": {
-    "build": "webpack",
-    "production": "webpack -p && NODE_ENV=production coffee ./bin/www",
-    "dev": "webpack-dev-server --progress --colors --inline -d",
-    "start": "npm run dev & coffee ./bin/www",
+    "dev": "node bin/www",
+    "start": "npm run dev",
     "test": "mocha"
   },
   "dependencies": {
@@ -54,6 +52,6 @@
     "style-loader": "^0.8.3",
     "supertest": "^0.15.0",
     "webpack": "^1.5.3",
-    "webpack-dev-server": "^1.7.0"
+    "webpack-dev-middleware": "^1.0.11"
   }
 }

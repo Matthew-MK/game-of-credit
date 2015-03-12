@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 io = require('socket.io')()
+hash = null
 
 io.on 'connection', (socket) ->
-
   socket.on "data", (data) ->
     socket.broadcast.emit('data', data)
 
@@ -25,5 +25,12 @@ io.on 'connection', (socket) ->
 
   socket.on "disconnect", ->
     socket.broadcast.emit('leave', socket.id)
+
+io.onInvalided = (stats) ->
+  return if hash == stats.hash
+  hash = stats.hash
+  console.error(stats.errors) if stats.errors?
+  console.warn(stats.errors) if stats.warnings?
+  io.sockets.emit("reload", hash)
 
 module.exports = io
