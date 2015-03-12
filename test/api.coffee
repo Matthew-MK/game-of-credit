@@ -6,5 +6,9 @@ req = request(app)
 
 describe "API", ->
   describe "GET /", ->
-    it "should return status code 200", (done) ->
-      req.get("/").expect(200, done)
+    it "should return status code 200", ->
+      req.get("/").expect(200)
+
+  describe "GET /non-exists", ->
+    it "should return status code 200", ->
+      req.get("/non-exists").expect(200)
