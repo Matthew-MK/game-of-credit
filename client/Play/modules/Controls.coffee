@@ -19,7 +19,7 @@ Base = require("./Base")
 {Bullet} = require("./Objects")
 
 actions = require("../../actions")
-store = require("../../store")
+state = require("../../state")
 
 class Controls extends Base
 
@@ -74,7 +74,7 @@ class Controls extends Base
     @animation = "crwalk" if @moved
     @animation = "jump" if @jumped
     @animation = "run" if @moved and @sprinted
-    @animation = "attack" if not store.state.get("player").get("canFire")
+    @animation = "attack" if not state.get().get("player").get("canFire")
 
   getCamera: ->
     @cameraYaw
@@ -146,7 +146,7 @@ class Controls extends Base
     @velocity.x -= @velocity.x * @defaultSpeed * delta
     @velocity.z -= @velocity.z * @defaultSpeed * delta
 
-    fired = store.state.get("player").get("fired")
+    fired = state.get().get("player").get("fired")
     if fired
       @fireBullet()
       actions.playerEndFire()

@@ -13,24 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-"use strict"
+{Map} = require("immutable")
+State = require("../lib/State")
 
-io = require("io")
-React = require("react")
+defaultState = Map
+  gameState: "loading"
+  window: Map
+    width: window.innerWidth
+    height: window.innerHeight
 
-# App reloading
-socket = io.connect()
-socket.on("reload", -> window.location.reload())
+# TODO socketServer
 
-# Normalize & common css
-require("../static/css/normalize.css")
-require("../static/css/common.css")
+module.exports = new State(defaultState)
 
-# Main application component
-App = require("./App")
-
-# Get elements with environment based data from server
-AppElement = document.getElementById("app")
-
-# Render main component
-React.render(App(), AppElement)

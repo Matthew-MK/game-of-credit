@@ -26,7 +26,6 @@ UI = require("./components/UI")
 # Others
 mapping = require("./mapping")
 actions = require("../actions")
-store = require("../store")
 
 {PureRenderMixin} = React["addons"]
 {Map} = Immutable
@@ -37,20 +36,20 @@ require("./component.css")
 
 App = React.createClass
 
-#  mixins: [PureRenderMixin]
+  mixins: [PureRenderMixin]
 
   textures: {}
 
   handleLoading: (item, loaded, total) ->
-    gameState = store.state.get("gameState")
+    gameState = @props.state.get("gameState")
     if loaded == total and gameState is "loading"
       actions.gameStateDidChange("initiating")
       @initiation()
 
   handleClick: (e) ->
-    canFire = store.state.get("player").get("canFire")
-    return if e.target.id != "blocker" or not canFire
+    canFire = @props.state.get("player").get("canFire")
 
+    return if e.target.id != "blocker" or not canFire
     actions.playerDidFire()
     setTimeout(actions.playerCanFire, 16 * 60)
 
@@ -68,13 +67,7 @@ App = React.createClass
     actions.playerInit(player)
     actions.gameStateDidChange("menu")
 
-  ###
-  Invoked once, both on the client and server, immediately before the initial
-  rendering occurs.
-  ###
-  componentWillMount: ->
-    actions.gameStateDidChange("loading")
-
+  componentDidMount: ->
     # Loading textures
     THREE.DefaultLoadingManager.onProgress = @handleLoading
 
@@ -89,8 +82,8 @@ App = React.createClass
         @textures[key] = new THREE.ImageUtils.loadTextureCube(files)
 
   render: ->
-    # Get state from store
-    {state} = store
+
+    {state} = @props
     gameState = state.get("gameState")
 
     switch gameState

@@ -22,11 +22,11 @@ Immutable = require("immutable")
 PlayComponent = require("./Play/component")
 
 # Others
+state = require("./state")
 store = require("./store")
 actions = require("./actions")
 {Map} = Immutable
 {PureRenderMixin} = React["addons"]
-
 
 App = React.createClass
 
@@ -38,10 +38,10 @@ App = React.createClass
   At this point in the lifecycle, the component has a DOM representation.
   ###
   componentDidMount: ->
-    store.on 'change', =>
+    store.init()
+    state.on 'change', =>
       console.time('App re-rendered')
-      @forceUpdate =>
-        console.timeEnd('App re-rendered')
+      @forceUpdate -> console.timeEnd('App re-rendered')
     window.addEventListener('resize', actions.windowDidResize)
 
   ###
@@ -54,6 +54,6 @@ App = React.createClass
 
   render: ->
     # TODO Router instead
-    PlayComponent()
+    PlayComponent(state: state.get())
 
 module.exports = React.createFactory(App)

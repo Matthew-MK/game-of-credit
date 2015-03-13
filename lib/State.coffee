@@ -13,24 +13,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-"use strict"
 
-io = require("io")
-React = require("react")
+events = require("events")
 
-# App reloading
-socket = io.connect()
-socket.on("reload", -> window.location.reload())
+###* Helper class for emitting & storing state changes ###
+class State extends events.EventEmitter
 
-# Normalize & common css
-require("../static/css/normalize.css")
-require("../static/css/common.css")
+  constructor: (state) ->
+    @set(state)
 
-# Main application component
-App = require("./App")
+  get: ->
+    return @val
 
-# Get elements with environment based data from server
-AppElement = document.getElementById("app")
+  set: (state) ->
+    return if state is @val
+    @val = state
+    @emit('change', @val)
 
-# Render main component
-React.render(App(), AppElement)
+
+module.exports = State

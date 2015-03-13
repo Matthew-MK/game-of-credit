@@ -24,11 +24,7 @@ class Sockets extends Base
     @socket.on("data", @onDataUpdate)
     @socket.on("leave", @onLeave)
     @socket.on("death", @onDeath)
-    @socket.on("reload", @onReload)
     setInterval(@sendUpdate, 16)
-
-  onReload: =>
-    window.location.reload()
 
   ###
   Pack data object to binary buffer
