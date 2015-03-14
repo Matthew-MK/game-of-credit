@@ -22,4 +22,4 @@ Finally run application in development mode with bundle watcher
 
 
 ## TODO
-- Hot module & server specific files reloading
+- Hot module reloading
