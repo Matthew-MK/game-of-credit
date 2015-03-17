@@ -11,7 +11,6 @@
     "items": {
       "dirt": "dirt-512.jpg",
       "grass": "grass-512.jpg",
-      "heightMap": "height_map_1024.png",
       "rock": "rock-512.jpg",
       "sand": "sand-512.jpg",
       "skyBox": [
