@@ -19,8 +19,8 @@ Player = require("./Player")
 
 class Sockets extends Base
 
-  init: (dataServer) ->
-    @socket = io.connect(path: dataServer)
+  init: (socketServer) ->
+    @socket = io.connect(path: socketServer)
     @socket.on("data", @onDataUpdate)
     @socket.on("leave", @onLeave)
     @socket.on("death", @onDeath)

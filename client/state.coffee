@@ -21,6 +21,8 @@ defaultState = Map
   window: Map
     width: window.innerWidth
     height: window.innerHeight
+  # TODO not using reading from DOM
+  socketServer: document.getElementById("app").dataset.server
 
 # TODO socketServer
 
