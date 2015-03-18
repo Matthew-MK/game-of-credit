@@ -18,9 +18,10 @@ limitations under the License.
 io = require("io")
 React = require("react")
 
-# App reloading
-socket = io.connect()
-socket.on("reload", -> window.location.reload())
+if _ENVIRONMENT is "development"
+  # App reloading
+  socket = io.connect()
+  socket.on("reload", -> window.location.reload())
 
 # Normalize & common css
 require("../static/css/normalize.css")
