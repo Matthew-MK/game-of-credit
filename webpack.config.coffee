@@ -3,6 +3,7 @@ webpack = require('webpack')
 pkg = require("./package")
 
 makeConfig = (env) ->
+  env = "development" if env is "test"
 
   plugins =
     common: [
