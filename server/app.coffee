@@ -27,7 +27,7 @@ webpackConfig = require("../webpack.config")
 ### Setup ###
 app = express()
 env = app.get('env')
-app.set('port', parseInt(process.env["PORT"], 100) or config.port or 3000)
+app.set('port', process.env["PORT"] or config.port or 3000)
 compiler = webpack(webpackConfig(env))
 
 # Webpack bundling
