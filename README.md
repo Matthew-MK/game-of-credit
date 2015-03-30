@@ -1,5 +1,6 @@
+
 # Game-of-credit
-3D first person shooter
+Online 3D first person shooter experiment. __IN DEVELOPMENT__.
 
 [![Circle CI](https://circleci.com/gh/svagi/Game-of-credit.svg?style=shield&circle)](https://circleci.com/gh/svagi/Game-of-credit)
 [![Dependency Status](https://david-dm.org/svagi/Game-of-credit.png)](https://david-dm.org/svagi/Game-of-credit)
