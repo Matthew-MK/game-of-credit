@@ -76,7 +76,7 @@ export function createModels(textures) {
       receiveShadow: true
     },
     box: {
-      position: [0, 5, 0]
+      position: [30, 7.5, -50]
     }
   };
 
@@ -84,7 +84,7 @@ export function createModels(textures) {
   const wallMesh = new Mesh(geometry.wall, material.wall);
   const meshes = {
     box: new Mesh(
-      new THREE.BoxGeometry(10, 10, 10),
+      new THREE.BoxGeometry(15, 15, 15),
       new THREE.MeshBasicMaterial({color: "red"})
     ),
     frontWall: wallMesh.clone(),

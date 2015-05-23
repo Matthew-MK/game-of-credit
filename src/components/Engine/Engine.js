@@ -7,9 +7,9 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ * Unless required by applicable law || agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES || CONDITIONS OF ANY KIND, either express || implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
@@ -34,8 +34,8 @@ export function createEngine(props) {
     canvasHeight = 0,
     // player
     speed = 20,
-    position = [0, 0, 0],
-    rotation = [0, 0, 0],
+    initialPosition = [0, 0, 0],
+    initialRotation = [0, 0, 0],
     } = props;
 
   const aspect = canvasWidth / canvasHeight;
@@ -45,7 +45,17 @@ export function createEngine(props) {
     down: new THREE.Vector3(0, -1, 0),
     front: new THREE.Vector3(0, 0, -1)
   };
-  const defaultHeight = 10;
+  const intersects = [];
+  const collision = {
+    down: true,
+    front: false,
+    back: false,
+    left: false,
+    right: false
+  };
+  const rotationAngle = Math.PI / 4;
+  const rotationAxe = new THREE.Vector3(0, 1, 0);
+  const defaultHeight = 12;
 
   const renderer = new THREE.WebGLRenderer(props.renderer);
   const scene = new THREE.Scene();
@@ -61,6 +71,7 @@ export function createEngine(props) {
   const models = createModels(props.textures);
 
   var delta = 0.0;
+  var idx = 0;
   var mouse = {
     x: 0,
     y: 0
@@ -73,9 +84,8 @@ export function createEngine(props) {
     SPACE: false
   };
   var isJumping = false;
-  var intersections;
-  var distance;
-  var height;
+  var direction;
+  var height = defaultHeight;
 
   // EVENTS
   const { eventTypes } = emitter;
@@ -94,7 +104,7 @@ export function createEngine(props) {
     }
   });
   emitter.addListener(eventTypes.KEY_DOWN, getKeyFromCode(key =>
-    keys[key] = keys.hasOwnProperty(key)
+      keys[key] = keys.hasOwnProperty(key)
   ));
   emitter.addListener(eventTypes.KEY_UP, getKeyFromCode(key =>
       keys[key] = !keys.hasOwnProperty(key)
@@ -108,9 +118,9 @@ export function createEngine(props) {
 
   // Camera
   cameraYaw.add(cameraPitch);
-  cameraYaw.position.set(...position);
+  cameraYaw.position.set(...initialPosition);
   cameraYaw.position.y += defaultHeight;
-  cameraYaw.rotation.set(...rotation);
+  cameraYaw.rotation.set(...initialRotation);
   scene.add(cameraYaw);
 
   // Lights
@@ -139,23 +149,30 @@ export function createEngine(props) {
       // Gravity
       velocity.y -= 9.823 * delta;
 
+      // y intersect
       rayCaster.far = 1000; // avoid skyBox
       rayCaster.set(cameraYaw.position, rayDirections.down);
-      intersections = rayCaster.intersectObjects(models);
-      distance = intersections[0].distance;
-      height = Math.abs(cameraYaw.position.y - distance) + defaultHeight;
-
+      collision.down = rayCaster.intersectObjects(models)[0];
+      if (collision.down){
+        height = cameraYaw.position.y - collision.down.distance + defaultHeight;
+      }
+      // xz intersects
       rayCaster.far = speed;
-      rayCaster.set(cameraYaw.position, rayDirections.front);
-      intersections = rayCaster.intersectObjects(models);
-      console.log(intersections);
-
+      for (idx = 0, direction = rayDirections.front.clone(); idx < 8; idx++) {
+        direction.applyAxisAngle(rotationAxe, idx === 0 ? cameraYaw.rotation.y : rotationAngle);
+        rayCaster.set(cameraYaw.position, direction);
+        intersects[idx] = !!rayCaster.intersectObjects(models)[0];
+      }
+      collision.front = intersects[7] || intersects[0] || intersects[1];
+      collision.back = intersects[3] || intersects[4] || intersects[5];
+      collision.left =  intersects[5] || intersects[6] || intersects[7];
+      collision.right = intersects[1] || intersects[2] || intersects[3];
 
       // Player move
-      if (keys.W) velocity.z -= speed * delta;
-      if (keys.S) velocity.z += speed * delta;
-      if (keys.A) velocity.x -= speed * delta;
-      if (keys.D) velocity.x += speed * delta;
+      if (keys.W && !collision.front) velocity.z -= speed * delta;
+      if (keys.S && !collision.back) velocity.z += speed * delta;
+      if (keys.A && !collision.left) velocity.x -= speed * delta;
+      if (keys.D && !collision.right) velocity.x += speed * delta;
       if (keys.SPACE && !isJumping) {
         velocity.y += 3.0;
         isJumping = true;
@@ -186,9 +203,9 @@ export function createEngine(props) {
       requestAnimationFrame(animationFrame);
     },
     resize(size) {
-      camera.aspect = size.width / size.height;
+      camera.aspect = size.canvasWidth / size.canvasHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize(size.width, size.height);
+      renderer.setSize(size.canvasWidth, size.canvasHeight);
     }
   };
 }
