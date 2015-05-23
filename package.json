@@ -1,12 +1,13 @@
 {
   "name": "Game-of-credit",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "3D first person shooter in web browser",
   "author": "Jan Svager <jan@svager.cz> (http://svager.cz)",
   "contributors": [
     "Michael Muller"
   ],
-  "license": "Apache License 2.0",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/svagi/Game-of-credit",
   "repository": {
     "type": "git",
     "url": "git@github.com:svagi/Game-of-credit.git"
@@ -15,11 +16,14 @@
     "url": "https://github.com/svagi/Game-of-credit/issues"
   },
   "keywords": [
-    "WebGL",
-    "Three.js",
+    "webgl",
+    "threejs",
+    "reactjs",
+    "websockets",
     "3D",
     "game",
-    "credit"
+    "online",
+    "multiplayer"
   ],
   "bin": "./bin/www",
   "config": {
@@ -30,27 +34,53 @@
     "darwin"
   ],
   "scripts": {
-    "dev": "node bin/www",
-    "start": "npm run dev",
-    "test": "mocha"
+    "lint": "eslint ./src",
+    "start": "iojs bin/www",
+    "test": "eslint ./src && jest"
+  },
+  "jest": {
+    "rootDir": "./src",
+    "scriptPreprocessor": "../node_modules/babel-jest",
+    "testFileExtensions": [
+      "test.js"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json"
+    ],
+    "unmockedModulePathPatterns": [
+      "react",
+      "react/addons"
+    ]
   },
   "dependencies": {
-    "coffee-loader": "^0.7.2",
-    "coffee-script": "^1.9.0",
-    "css-loader": "^0.9.1",
-    "express": "^4.11.0",
-    "flux": "^2.0.1",
-    "immutable": "^3.6.4",
+    "babel": "^5.3.1",
+    "babel-runtime": "^5.3.1",
+    "compression": "^1.4.4",
+    "express": "^4.12.3",
+    "flux": "^2.0.3",
+    "immutable": "^3.7.2",
+    "react": "^0.13.3",
+    "react-document-title": "^1.0.2",
+    "react-pure-render": "^1.0.1",
+    "react-router": "^0.13.3",
+    "socket.io": "^1.3.5",
+    "socket.io-client": "^1.3.5"
+  },
+  "devDependencies": {
+    "babel-core": "^5.3.1",
+    "babel-eslint": "^3.1.7",
+    "babel-loader": "^5.0.0",
+    "css-loader": "^0.12.0",
+    "eslint": "^0.21.0",
+    "eslint-plugin-react": "^2.2.0",
+    "extract-text-webpack-plugin": "^0.8.0",
     "json-loader": "^0.5.1",
-    "keymaster": "^1.6.2",
-    "mocha": "^2.1.0",
-    "piping": "^0.1.7",
-    "react": "^0.12.2",
-    "react-router": "^0.12.4",
-    "socket.io": "^1.3.4",
-    "style-loader": "^0.8.3",
-    "supertest": "^0.15.0",
-    "webpack": "^1.5.3",
-    "webpack-dev-middleware": "^1.0.11"
+    "node-libs-browser": "^0.5.0",
+    "react-hot-loader": "^1.2.7",
+    "style-loader": "^0.12.2",
+    "webpack": "^1.9.5",
+    "webpack-dev-server": "^1.8.2"
   }
 }

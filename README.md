@@ -6,21 +6,27 @@ Online 3D first person shooter experiment. __IN DEVELOPMENT__.
 [![Dependency Status](https://david-dm.org/svagi/Game-of-credit.png)](https://david-dm.org/svagi/Game-of-credit)
 [![devDependency Status](https://david-dm.org/svagi/Game-of-credit/dev-status.png)](https://david-dm.org/svagi/Game-of-credit#info=devDependencies)
 
-# Installation
+***
+## Install
+1. Install iojs [iojs](https://www.google.com)
+2. Clone this repo `git clone git@github.com:svagi/Game-of-credit.git`
+3. Change directory `cd Game-of-credit`
+3. Install all dependencies `npm install`
 
-First install [iojs](https://www.google.com).
-The easiest way is with [nvm](https://github.com/creationix/nvm).
+## Run it locally
+`npm start`
 
----
-Then install all dependencies
+Runs server in `development` mode and start watching for file changes.
 
-    npm install
+## Tests
+`npm test`
 
----
-Finally run application in development mode with bundle watcher
+Runs all test along with linting.
 
-    npm start
+## Linting
+`npm run lint`
 
+Runs [eslint](https://github.com/eslint/eslint) for JavaScript source files.
 
-## TODO
-- Hot module reloading
+## License
+[Apache 2](/LICENSE)

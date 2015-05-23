@@ -1,0 +1,34 @@
+#index-page {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#index-page h1 {
+    font-size: 4em;
+    margin: 0;
+}
+#index-page h1 .version {
+    font-size: .3em;
+    padding-left: .3em;
+}
+#index-page h2 {
+    font-size: 2em;
+    margin-bottom: 1em;
+}
+#index-page .button {
+    color: white;
+    background-color: #d9534f;
+    padding: .8em .9em;
+    border-radius: .4em;
+    text-decoration: none;
+}
+#index-page p {
+    color: #999;
+}
+#info a {
+    cursor: pointer;
+}

@@ -1,0 +1,19 @@
+#loading {
+    z-index: 10;
+    background-color: white;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#loading progress {
+    width: 40%;
+}
