@@ -36,7 +36,7 @@ function createStore(initialState) {
   let state = Immutable.fromJS(initialState);
 
   // public
-  const store = {
+  return {
 
     getState() {
       return state;
@@ -58,6 +58,7 @@ function createStore(initialState) {
      * @return {Object} new store
      */
     createSubStore(path, spec) {
+      const cursor = this.cursor(path);
       return {
         __proto__: spec,
 
@@ -68,12 +69,11 @@ function createStore(initialState) {
           emitter.removeListener(CHANGE_EVENT, callback);
         },
         get state() {
-          return store.cursor(path)();
+          return cursor();
         }
       };
     }
   };
-  return store;
 }
 
 export default createStore(isBrowser ? window._STATE_ : getInitialState());
