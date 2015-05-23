@@ -87,11 +87,7 @@ export default class Engine extends Component {
     this.setState(size, () => this.engine.resize(size));
   }
 
-  handleClick() {
-    console.log("HOVNO");
-  }
-
   render() {
-    return <canvas onClick={this.handleClick} id="engine" ref="engine"/>;
+    return <canvas id="engine" ref="engine"/>;
   }
 }

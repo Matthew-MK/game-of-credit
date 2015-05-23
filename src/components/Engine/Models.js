@@ -44,11 +44,12 @@ export function createModels(textures) {
     }),
     skyBox: (() => {
       const shader = THREE.ShaderLib.cube;
-      shader.uniforms.tCube.value = textures.skyBox;
+      var uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+      uniforms["tCube"].value = textures.skyBox;
       return new THREE.ShaderMaterial({
         fragmentShader: shader.fragmentShader,
         vertexShader: shader.vertexShader,
-        uniforms: shader.uniforms,
+        uniforms: uniforms,
         depthWrite: false,
         side: THREE.BackSide
       });

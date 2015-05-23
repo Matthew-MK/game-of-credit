@@ -55,8 +55,6 @@ export function createEngine(props) {
 
   const models = createModels(props.textures);
 
-  console.log(props.socket)
-
   var delta = 0;
   var mouse = {
     x: 0,
@@ -70,6 +68,7 @@ export function createEngine(props) {
     SPACE: false
   };
   var distance;
+  var intersections;
 
   function onClick() {
     console.log("click");
@@ -156,8 +155,9 @@ export function createEngine(props) {
 
       rayCaster.set(cameraYaw.position, rayDirection);
       rayCaster.far = 1000; // avoid skybox
-      distance = rayCaster.intersectObjects(models)[0].distance;
-      console.log(Math.abs(Math.round(cameraYaw.position.y - distance)) + 10)
+      intersections = rayCaster.intersectObjects(models);
+      distance = intersections[0].distance;
+//      console.log(Math.abs(Math.round(cameraYaw.position.y - distance)) + 10)
 
 
       // Player move
