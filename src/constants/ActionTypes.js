@@ -19,11 +19,6 @@
 import keyMirror from "react/lib/keyMirror";
 
 export default keyMirror({
-  // play store
   POINTER_LOCK_CHANGE: null,
-  LOADING_PROGRESS_CHANGE: null,
-  // event store
-  MOUSE_MOVE_EVENT: null,
-  KEY_DOWN_EVENT: null,
-  KEY_UP_EVENT: null
+  LOADING_PROGRESS_CHANGE: null
 });
