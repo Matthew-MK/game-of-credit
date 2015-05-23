@@ -20,17 +20,6 @@ import Router from "react-router";
 import routes from "./routes";
 import io from "socket.io-client";
 
-var lastUsedHeap = 0;  // remember the heap size
-
-function checkMemory() {
-  if (window.performance.memory.usedJSHeapSize < lastUsedHeap) {
-    console.log("Garbage collected!");
-  }
-  lastUsedHeap = window.performance.memory.usedJSHeapSize;
-}
-
-setInterval(checkMemory, 100);
-
 const socket = io();
 
 const initialState = window._STATE_;
