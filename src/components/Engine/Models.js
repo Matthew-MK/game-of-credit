@@ -17,17 +17,12 @@
  **/
 
 /* global THREE */
+import { repeatTexture } from "./Utils";
 
 export function createModels(textures) {
 
   const { Mesh } = THREE;
   const { PI } = Math;
-
-  function repeatTexture(texture, repeat) {
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(...repeat);
-    return texture;
-  }
 
   const geometry = {
     ground: new THREE.PlaneBufferGeometry(1024, 1024),
@@ -81,7 +76,7 @@ export function createModels(textures) {
       receiveShadow: true
     },
     box: {
-      position: [0, 20, 0]
+      position: [0, 5, 0]
     }
   };
 

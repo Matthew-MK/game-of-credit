@@ -33,8 +33,8 @@ export default class Engine extends Component {
     this.unmounted = false;
     this.handleResize = this.handleResize.bind(this);
     this.state = {
-      width: 0,
-      height: 0
+      canvasWidth: 0,
+      canvasHeight: 0
     };
   }
 
@@ -52,8 +52,8 @@ export default class Engine extends Component {
       renderer: {
         canvas: React.findDOMNode(this.refs.engine)
       },
-      width: window.innerWidth,
-      height: window.innerHeight
+      canvasWidth: window.innerWidth,
+      canvasHeight: window.innerHeight
     });
     this.engine.animate(() => {
       if (this.unmounted) return;
@@ -81,8 +81,8 @@ export default class Engine extends Component {
 
   handleResize() {
     const size = {
-      width: window.innerWidth,
-      height: window.innerHeight
+      canvasWidth: window.innerWidth,
+      canvasHeight: window.innerHeight
     };
     this.setState(size, () => this.engine.resize(size));
   }

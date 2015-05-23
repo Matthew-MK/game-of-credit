@@ -18,6 +18,7 @@
 
 /* global THREE */
 import { createModels } from "./Models";
+import { getKeyFromCode } from "./Utils";
 
 /**
  * Game engine factory
@@ -29,18 +30,22 @@ export function createEngine(props) {
   const {
     emitter,
     // canvas
-    width = 0,
-    height = 0,
+    canvasWidth = 0,
+    canvasHeight = 0,
     // player
     speed = 20,
     position = [0, 0, 0],
     rotation = [0, 0, 0],
     } = props;
 
-  const aspect = width / height;
+  const aspect = canvasWidth / canvasHeight;
   const velocity = new THREE.Vector3();
   const rayCaster = new THREE.Raycaster();
-  const rayDirection = new THREE.Vector3(0, -1, 0);
+  const rayDirections = {
+    down: new THREE.Vector3(0, -1, 0),
+    front: new THREE.Vector3(0, 0, -1)
+  };
+  const defaultHeight = 10;
 
   const renderer = new THREE.WebGLRenderer(props.renderer);
   const scene = new THREE.Scene();
@@ -55,7 +60,7 @@ export function createEngine(props) {
 
   const models = createModels(props.textures);
 
-  var delta = 0;
+  var delta = 0.0;
   var mouse = {
     x: 0,
     y: 0
@@ -67,61 +72,44 @@ export function createEngine(props) {
     D: false,
     SPACE: false
   };
-  var distance;
+  var isJumping = false;
   var intersections;
+  var distance;
+  var height;
 
-  function onClick() {
-    console.log("click");
-  }
+  // EVENTS
+  const { eventTypes } = emitter;
 
-  function onMouseMove({x, y}) {
-    if (mouse.x !== x || mouse.y !== y) {
-      mouse = {x, y};
+  emitter.addListener(eventTypes.CLICK, () => {
+
+  });
+  emitter.addListener(eventTypes.MOUSE_MOVE, newMouse => {
+    if (mouse.x !== newMouse.x || mouse.y !== newMouse.y) {
+      mouse = newMouse;
       cameraYaw.rotation.y -= mouse.x * 0.002;
       cameraPitch.rotation.x -= mouse.y * 0.002;
       cameraPitch.rotation.x = Math.max(
         -Math.PI / 2, Math.min(Math.PI / 2, cameraPitch.rotation.x)
       );
     }
-  }
-
-  function codeToKey(keyCode) {
-    const char = String.fromCharCode(keyCode);
-    switch (char) {
-      case " ":
-        return "SPACE";
-      default:
-        return char;
-    }
-  }
-
-  function onKeyDown(keyCode) {
-    const key = codeToKey(keyCode);
-    if (keys.hasOwnProperty(key)) keys[key] = true;
-  }
-
-  function onKeyUp(keyCode) {
-    const key = String.fromCharCode(keyCode);
-    if (keys.hasOwnProperty(key)) keys[key] = false;
-  }
-
-  // Listeners
-  const { eventTypes } = emitter;
-  emitter.addListener(eventTypes.CLICK, onClick);
-  emitter.addListener(eventTypes.MOUSE_MOVE, onMouseMove);
-  emitter.addListener(eventTypes.KEY_DOWN, onKeyDown);
-  emitter.addListener(eventTypes.KEY_UP, onKeyUp);
+  });
+  emitter.addListener(eventTypes.KEY_DOWN, getKeyFromCode(key =>
+    keys[key] = keys.hasOwnProperty(key)
+  ));
+  emitter.addListener(eventTypes.KEY_UP, getKeyFromCode(key =>
+      keys[key] = !keys.hasOwnProperty(key)
+  ));
 
   // INITIALIZATION
 
   // Renderer
-  renderer.setSize(width, height);
+  renderer.setSize(canvasWidth, canvasHeight);
   renderer.shadowMapEnabled = true;
 
   // Camera
   cameraYaw.add(cameraPitch);
   cameraYaw.position.set(...position);
-  cameraYaw.position.y += 10;
+  cameraYaw.position.y += defaultHeight;
   cameraYaw.rotation.set(...rotation);
   scene.add(cameraYaw);
 
@@ -139,8 +127,6 @@ export function createEngine(props) {
   // Models
   models.forEach(mesh => scene.add(mesh));
 
-  console.log(models[0]);
-
   // public
   return {
 
@@ -153,11 +139,16 @@ export function createEngine(props) {
       // Gravity
       velocity.y -= 9.823 * delta;
 
-      rayCaster.set(cameraYaw.position, rayDirection);
-      rayCaster.far = 1000; // avoid skybox
+      rayCaster.far = 1000; // avoid skyBox
+      rayCaster.set(cameraYaw.position, rayDirections.down);
       intersections = rayCaster.intersectObjects(models);
       distance = intersections[0].distance;
-//      console.log(Math.abs(Math.round(cameraYaw.position.y - distance)) + 10)
+      height = Math.abs(cameraYaw.position.y - distance) + defaultHeight;
+
+      rayCaster.far = speed;
+      rayCaster.set(cameraYaw.position, rayDirections.front);
+      intersections = rayCaster.intersectObjects(models);
+      console.log(intersections);
 
 
       // Player move
@@ -165,21 +156,24 @@ export function createEngine(props) {
       if (keys.S) velocity.z += speed * delta;
       if (keys.A) velocity.x -= speed * delta;
       if (keys.D) velocity.x += speed * delta;
+      if (keys.SPACE && !isJumping) {
+        velocity.y += 3.0;
+        isJumping = true;
+      }
 
       cameraYaw.translateX(velocity.x);
       cameraYaw.translateY(velocity.y);
       cameraYaw.translateZ(velocity.z);
 
       // Ground check
-      if (cameraYaw.position.y < 10){
-        velocity.y = 0;
-        cameraYaw.position.y = 10;
+      if (cameraYaw.position.y < height) {
+        velocity.y = 0.0;
+        cameraYaw.position.y = height;
+        isJumping = false;
       }
 
       velocity.x -= velocity.x * speed * delta;
       velocity.z -= velocity.z * speed * delta;
-
-
 
       renderer.render(scene, camera);
     },
