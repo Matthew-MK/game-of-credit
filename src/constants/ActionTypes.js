@@ -16,9 +16,7 @@
  * @providesModule ActionTypes
  **/
 
-import keyMirror from "react/lib/keyMirror";
-
-export default keyMirror({
-  POINTER_LOCK_CHANGE: null,
-  LOADING_PROGRESS_CHANGE: null
+export default Object.freeze({
+  POINTER_LOCK_CHANGE: "pointerLockChange",
+  LOADING_PROGRESS_CHANGE: "loadingProgressChange"
 });

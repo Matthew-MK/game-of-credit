@@ -15,11 +15,10 @@
  *
  * @providesModule EventTypes
  **/
-import keyMirror from "react/lib/keyMirror";
 
-export default keyMirror({
-  CLICK: null,
-  MOUSE_MOVE: null,
-  KEY_DOWN: null,
-  KEY_UP: null
+export default Object.freeze({
+  CLICK: "click",
+  MOUSE_MOVE: "mousemove",
+  KEY_DOWN: "keydown",
+  KEY_UP: "keyup"
 });
