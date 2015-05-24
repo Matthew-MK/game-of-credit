@@ -83,8 +83,7 @@ const development = {
     ]
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.HotModuleReplacementPlugin()
   ]
 };
 
@@ -115,14 +114,10 @@ const production = {
     ]
   },
   plugins: [
+    // set environment based on process.env[key]
     new webpack.EnvironmentPlugin("NODE_ENV"),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.DefinePlugin({
-      "process.env": {
-        "NODE_ENV": JSON.stringify("production")
-      }
-    }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {warnings: false},
       sourceMap: false

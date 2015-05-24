@@ -173,7 +173,7 @@ export function createEngine(props) {
       if (keys.W && !collision.front) {
         velocity.z -= deltaSpeed;
       }
-      if (keys.S && !collision.back)  {
+      if (keys.S && !collision.back) {
         velocity.z += deltaSpeed;
       }
       if (keys.A && !collision.left) {
