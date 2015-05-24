@@ -20,7 +20,7 @@ import webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
 import webpackConfig from "../../webpack.config";
 
-export default function generateBundle(env) {
+export function generateBundle(env) {
   const config = webpackConfig(env);
   const compiler = webpack(config);
 
@@ -37,10 +37,9 @@ export default function generateBundle(env) {
       console.log("Production bundle created.");
     });
   } else {
-    const devServerConfig = config.devServer;
-    const {port, host} = devServerConfig;
-    new WebpackDevServer(compiler, devServerConfig)
-      .listen(port, host, err => {
+    const devConfig = config.devServer;
+    new WebpackDevServer(compiler, devConfig)
+      .listen(devConfig.port, devConfig.host, err => {
         if (err) console.error(err);
         console.log("Dev server listening on 8888");
       });

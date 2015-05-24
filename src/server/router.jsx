@@ -29,7 +29,7 @@ import {DEV_SERVER_URL} from "../../webpack.config";
  * @param req Request
  * @param res Response
  */
-export default function (req:Object, res:Object){
+export default function (req, res){
   Router.run(routes, req.originalUrl, (Handler, routerState) => {
     const env = req.app.get("env");
     const state = getInitialState();

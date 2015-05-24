@@ -23,7 +23,7 @@ import socketIO from "socket.io";
 import {config} from "../package.json";
 import router from "./server/router";
 import routes from "./routes.jsx";
-import generateBundle from "./server/webpack.compiler";
+import { generateBundle } from "./server/webpack.compiler";
 import sitemapRoute from "./components/Sitemap/sitemapRoute";
 import "./dispatcher.js";
 

@@ -55,7 +55,7 @@ export function createEngine(props) {
   };
   const rotationAngle = Math.PI / 4;
   const rotationAxe = new THREE.Vector3(0, 1, 0);
-  const defaultHeight = 12;
+  const defaultHeight = 15;
 
   const renderer = new THREE.WebGLRenderer(props.renderer);
   const scene = new THREE.Scene();
@@ -71,6 +71,7 @@ export function createEngine(props) {
   const models = createModels(props.textures);
 
   var delta = 0.0;
+  var deltaSpeed;
   var idx = 0;
   var mouse = {
     x: 0,
@@ -85,7 +86,7 @@ export function createEngine(props) {
   };
   var isJumping = false;
   var direction;
-  var height = defaultHeight;
+  var height;
 
   // EVENTS
   const { eventTypes } = emitter;
@@ -145,6 +146,7 @@ export function createEngine(props) {
 
     render() {
       delta = clock.getDelta();
+      deltaSpeed = speed * delta;
 
       // Gravity
       velocity.y -= 9.823 * delta;
@@ -153,9 +155,8 @@ export function createEngine(props) {
       rayCaster.far = 1000; // avoid skyBox
       rayCaster.set(cameraYaw.position, rayDirections.down);
       collision.down = rayCaster.intersectObjects(models)[0];
-      if (collision.down){
-        height = cameraYaw.position.y - collision.down.distance + defaultHeight;
-      }
+      height = height ? cameraYaw.position.y - collision.down.distance + defaultHeight : defaultHeight;
+
       // xz intersects
       rayCaster.far = speed;
       for (idx = 0, direction = rayDirections.front.clone(); idx < 8; idx++) {
@@ -165,14 +166,22 @@ export function createEngine(props) {
       }
       collision.front = intersects[7] || intersects[0] || intersects[1];
       collision.back = intersects[3] || intersects[4] || intersects[5];
-      collision.left =  intersects[5] || intersects[6] || intersects[7];
+      collision.left = intersects[5] || intersects[6] || intersects[7];
       collision.right = intersects[1] || intersects[2] || intersects[3];
 
       // Player move
-      if (keys.W && !collision.front) velocity.z -= speed * delta;
-      if (keys.S && !collision.back) velocity.z += speed * delta;
-      if (keys.A && !collision.left) velocity.x -= speed * delta;
-      if (keys.D && !collision.right) velocity.x += speed * delta;
+      if (keys.W && !collision.front) {
+        velocity.z -= deltaSpeed;
+      }
+      if (keys.S && !collision.back)  {
+        velocity.z += deltaSpeed;
+      }
+      if (keys.A && !collision.left) {
+        velocity.x -= deltaSpeed;
+      }
+      if (keys.D && !collision.right) {
+        velocity.x += deltaSpeed;
+      }
       if (keys.SPACE && !isJumping) {
         velocity.y += 3.0;
         isJumping = true;
@@ -189,15 +198,15 @@ export function createEngine(props) {
         isJumping = false;
       }
 
-      velocity.x -= velocity.x * speed * delta;
-      velocity.z -= velocity.z * speed * delta;
+      velocity.x -= velocity.x * deltaSpeed;
+      velocity.z -= velocity.z * deltaSpeed;
 
       renderer.render(scene, camera);
     },
     animate(callback) {
       const animationFrame = () => {
         this.render();
-        callback();
+        if (callback !== undefined) callback();
         return requestAnimationFrame(animationFrame);
       };
       requestAnimationFrame(animationFrame);

@@ -17,6 +17,7 @@
  **/
 
 import React, { Component, PropTypes } from "react";
+import ReactUpdates from "react/lib/ReactUpdates";
 import { createEngine } from "./Engine";
 
 /**
@@ -55,10 +56,7 @@ export default class Engine extends Component {
       canvasWidth: window.innerWidth,
       canvasHeight: window.innerHeight
     });
-    this.engine.animate(() => {
-      if (this.unmounted) return;
-      this.forceUpdate();
-    });
+    this.engine.animate();
   }
 
   /**
