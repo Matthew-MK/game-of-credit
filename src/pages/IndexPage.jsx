@@ -21,16 +21,15 @@ import Title from "react-document-title";
 import { Link } from "react-router";
 import { isBrowser } from "../utils/ExecutionEnvironment";
 
+if (isBrowser) require("./IndexPage.css");
+
 export default function(props) {
-
-  if (isBrowser) require("./IndexPage.css");
-
   return {
     render() {
       const { version, githubLink } = props.initialState;
       return (
         <Title title="Game of Credit">
-          <div id="index-page">
+          <div id="index-page" className="center">
             <h1>Game of Credit
               <small className="version">v{version}</small>
             </h1>

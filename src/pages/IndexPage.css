@@ -1,10 +1,6 @@
 #index-page {
-    display: flex;
     width: 100%;
     height: 100%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
 }
 
 #index-page h1 {
@@ -28,7 +24,4 @@
 }
 #index-page p {
     color: #999;
-}
-#info a {
-    cursor: pointer;
 }

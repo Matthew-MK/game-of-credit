@@ -16,7 +16,7 @@
  * @providesModule Loading
  **/
 
-import React, { Component, PropTypes } from "react";
+import React, { PropTypes } from "react";
 import { isBrowser } from "../../utils/ExecutionEnvironment";
 
 if (isBrowser) require("./Loading.css");
@@ -24,16 +24,18 @@ if (isBrowser) require("./Loading.css");
 /**
  * @class Loading
  */
-export default class Loading extends Component {
+export default class Loading {
   static propTypes = {
     progress: PropTypes.number.isRequired
   };
 
   render() {
+    const { progress } = this.props;
+
     return (
-      <div id="loading">
+      <div id="loading" className="center">
         <div>Loading...</div>
-        <progress value={this.props.progress} max="100"/>
+        <progress value={progress} max="100"/>
       </div>
     );
   }
