@@ -18,17 +18,19 @@
 
 /* global THREE */
 import { repeatTexture } from "./Utils";
+import { createMonster } from "./Monster";
 
 export function createMeshes(assets) {
 
   const { Mesh } = THREE;
   const { PI } = Math;
-  const {textures, texturesCube, models } = assets;
+  const { textures, texturesCube, models } = assets;
 
   const geometry = {
     ground: new THREE.PlaneBufferGeometry(1024, 1024),
     wall: new THREE.PlaneBufferGeometry(1024, 128),
-    skyBox: new THREE.BoxGeometry(5000, 5000, 5000)
+    skyBox: new THREE.BoxGeometry(5000, 5000, 5000),
+    monsterBody: models.ratamahattaBody[0]
   };
 
   const material = {
@@ -49,7 +51,8 @@ export function createMeshes(assets) {
         depthWrite: false,
         side: THREE.BackSide
       });
-    })()
+    })(),
+    monsterBody: new THREE.MeshFaceMaterial(models.ratamahattaBody[1])
   };
 
   const mapping = {
@@ -78,6 +81,10 @@ export function createMeshes(assets) {
     },
     box: {
       position: [30, 7.5, -50]
+    },
+    monster: {
+      scale: [0.5, 0.5, 0.5],
+      position: [30, 12, -100]
     }
   };
 
@@ -93,17 +100,37 @@ export function createMeshes(assets) {
     rightWall: wallMesh.clone(),
     backWall: wallMesh.clone(),
     ground: new Mesh(geometry.ground, material.grass),
-    skyBox: new Mesh(geometry.skyBox, material.skyBox)
+    skyBox: new Mesh(geometry.skyBox, material.skyBox),
+    monster: createMonster({
+      body: {
+        model: models.ratamahattaBody,
+        textures: textures.ratamahattaBody
+      },
+      weapon: {
+        model: models.ratamahattaWeapon,
+        textures: textures.ratamahattaWeapon
+      }
+    }).monster
   };
 
   Object.keys(mapping).forEach(key => {
     const mesh = meshes[key];
-    const { position, rotation, castShadow, receiveShadow } = mapping[key];
+    const { position, rotation, scale, castShadow, receiveShadow } = mapping[key];
     if (position) mesh.position.set(...position);
     if (rotation) mesh.rotation.set(...rotation);
+    if (scale) mesh.scale.set(...scale);
     if (castShadow) mesh.castShadow = castShadow;
     if (receiveShadow) mesh.receiveShadow = receiveShadow;
+
   });
-  return Object.keys(meshes).map(key => meshes[key]);
+
+  return {
+    items: Object.keys(meshes).map(key => meshes[key]),
+    update(delta) {
+      meshes.monster.children.forEach(child =>
+        child.updateAnimation(delta * 1000)
+      );
+    }
+  };
 }
 

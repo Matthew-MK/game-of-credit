@@ -57,7 +57,7 @@ export function createEngine(props) {
   };
   const rotationAngle = Math.PI / 4;
   const rotationAxe = new THREE.Vector3(0, 1, 0);
-  const defaultHeight = 15;
+  const defaultHeight = 20;
 
   const renderer = new THREE.WebGLRenderer(props.renderer);
   const scene = new THREE.Scene();
@@ -128,6 +128,9 @@ export function createEngine(props) {
   renderer.setSize(canvasWidth, canvasHeight);
   renderer.shadowMapEnabled = true;
 
+  // no warnings
+  // renderer.context.getProgramInfoLog = function () { return '' };
+
   // Camera
   cameraYaw.add(cameraPitch);
   cameraYaw.position.set(...initialPosition);
@@ -147,7 +150,7 @@ export function createEngine(props) {
   scene.add(directionalLight);
 
   // Meshes
-  meshes.forEach(mesh => scene.add(mesh));
+  meshes.items.forEach(mesh => scene.add(mesh));
 
   // public
   return {
@@ -165,7 +168,7 @@ export function createEngine(props) {
       // y intersect
       rayCaster.far = 1000; // avoid skyBox
       rayCaster.set(cameraYaw.position, rayDirections.down);
-      collision.down = rayCaster.intersectObjects(meshes)[0];
+      collision.down = rayCaster.intersectObjects(meshes.items)[0];
       height = height ? cameraYaw.position.y - collision.down.distance + defaultHeight : defaultHeight;
 
       // xz intersects
@@ -173,7 +176,7 @@ export function createEngine(props) {
       for (idx = 0, direction = rayDirections.front.clone(); idx < 8; idx++) {
         direction.applyAxisAngle(rotationAxe, idx === 0 ? cameraYaw.rotation.y : rotationAngle);
         rayCaster.set(cameraYaw.position, direction);
-        intersects[idx] = !!rayCaster.intersectObjects(meshes)[0];
+        intersects[idx] = !!rayCaster.intersectObjects(meshes.items)[0];
       }
       collision.front = intersects[7] || intersects[0] || intersects[1];
       collision.back = intersects[3] || intersects[4] || intersects[5];
@@ -212,6 +215,7 @@ export function createEngine(props) {
       velocity.x -= velocity.x * deltaSpeed;
       velocity.z -= velocity.z * deltaSpeed;
 
+      meshes.update(delta);
       renderer.render(scene, camera);
     },
     animate(callback) {
