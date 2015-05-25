@@ -16,14 +16,14 @@
     "url": "https://github.com/svagi/Game-of-credit/issues"
   },
   "keywords": [
-    "webgl",
-    "threejs",
-    "reactjs",
-    "websockets",
     "3D",
     "game",
+    "multiplayer",
     "online",
-    "multiplayer"
+    "reactjs",
+    "threejs",
+    "webgl",
+    "websockets"
   ],
   "bin": "./bin/www",
   "config": {

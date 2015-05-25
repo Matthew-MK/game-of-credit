@@ -130,15 +130,15 @@ export function createPacker(scheme) {
     pack(packet) {
       const buffer = new ArrayBuffer(totalSize);
 
-      var item;
-      var length;
-      var TypeArray;
-      var typeArray;
+      var dataIdx = 0;
       var offset = 0;
 
-      var schemeIdx;
-      var dataIdx = 0;
       var arrayIdx;
+      var item;
+      var length;
+      var schemeIdx;
+      var TypeArray;
+      var typeArray;
 
       // use imperative "for" instead of "forEach" for extra performance
       for (schemeIdx = 0; schemeIdx < schemeLength; schemeIdx++) {
@@ -159,19 +159,19 @@ export function createPacker(scheme) {
      * @param buffer {ArrayBuffer}
      * @return {Array} packet
      */
-    unpack(buffer) {
+      unpack(buffer) {
 
+      var end = 0;
       var packet = [];
       var start = 0;
-      var end = 0;
 
       var item;
       var length;
       var TypeArray;
       var typeArray;
 
-      var schemeIdx;
       var arrayIdx;
+      var schemeIdx;
 
       for (schemeIdx = 0; schemeIdx < schemeLength; schemeIdx++) {
         item = scheme[schemeIdx];
