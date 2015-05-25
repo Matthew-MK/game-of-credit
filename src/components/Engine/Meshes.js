@@ -19,10 +19,11 @@
 /* global THREE */
 import { repeatTexture } from "./Utils";
 
-export function createModels(textures) {
+export function createMeshes(assets) {
 
   const { Mesh } = THREE;
   const { PI } = Math;
+  const {textures, texturesCube, models } = assets;
 
   const geometry = {
     ground: new THREE.PlaneBufferGeometry(1024, 1024),
@@ -40,7 +41,7 @@ export function createModels(textures) {
     skyBox: (() => {
       const shader = THREE.ShaderLib.cube;
       var uniforms = THREE.UniformsUtils.clone(shader.uniforms);
-      uniforms["tCube"].value = textures.skyBox;
+      uniforms["tCube"].value = texturesCube.skyBox;
       return new THREE.ShaderMaterial({
         fragmentShader: shader.fragmentShader,
         vertexShader: shader.vertexShader,

@@ -20,7 +20,7 @@ import React, { PropTypes } from "react";
 import Title from "react-document-title";
 import EventEmitter from "events";
 import connectToStores from "../utils/ConnectToStores";
-import { loadTextures } from "../components/Engine/Textures";
+import { loadAssets } from "../components/Engine/Loaders";
 import { isBrowser } from "../utils/ExecutionEnvironment";
 import Blocker from "../components/Blocker/Blocker.jsx";
 import Loading from "../components/Loading/Loading.jsx";
@@ -59,12 +59,45 @@ export default class PlayPage {
     this.handleKeyUp = this.handleKeyUp.bind(this);
 
     if (isBrowser) {
-      this.textures = loadTextures("/static/textures", (item, loaded, total) => {
+
+      const config = {
+        textures: {
+          bricks: "static/textures/materials/bricks.jpg",
+          grass: "static/textures/materials/grass-512.jpg",
+          rock: "static/textures/materials/rock-512.jpg",
+          wall: "static/textures/materials/wall.jpg",
+          woodCrate: "static/textures/materials/crate.gif",
+          ratamahattaBody: [
+            "static/textures/ratamahatta/ratamahatta.png"
+          ],
+          ratamahattaWeapon: [
+            "static/textures/ratamahatta/weapon.png"
+          ]
+        },
+        texturesCube: {
+          skyBox: [
+            "static/textures/skyBox/front.jpg",
+            "static/textures/skyBox/back.jpg",
+            "static/textures/skyBox/up.jpg",
+            "static/textures/skyBox/down.jpg",
+            "static/textures/skyBox/right.jpg",
+            "static/textures/skyBox/left.jpg"
+          ]
+        },
+        models: {
+          ratamahattaBody: "static/models/ratamahatta/ratamahatta.json",
+          ratamahattaWeapon: "static/models/ratamahatta/weapon.json"
+        }
+      };
+
+      const total = 15; // TODO dynamic counting
+      this.assets = loadAssets(config, loaded => {
         const progress = Math.round((loaded * 100) / total);
         PlayActions.loadingProgressChanged(progress);
       });
     }
   }
+
   handleMouseMove(e) {
     if (this.props.isPointerLocked) {
       this.emitter.emit(EventTypes.MOUSE_MOVE, {
@@ -73,16 +106,19 @@ export default class PlayPage {
       });
     }
   }
+
   handleKeyDown(e) {
     if (this.props.isPointerLocked) {
       this.emitter.emit(EventTypes.KEY_DOWN, e.keyCode);
     }
   }
+
   handleKeyUp(e) {
     if (this.props.isPointerLocked) {
       this.emitter.emit(EventTypes.KEY_UP, e.keyCode);
     }
   }
+
   handleClick() {
     if (this.props.isPointerLocked) {
       this.emitter.emit(EventTypes.CLICK);
@@ -109,7 +145,7 @@ export default class PlayPage {
         <Blocker isPointerLocked={isPointerLocked}
                  handler={PlayActions.pointerLockChanged}/>
         <Engine emitter={this.emitter}
-                textures={this.textures}
+                assets={this.assets}
                 socket={socket}/>
       </div>
     );

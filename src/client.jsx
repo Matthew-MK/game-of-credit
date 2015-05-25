@@ -17,11 +17,10 @@
  **/
 import React from "react";
 import Router from "react-router";
-import routes from "./routes";
 import io from "socket.io-client";
+import routes from "./routes";
 
 const socket = io();
-
 const initialState = window._STATE_;
 const renderElement = document.getElementById("render");
 

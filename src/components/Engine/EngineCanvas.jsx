@@ -26,7 +26,7 @@ import { createEngine } from "./Engine";
 export default class Engine extends Component {
 
   static propTypes = {
-    textures: PropTypes.object
+    assets: PropTypes.object
   };
 
   constructor(props) {
@@ -47,7 +47,7 @@ export default class Engine extends Component {
     window.addEventListener("resize", this.handleResize);
 
     this.engine = createEngine({
-      textures: this.props.textures,
+      assets: this.props.assets,
       emitter: this.props.emitter,
       socket: this.props.socket,
       renderer: {
@@ -56,7 +56,9 @@ export default class Engine extends Component {
       canvasWidth: window.innerWidth,
       canvasHeight: window.innerHeight
     });
-    this.engine.animate();
+    this.engine.animate(() => {
+      return this.unmounted;
+    });
   }
 
   /**

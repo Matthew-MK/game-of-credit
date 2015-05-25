@@ -17,8 +17,9 @@
  **/
 
 /* global THREE */
-import { createModels } from "./Models";
+import { createMeshes } from "./Meshes";
 import { getKeyFromCode } from "./Utils";
+import { createPacker } from "../../utils/Packer";
 
 /**
  * Game engine factory
@@ -29,6 +30,7 @@ export function createEngine(props) {
 
   const {
     emitter,
+    socket,
     // canvas
     canvasWidth = 0,
     canvasHeight = 0,
@@ -68,7 +70,16 @@ export function createEngine(props) {
   const ambientLight = new THREE.AmbientLight(0x404040);
   const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
 
-  const models = createModels(props.textures);
+  const meshes = createMeshes(props.assets);
+
+  const packer = createPacker([
+    //{type: "Uint8Array", count: 20},
+    {type: "Float32Array", count: 3},
+    {type: "Float32Array", count: 2},
+    {type: "Uint8Array", count: 1}
+  ]);
+
+  const sendPacket = (data) => socket.emit("data", packer.pack(data));
 
   var delta = 0.0;
   var deltaSpeed;
@@ -135,8 +146,8 @@ export function createEngine(props) {
   scene.add(ambientLight);
   scene.add(directionalLight);
 
-  // Models
-  models.forEach(mesh => scene.add(mesh));
+  // Meshes
+  meshes.forEach(mesh => scene.add(mesh));
 
   // public
   return {
@@ -154,7 +165,7 @@ export function createEngine(props) {
       // y intersect
       rayCaster.far = 1000; // avoid skyBox
       rayCaster.set(cameraYaw.position, rayDirections.down);
-      collision.down = rayCaster.intersectObjects(models)[0];
+      collision.down = rayCaster.intersectObjects(meshes)[0];
       height = height ? cameraYaw.position.y - collision.down.distance + defaultHeight : defaultHeight;
 
       // xz intersects
@@ -162,7 +173,7 @@ export function createEngine(props) {
       for (idx = 0, direction = rayDirections.front.clone(); idx < 8; idx++) {
         direction.applyAxisAngle(rotationAxe, idx === 0 ? cameraYaw.rotation.y : rotationAngle);
         rayCaster.set(cameraYaw.position, direction);
-        intersects[idx] = !!rayCaster.intersectObjects(models)[0];
+        intersects[idx] = !!rayCaster.intersectObjects(meshes)[0];
       }
       collision.front = intersects[7] || intersects[0] || intersects[1];
       collision.back = intersects[3] || intersects[4] || intersects[5];
@@ -205,9 +216,17 @@ export function createEngine(props) {
     },
     animate(callback) {
       const animationFrame = () => {
+        if (callback()) return;
         this.render();
-        if (callback !== undefined) callback();
-        return requestAnimationFrame(animationFrame);
+        sendPacket([
+          cameraYaw.position.x,
+          cameraYaw.position.y,
+          cameraYaw.position.z,
+          cameraYaw.rotation.x,
+          cameraYaw.rotation.y,
+          1
+        ]);
+        requestAnimationFrame(animationFrame);
       };
       requestAnimationFrame(animationFrame);
     },
