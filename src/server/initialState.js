@@ -27,7 +27,8 @@ export function getInitialState() {
     githubLink: homepage,
     playStore: {
       pointerLocked: false,
-      loadingProgress: 0
+      textures: false,
+      models: false
     }
   };
 }

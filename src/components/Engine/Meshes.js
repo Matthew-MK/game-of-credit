@@ -20,30 +20,28 @@
 import { repeatTexture } from "./Utils";
 import { createMonster } from "./Monster";
 
-export function createMeshes(assets) {
+export function createMeshes(textures, models) {
 
   const { Mesh } = THREE;
   const { PI } = Math;
-  const { textures, texturesCube, models } = assets;
 
   const geometry = {
     ground: new THREE.PlaneBufferGeometry(1024, 1024),
     wall: new THREE.PlaneBufferGeometry(1024, 128),
-    skyBox: new THREE.BoxGeometry(5000, 5000, 5000),
-    monsterBody: models.ratamahattaBody[0]
+    skyBox: new THREE.BoxGeometry(5000, 5000, 5000)
   };
 
   const material = {
     grass: new THREE.MeshLambertMaterial({
-      map: repeatTexture(textures.grass, [16, 16])
+      map: repeatTexture(textures.simple.grass, [16, 16])
     }),
     wall: new THREE.MeshLambertMaterial({
-      map: repeatTexture(textures.wall, [16, 2])
+      map: repeatTexture(textures.simple.wall, [16, 2])
     }),
     skyBox: (() => {
       const shader = THREE.ShaderLib.cube;
       var uniforms = THREE.UniformsUtils.clone(shader.uniforms);
-      uniforms["tCube"].value = texturesCube.skyBox;
+      uniforms.tCube.value = textures.cube.skyBox;
       return new THREE.ShaderMaterial({
         fragmentShader: shader.fragmentShader,
         vertexShader: shader.vertexShader,
@@ -51,8 +49,7 @@ export function createMeshes(assets) {
         depthWrite: false,
         side: THREE.BackSide
       });
-    })(),
-    monsterBody: new THREE.MeshFaceMaterial(models.ratamahattaBody[1])
+    })()
   };
 
   const mapping = {
@@ -79,9 +76,6 @@ export function createMeshes(assets) {
       rotation: [-PI / 2, 0, 0],
       receiveShadow: true
     },
-    box: {
-      position: [30, 7.5, -50]
-    },
     monster: {
       scale: [0.5, 0.5, 0.5],
       position: [30, 12, -100]
@@ -91,10 +85,6 @@ export function createMeshes(assets) {
   // Meshes
   const wallMesh = new Mesh(geometry.wall, material.wall);
   const meshes = {
-    box: new Mesh(
-      new THREE.BoxGeometry(15, 15, 15),
-      new THREE.MeshBasicMaterial({color: "red"})
-    ),
     frontWall: wallMesh.clone(),
     leftWall: wallMesh.clone(),
     rightWall: wallMesh.clone(),
@@ -104,13 +94,13 @@ export function createMeshes(assets) {
     monster: createMonster({
       body: {
         model: models.ratamahattaBody,
-        textures: textures.ratamahattaBody
+        texture: textures.simple.ratamahattaBody
       },
       weapon: {
         model: models.ratamahattaWeapon,
-        textures: textures.ratamahattaWeapon
+        texture: textures.simple.ratamahattaWeapon
       }
-    }).monster
+    })
   };
 
   Object.keys(mapping).forEach(key => {

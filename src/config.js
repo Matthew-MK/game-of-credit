@@ -1,0 +1,57 @@
+/**
+ * Copyright 2015 Jan Svager
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @providesModule config
+ **/
+
+import { DEV_SERVER_URL } from "../webpack.config";
+import { version } from "../package.json";
+
+export const common = {
+  links: {
+    favicon: "/static/favicon.ico"
+  }
+};
+
+export const development = {
+  __proto__: common,
+  links: {
+    css: {
+      normalize: "/static/css/normalize.css"
+    },
+    js: {
+      three: "/static/js/three.js",
+      bundle: `${DEV_SERVER_URL}/build/bundle.js`
+    }
+  }
+};
+
+export const production = {
+  __proto__: common,
+  links: {
+    css: {
+      normalize: "/static/css/normalize.min.css",
+      bundle: `/build/bundle.css?v=${version}`
+    },
+    js: {
+      three: "https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js",
+      bundle: `/build/bundle.js?v=${version}`
+    }
+  }
+};
+
+export function getConfig(env) {
+  return env === "production" ? production : development;
+}

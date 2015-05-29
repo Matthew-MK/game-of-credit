@@ -16,78 +16,59 @@
  * @providesModule Engine
  **/
 
-import React, { Component, PropTypes } from "react";
-import ReactUpdates from "react/lib/ReactUpdates";
+import React, { PropTypes } from "react";
 import { createEngine } from "./Engine";
 
-/**
- * @class Engine
- */
-export default class Engine extends Component {
+function Engine(initialProps) {
 
-  static propTypes = {
-    assets: PropTypes.object
+  Engine.propTypes = {
+    emitter: PropTypes.object,
+    models: PropTypes.object,
+    textures: PropTypes.object,
+    socket: PropTypes.object
   };
 
-  constructor(props) {
-    super(props);
-    this.unmounted = false;
-    this.handleResize = this.handleResize.bind(this);
-    this.state = {
-      canvasWidth: 0,
-      canvasHeight: 0
-    };
-  }
+  var unmounted = false;
+  var engine;
 
-  /**
-   * Invoked once, only on the client (not on the server), immediately after
-   * the initial rendering occurs.
-   */
-  componentDidMount() {
-    window.addEventListener("resize", this.handleResize);
-
-    this.engine = createEngine({
-      assets: this.props.assets,
-      emitter: this.props.emitter,
-      socket: this.props.socket,
-      renderer: {
-        canvas: React.findDOMNode(this.refs.engine)
-      },
+  function handleResize() {
+    engine.resize({
       canvasWidth: window.innerWidth,
       canvasHeight: window.innerHeight
     });
-    this.engine.animate(() => {
-      return this.unmounted;
-    });
   }
 
-  /**
-   * Invoked before rendering when new props or state are being received. This
-   * method is not called for the initial render or when `forceUpdate` is used.
-   * @return {boolean}
-   */
-  shouldComponentUpdate() {
-    return false;
-  }
+  return {
 
-  // Un-mounting
-  /**
-   * Invoked immediately before a component is unmounted from the DOM.
-   */
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.handleResize);
-    this.unmounted = true;
-  }
+    props: initialProps,
 
-  handleResize() {
-    const size = {
-      canvasWidth: window.innerWidth,
-      canvasHeight: window.innerHeight
-    };
-    this.setState(size, () => this.engine.resize(size));
-  }
+    componentDidMount() {
+      window.addEventListener("resize", handleResize);
 
-  render() {
-    return <canvas id="engine" ref="engine"/>;
-  }
+      engine = createEngine({
+        textures: this.props.textures,
+        models: this.props.models,
+        emitter: this.props.emitter,
+        socket: this.props.socket,
+        renderer: {
+          canvas: React.findDOMNode(this.refs.engine)
+        },
+        canvasWidth: window.innerWidth,
+        canvasHeight: window.innerHeight
+      });
+      engine.animate(() => unmounted);
+    },
+    shouldComponentUpdate() {
+      return false; // render component only once, disable updates
+    },
+    componentWillUnmount() {
+      window.removeEventListener("resize", handleResize);
+      unmounted = true;
+    },
+    render() {
+      return <canvas id="engine" ref="engine"/>;
+    }
+  };
 }
+
+export default Engine;

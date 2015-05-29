@@ -70,16 +70,15 @@ export function createEngine(props) {
   const ambientLight = new THREE.AmbientLight(0x404040);
   const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
 
-  const meshes = createMeshes(props.assets);
+  const meshes = createMeshes(props.textures, props.models);
 
   const packer = createPacker([
-    //{type: "Uint8Array", count: 20},
-    {type: "Float32Array", count: 3},
-    {type: "Float32Array", count: 2},
+    {type: "Float32Array", count: 5},
     {type: "Uint8Array", count: 1}
   ]);
 
-  const sendPacket = (data) => socket.emit("data", packer.pack(data));
+  const sendPacket = (data) =>
+    socket.emit(packer.pack(data));
 
   var delta = 0.0;
   var deltaSpeed;

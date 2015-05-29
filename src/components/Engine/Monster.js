@@ -24,10 +24,11 @@
  */
 export function createMonster({body, weapon}) {
 
-  const [ bodyGeometry ] = body.model;
-  const [ weaponGeometry ] = weapon.model;
-  const bodyTexture = body.textures[0];
-  const weaponTexture = weapon.textures[0];
+  const bodyGeometry = body.model.geometry;
+  const weaponGeometry = weapon.model.geometry;
+
+  const bodyTexture = body.texture;
+  const weaponTexture = weapon.texture;
   const monster = new THREE.Object3D();
 
   const bodyMaterial = new THREE.MeshLambertMaterial({
@@ -45,9 +46,6 @@ export function createMonster({body, weapon}) {
     vertexColors: THREE.FaceColors
   });
 
-  bodyGeometry.computeMorphNormals();
-  weaponGeometry.computeMorphNormals();
-
   const bodyMesh = new THREE.MorphAnimMesh(bodyGeometry, bodyMaterial);
   const weaponMesh = new THREE.MorphAnimMesh(weaponGeometry, weaponMaterial);
 
@@ -60,9 +58,5 @@ export function createMonster({body, weapon}) {
   monster.add(weaponMesh);
   monster.rotation.y += Math.PI / 2;
 
-  return {
-    monster: monster,
-    body: bodyMesh,
-    weapon: weaponMesh
-  };
+  return monster;
 }

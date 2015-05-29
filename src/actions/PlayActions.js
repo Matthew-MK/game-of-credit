@@ -25,5 +25,11 @@ export default {
   },
   loadingProgressChanged(progress) {
     dispatcher.dispatch(actionTypes.LOADING_PROGRESS_CHANGE, progress);
+  },
+  loadingTexturesCompleted() {
+    dispatcher.dispatch(actionTypes.LOADING_TEXTURES_COMPLETE, null);
+  },
+  loadingModelsCompleted(models) {
+    dispatcher.dispatch(actionTypes.LOADING_MODELS_COMPLETE, models);
   }
 };

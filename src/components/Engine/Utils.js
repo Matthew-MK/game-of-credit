@@ -30,7 +30,7 @@ export function getKeyFromCode(callback) {
         break;
     }
     callback(key);
-  }
+  };
 }
 
 /**

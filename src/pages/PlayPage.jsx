@@ -16,19 +16,21 @@
  * @providesModule Play
  **/
 
+import EventEmitter from "events";
 import React, { PropTypes } from "react";
 import Title from "react-document-title";
-import EventEmitter from "events";
-import connectToStores from "../utils/ConnectToStores";
-import { loadAssets } from "../components/Engine/Loaders";
-import { isBrowser } from "../utils/ExecutionEnvironment";
-import Blocker from "../components/Blocker/Blocker.jsx";
-import Loading from "../components/Loading/Loading.jsx";
-import Engine from "../components/Engine/EngineCanvas.jsx";
 
-import PlayStore from "../stores/PlayStore";
-import PlayActions from "../actions/PlayActions";
+import connectToStores from "../utils/ConnectToStores";
+import { isBrowser } from "../utils/ExecutionEnvironment";
+import { loadTextures, loadModels } from "../utils/AssetsLoader";
+
+import Blocker from "../components/Blocker/Blocker.jsx";
+import Engine from "../components/Engine/EngineCanvas.jsx";
+import Loading from "../components/Loading/Loading.jsx";
+
 import EventTypes from "../constants/EventTypes";
+import PlayActions from "../actions/PlayActions";
+import PlayStore from "../stores/PlayStore";
 
 /**
  * Retrieves state from stores for current props.
@@ -37,7 +39,7 @@ function getState() {
   return {
     isPointerLocked: PlayStore.isPointerLocked(),
     isLoading: PlayStore.isLoading(),
-    loadingProgress: PlayStore.getLoadingProgress()
+    models: PlayStore.getModels()
   };
 }
 
@@ -46,11 +48,10 @@ export default class PlayPage {
   static propTypes = {
     // Injected by @connectToStores:
     isPointerLocked: PropTypes.bool.isRequired,
-    isLoading: PropTypes.bool.isRequired,
-    loadingProgress: PropTypes.number.isRequired
+    isLoading: PropTypes.bool.isRequired
   };
 
-  constructor() {
+  constructor(props) {
     this.emitter = new EventEmitter();
     this.emitter.eventTypes = EventTypes;
     this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -60,19 +61,15 @@ export default class PlayPage {
 
     if (isBrowser) {
 
-      const config = {
+      const texturesConfig = {
         textures: {
           bricks: "static/textures/materials/bricks.jpg",
           grass: "static/textures/materials/grass-512.jpg",
           rock: "static/textures/materials/rock-512.jpg",
           wall: "static/textures/materials/wall.jpg",
           woodCrate: "static/textures/materials/crate.gif",
-          ratamahattaBody: [
-            "static/textures/ratamahatta/ratamahatta.png"
-          ],
-          ratamahattaWeapon: [
-            "static/textures/ratamahatta/weapon.png"
-          ]
+          ratamahattaBody: "static/textures/ratamahatta/ratamahatta.png",
+          ratamahattaWeapon: "static/textures/ratamahatta/weapon.png"
         },
         texturesCube: {
           skyBox: [
@@ -83,18 +80,18 @@ export default class PlayPage {
             "static/textures/skyBox/right.jpg",
             "static/textures/skyBox/left.jpg"
           ]
-        },
-        models: {
-          ratamahattaBody: "static/models/ratamahatta/ratamahatta.json",
-          ratamahattaWeapon: "static/models/ratamahatta/weapon.json"
         }
       };
 
-      const total = 15; // TODO dynamic counting
-      this.assets = loadAssets(config, loaded => {
-        const progress = Math.round((loaded * 100) / total);
-        PlayActions.loadingProgressChanged(progress);
-      });
+      this.textures = loadTextures(texturesConfig, PlayActions.loadingTexturesCompleted);
+
+
+        const modelsConfig = {
+          ratamahattaBody: "static/models/ratamahatta/ratamahatta.json",
+          ratamahattaWeapon: "static/models/ratamahatta/weapon.json"
+        };
+        loadModels(modelsConfig, PlayActions.loadingModelsCompleted);
+
     }
   }
 
@@ -138,14 +135,15 @@ export default class PlayPage {
   }
 
   render() {
-    const { isLoading, loadingProgress, isPointerLocked, socket } = this.props;
-    const loading = <Loading progress={loadingProgress}/>;
+    const { isLoading, isPointerLocked, socket, models } = this.props;
+    const loading = <Loading />;
     const playing = (
       <div onClick={this.handleClick}>
         <Blocker isPointerLocked={isPointerLocked}
                  handler={PlayActions.pointerLockChanged}/>
         <Engine emitter={this.emitter}
-                assets={this.assets}
+                textures={this.textures}
+                models={models}
                 socket={socket}/>
       </div>
     );

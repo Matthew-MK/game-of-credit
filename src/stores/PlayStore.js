@@ -28,19 +28,21 @@ const PlayStore = store.createSubStore(["playStore"], {
       case Types.POINTER_LOCK_CHANGE:
         state.set("pointerLocked", data);
         break;
-      case Types.LOADING_PROGRESS_CHANGE:
-        state.set("loadingProgress", data);
+      case Types.LOADING_TEXTURES_COMPLETE:
+        state.set("textures", true);
         break;
+      case Types.LOADING_MODELS_COMPLETE:
+        state.set("models", data);
     }
   }),
-  getLoadingProgress() {
-    return this.state.get("loadingProgress");
+  getModels() {
+    return this.state.get("models");
   },
   isPointerLocked() {
     return this.state.get("pointerLocked");
   },
-  isLoading(){
-    return this.getLoadingProgress() < 100;
+  isLoading() {
+    return !this.state.get("textures") || !this.getModels();
   }
 });
 
