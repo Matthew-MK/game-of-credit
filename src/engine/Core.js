@@ -18,7 +18,7 @@
 
 /* global THREE */
 import { createMeshes } from "./Meshes";
-import { getKeyFromCode } from "./Utils";
+import { getKeyFromCode } from "../utils/Helpers";
 import { createPacker } from "../utils/Packer";
 import Event from "../constants/EventTypes";
 

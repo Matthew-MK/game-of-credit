@@ -17,7 +17,7 @@
  **/
 
 /* global THREE */
-import { repeatTexture } from "./Utils";
+import { repeatTexture } from "../utils/Helpers";
 import { createMonster } from "./Monster";
 
 export function createMeshes(textures, models) {
