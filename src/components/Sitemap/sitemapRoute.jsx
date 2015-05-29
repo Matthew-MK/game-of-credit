@@ -18,7 +18,7 @@
 import React from "react";
 import Sitemap from "./Sitemap.jsx";
 
-export default function (routes:Array) {
+export default function(routes) {
   const lastUpdate = new Date().toISOString();
   return function (req, res) {
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>` +

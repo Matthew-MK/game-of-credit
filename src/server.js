@@ -15,16 +15,20 @@
  *
  * @providesModule server
  **/
-import http from "http";
-import express from "express";
 import compression from "compression";
+import DocumentTitle from "react-document-title";
+import express from "express";
+import http from "http";
+import React, { renderToString, renderToStaticMarkup } from "react";
+import Router from "react-router";
 import socketIO from "socket.io";
 
-import {config} from "../package.json";
-import router from "./server/router";
 import routes from "./routes.jsx";
-import { generateBundle } from "./server/webpackCompiler";
 import sitemapRoute from "./components/Sitemap/sitemapRoute";
+import { config } from "../package.json";
+import { createStaticHtml } from "./components/Html/Html.jsx";
+import { generateBundle } from "./bundler";
+import { getInitialState } from "./initialState";
 
 let app = express();
 let io = socketIO();
@@ -32,13 +36,22 @@ let io = socketIO();
 const env = app.get("env");
 const port = process.env.PORT || config.port;
 
+generateBundle(env);
+
 app.use(compression());
 app.use("/build", express.static(`${__dirname}/../build`));
 app.use("/static", express.static(`${__dirname}/../static`));
 app.get("/sitemap.xml", sitemapRoute(routes));
-app.get("*", router); // pass all requests to router
+app.get('*', function (req, res) {
+  const state = getInitialState(env);
+  Router.run(routes, req.originalUrl, (Handler, routerState) => {
+    const innerHTML = renderToString(<Handler state={state}/>);
+    const title = DocumentTitle.rewind(); // always call rewind after rendering components to string
+    const notFound = routerState.routes.some(route => route.name === "not-found");
+    res.status(notFound ? 404 : 200).end(createStaticHtml({title, state}, innerHTML));
+  });
+});
 
-generateBundle(env);
 
 io.on("connection", function (socket) {
   console.log("connect", socket.id);

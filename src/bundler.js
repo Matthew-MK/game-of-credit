@@ -18,7 +18,7 @@
 
 import webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
-import webpackConfig from "../../webpack.config";
+import webpackConfig from "../webpack.config.js";
 
 export function generateBundle(env) {
   const config = webpackConfig(env);

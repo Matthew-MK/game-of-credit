@@ -18,7 +18,6 @@
 
 import React from "react";
 import Router from "react-router";
-import shouldPureComponentUpdate from "react-pure-render/function";
 import Url from "./SitemapUrl.jsx";
 
 /**
@@ -26,8 +25,6 @@ import Url from "./SitemapUrl.jsx";
  * @class Sitemap
  */
 class Sitemap extends React.Component {
-
-  shouldComponentUpdate = shouldPureComponentUpdate;
 
   createUrlSet(route, urls = [], level = 0) {
 

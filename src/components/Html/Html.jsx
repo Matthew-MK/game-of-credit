@@ -15,7 +15,7 @@
  *
  * @providesModule Html
  **/
-import React, { PropTypes } from "react";
+import React, { PropTypes, renderToStaticMarkup } from "react";
 
 /**
  * Basic HTML layout component for server side rendering
@@ -76,3 +76,7 @@ function Html(props) {
 }
 
 export default Html;
+
+export function createStaticHtml(props, innerHTML) {
+  return "<!DOCTYPE html>" + renderToStaticMarkup(<Html {...props}>{innerHTML}</Html>);
+}
