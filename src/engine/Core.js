@@ -98,8 +98,6 @@ export function createEngine(props) {
   var height;
 
   // EVENTS
-  const { eventTypes } = emitter;
-
   emitter.addListener(Event.CLICK, () => {
     console.log("click");
   });

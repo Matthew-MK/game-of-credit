@@ -34,9 +34,9 @@
     "darwin"
   ],
   "scripts": {
-    "lint": "eslint ./src",
+    "lint": " ./node_modules/eslint/bin/eslint.js ./src",
     "start": "iojs bin/www",
-    "test": "eslint ./src && jest"
+    "test": "./node_modules/eslint/bin/eslint.js ./src"
   },
   "jest": {
     "rootDir": "./src",
@@ -71,10 +71,10 @@
   },
   "devDependencies": {
     "babel-core": "^5.3.1",
-    "babel-eslint": "^3.1.7",
+    "babel-eslint": "^3.1.9",
     "babel-loader": "^5.0.0",
     "css-loader": "^0.14.4",
-    "eslint": "^0.21.0",
+    "eslint": "^0.21.2",
     "eslint-plugin-react": "^2.2.0",
     "extract-text-webpack-plugin": "^0.8.0",
     "json-loader": "^0.5.1",

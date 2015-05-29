@@ -16,6 +16,8 @@
  * @providesModule Helpers
  **/
 
+/* global THREE */
+
 /**
  * Helper function for converting keyCode to helpful string property
  * @param keyCode {Number}
@@ -26,7 +28,6 @@ export function getKeyFromCode(keyCode) {
   switch (key) {
     case " ":
       return "SPACE";
-      break;
     default:
       return key;
   }
