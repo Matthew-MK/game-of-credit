@@ -33,7 +33,7 @@ import PlayActions from "../actions/PlayActions";
 import PlayStore from "../stores/PlayStore";
 
 
-function PlayPage(inititalProps) {
+function PlayPage(initialProps) {
 
   PlayPage.propTypes = {
     // Injected by @connectToStores:
@@ -42,47 +42,18 @@ function PlayPage(inititalProps) {
   };
 
   const emitter = new EventEmitter();
+  const { config } = initialProps.state;
 
   var textures;
 
-
   if (isBrowser) {
-
-    const texturesConfig = {
-      textures: {
-        bricks: "static/textures/materials/bricks.jpg",
-        grass: "static/textures/materials/grass-512.jpg",
-        rock: "static/textures/materials/rock-512.jpg",
-        wall: "static/textures/materials/wall.jpg",
-        woodCrate: "static/textures/materials/crate.gif",
-        ratamahattaBody: "static/textures/ratamahatta/ratamahatta.png",
-        ratamahattaWeapon: "static/textures/ratamahatta/weapon.png"
-      },
-      texturesCube: {
-        skyBox: [
-          "static/textures/skyBox/front.jpg",
-          "static/textures/skyBox/back.jpg",
-          "static/textures/skyBox/up.jpg",
-          "static/textures/skyBox/down.jpg",
-          "static/textures/skyBox/right.jpg",
-          "static/textures/skyBox/left.jpg"
-        ]
-      }
-    };
-
-    textures = loadTextures(texturesConfig, PlayActions.loadingTexturesCompleted);
-
-    const modelsConfig = {
-      ratamahattaBody: "static/models/ratamahatta/ratamahatta.json",
-      ratamahattaWeapon: "static/models/ratamahatta/weapon.json"
-    };
-    loadModels(modelsConfig, PlayActions.loadingModelsCompleted);
-
+    textures = loadTextures(config.textures, PlayActions.loadingTexturesCompleted);
+    loadModels(config.models, PlayActions.loadingModelsCompleted);
   }
 
   return {
 
-    props: inititalProps,
+    props: initialProps,
 
     handleEvent(eventType) {
       return (e) => {
@@ -99,13 +70,11 @@ function PlayPage(inititalProps) {
       window.addEventListener("keydown", this.handleEvent(Event.KEY_DOWN));
       window.addEventListener("keyup", this.handleEvent(Event.KEY_UP));
     },
-
     componentWillUnmount() {
       window.removeEventListener("mousemove", this.handleEvent(Event.MOUSE_MOVE));
       window.removeEventListener("keydown", this.handleEvent(Event.KEY_DOWN));
       window.removeEventListener("keyup", this.handleEvent(Event.KEY_UP));
     },
-
     render() {
       const { isLoading, isPointerLocked, socket, models } = this.props;
       const loading = <Loading />;

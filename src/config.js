@@ -15,40 +15,62 @@
  *
  * @providesModule config
  **/
-
-import { DEV_SERVER_URL } from "../webpack.config";
+import os from "os";
 import { version } from "../package.json";
 
-export const common = {
-  links: {
-    favicon: "/static/favicon.ico"
+export const PORT = 8888;
+export const HOST = os.hostname() || "localhost";
+export const DEV_SERVER_URL = `//${HOST}:${PORT}`;
+
+const common = {
+  textures: {
+    simple: {
+      bricks: "static/textures/materials/bricks.jpg",
+      grass: "static/textures/materials/grass-512.jpg",
+      rock: "static/textures/materials/rock-512.jpg",
+      wall: "static/textures/materials/wall.jpg",
+      woodCrate: "static/textures/materials/crate.gif",
+      ratamahattaBody: "static/textures/ratamahatta/ratamahatta.png",
+      ratamahattaWeapon: "static/textures/ratamahatta/weapon.png"
+    },
+    cube: {
+      skyBox: [
+        "static/textures/skyBox/front.jpg",
+        "static/textures/skyBox/back.jpg",
+        "static/textures/skyBox/up.jpg",
+        "static/textures/skyBox/down.jpg",
+        "static/textures/skyBox/right.jpg",
+        "static/textures/skyBox/left.jpg"
+      ]
+    }
+  },
+  models: {
+    ratamahattaBody: "static/models/ratamahatta/ratamahatta.json",
+    ratamahattaWeapon: "static/models/ratamahatta/weapon.json"
+  },
+  favicon: "/static/favicon.ico"
+};
+
+const development = {
+  ...common,
+  css: {
+    normalize: "/static/css/normalize.css"
+  },
+  js: {
+    three: "/static/js/three.js",
+    bundle: `${DEV_SERVER_URL}/build/bundle.js`
   }
 };
 
-export const development = {
-  __proto__: common,
-  links: {
-    css: {
-      normalize: "/static/css/normalize.css"
-    },
-    js: {
-      three: "/static/js/three.js",
-      bundle: `${DEV_SERVER_URL}/build/bundle.js`
-    }
-  }
-};
-
-export const production = {
-  __proto__: common,
-  links: {
-    css: {
-      normalize: "/static/css/normalize.min.css",
-      bundle: `/build/bundle.css?v=${version}`
-    },
-    js: {
-      three: "https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js",
-      bundle: `/build/bundle.js?v=${version}`
-    }
+const production = {
+  ...common,
+  css: {
+    normalize: "/static/css/normalize.min.css",
+    bundle: `/build/bundle.css?v=${version}`
+  },
+  js: {
+    three: "https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js",
+    bundle: `/build/bundle.js?v=${version}`
   }
 };
 

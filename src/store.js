@@ -19,7 +19,7 @@
 import Immutable from "immutable";
 import Cursor from "immutable/contrib/cursor";
 import EventEmitter from "events";
-import { getInitialState } from "./server/initialState";
+import { getInitialState } from "./initialState";
 import { isBrowser } from "./utils/ExecutionEnvironment";
 
 /**

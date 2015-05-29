@@ -25,10 +25,10 @@ export function loadTextures(config, onLoad) {
   THREE.DefaultLoadingManager.onLoad = onLoad;
 
   return {
-    simple: mapObject(config.textures, file =>
+    simple: mapObject(config.simple, file =>
         THREE.ImageUtils.loadTexture(file, THREE.UVMapping)
     ),
-    cube: mapObject(config.texturesCube, files =>
+    cube: mapObject(config.cube, files =>
         THREE.ImageUtils.loadTextureCube(files, THREE.UVMapping)
     )
   };

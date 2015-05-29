@@ -28,14 +28,13 @@ function IndexPage(props) {
   IndexPage.propTypes = {
     params: PropTypes.object.isRequired,
     query: PropTypes.object.isRequired,
-
-    initialState: PropTypes.object.isRequired,
-    socket: PropTypes.object.isRequired
+    state: PropTypes.object.isRequired,
+    socket: PropTypes.object
   };
 
   return {
     render() {
-      const { version, githubLink } = props.initialState;
+      const { version, githubLink } = props.state;
       return (
         <Title title="Game of Credit">
           <div id="index-page" className="center">

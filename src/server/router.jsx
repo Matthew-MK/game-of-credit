@@ -21,8 +21,7 @@ import Router from "react-router";
 import DocumentTitle from "react-document-title";
 import routes from "../routes";
 import Html from "../components/Html/Html.jsx";
-import { getInitialState } from "./initialState";
-import { getConfig } from "../config";
+import { getInitialState } from "./../initialState";
 
 /**
  * Server side rendering / router
@@ -32,14 +31,13 @@ import { getConfig } from "../config";
 export default function (req, res){
   Router.run(routes, req.originalUrl, (Handler, routerState) => {
     const env = req.app.get("env");
-    const state = getInitialState();
-    const innerHTML = React.renderToString(<Handler initialState={state}/>);
+    const state = getInitialState(env);
+    const innerHTML = React.renderToString(<Handler state={state}/>);
     // always call rewind after rendering components to string
     const title = DocumentTitle.rewind();
     const html = "<!DOCTYPE html>" + React.renderToStaticMarkup(
         <Html
           title={title}
-          config={getConfig(env)}
           state={state}>
         {innerHTML}
         </Html>

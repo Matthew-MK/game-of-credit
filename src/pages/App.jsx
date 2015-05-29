@@ -31,8 +31,8 @@ if (isBrowser) require("./App.css");
 function App(initialProps) {
 
   App.propTypes = {
-    initialState: PropTypes.object.isRequired,
-    socket: PropTypes.object.isRequired
+    state: PropTypes.object.isRequired,
+    socket: PropTypes.object
   };
 
   return {

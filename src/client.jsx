@@ -26,5 +26,5 @@ const renderElement = document.getElementById("render");
 
 Router.run(routes, Router.HistoryLocation, (Handler) => {
   React.render(<Handler socket={socket}
-                        initialState={initialState}/>, renderElement);
+                        state={initialState}/>, renderElement);
 });

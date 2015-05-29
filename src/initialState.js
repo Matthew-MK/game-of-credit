@@ -15,16 +15,18 @@
  *
  * @providesModule getInitialState
  **/
-import {version, homepage } from "../../package.json";
+import { version, homepage } from "../package.json";
+import { getConfig } from "./config";
 
 /**
- * Get server side initial state
+ * Get global initial state
  * @return {Object}
  */
-export function getInitialState() {
+export function getInitialState(env) {
   return {
     version: version,
     githubLink: homepage,
+    config: getConfig(env),
     playStore: {
       pointerLocked: false,
       textures: false,

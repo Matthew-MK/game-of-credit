@@ -23,9 +23,9 @@ import React, { PropTypes } from "react";
  * @param props {Object} Initial props
  */
 function Html(props) {
+
   Html.propTypes = {
     title: PropTypes.string.isRequired,
-    config: PropTypes.object.isRequired,
     state: PropTypes.object.isRequired
   };
 
@@ -53,7 +53,7 @@ function Html(props) {
 
   return {
     render() {
-      const { js, css, favicon } = props.config.links;
+      const { js, css, favicon } = props.state.config;
       return (
         <html>
         <head>

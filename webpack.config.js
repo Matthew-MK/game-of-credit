@@ -15,14 +15,11 @@
  *
  * @providesModule getWebpackConfig
  **/
-import os from "os";
 import webpack from "webpack";
 import path from "path";
 import ExtractTextPlugin from "extract-text-webpack-plugin";
 
-export const PORT = 8888;
-export const HOST = os.hostname() || "localhost";
-export const DEV_SERVER_URL = `//${HOST}:${PORT}`;
+import { DEV_SERVER_URL, PORT, HOST } from "./src/config";
 
 const common = {
   resolve: {
