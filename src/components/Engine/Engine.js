@@ -20,6 +20,7 @@
 import { createMeshes } from "./Meshes";
 import { getKeyFromCode } from "./Utils";
 import { createPacker } from "../../utils/Packer";
+import Event from "../../constants/EventTypes";
 
 /**
  * Game engine factory
@@ -83,10 +84,8 @@ export function createEngine(props) {
   var delta = 0.0;
   var deltaSpeed;
   var idx = 0;
-  var mouse = {
-    x: 0,
-    y: 0
-  };
+  var mouseX = 0;
+  var mouseY = 0;
   var keys = {
     W: false,
     A: false,
@@ -101,25 +100,29 @@ export function createEngine(props) {
   // EVENTS
   const { eventTypes } = emitter;
 
-  emitter.addListener(eventTypes.CLICK, () => {
+  emitter.addListener(Event.CLICK, () => {
+    console.log("click");
+  });
+  emitter.addListener(Event.MOUSE_MOVE, e => {
+    mouseX = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
+    mouseY = e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+
+    cameraYaw.rotation.y -= mouseX * 0.002;
+    cameraPitch.rotation.x -= mouseY * 0.002;
+    cameraPitch.rotation.x = Math.max(
+      -Math.PI / 2, Math.min(Math.PI / 2, cameraPitch.rotation.x)
+    );
 
   });
-  emitter.addListener(eventTypes.MOUSE_MOVE, newMouse => {
-    if (mouse.x !== newMouse.x || mouse.y !== newMouse.y) {
-      mouse = newMouse;
-      cameraYaw.rotation.y -= mouse.x * 0.002;
-      cameraPitch.rotation.x -= mouse.y * 0.002;
-      cameraPitch.rotation.x = Math.max(
-        -Math.PI / 2, Math.min(Math.PI / 2, cameraPitch.rotation.x)
-      );
-    }
+  emitter.addListener(Event.KEY_DOWN, ({ keyCode }) => {
+    const key = getKeyFromCode(keyCode);
+    keys[key] = keys.hasOwnProperty(key);
   });
-  emitter.addListener(eventTypes.KEY_DOWN, getKeyFromCode(key =>
-      keys[key] = keys.hasOwnProperty(key)
-  ));
-  emitter.addListener(eventTypes.KEY_UP, getKeyFromCode(key =>
-      keys[key] = !keys.hasOwnProperty(key)
-  ));
+
+  emitter.addListener(Event.KEY_UP, ({ keyCode }) => {
+    const key = getKeyFromCode(keyCode);
+    keys[key] = !keys.hasOwnProperty(key);
+  });
 
   // INITIALIZATION
 

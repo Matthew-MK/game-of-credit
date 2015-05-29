@@ -46,8 +46,7 @@ function IndexPage(props) {
             <Link className="button" to="play">PLAY NOW</Link>
 
             <p>
-              For more information checkout GitHub&nbsp;
-              <a href={githubLink} target="_blank">repository</a>.
+              For more information checkout GitHub <a href={githubLink} target="_blank">repository</a>.
             </p>
           </div>
         </Title>

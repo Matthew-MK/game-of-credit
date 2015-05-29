@@ -22,6 +22,12 @@ import { isBrowser } from "../utils/ExecutionEnvironment";
 
 if (isBrowser) require("./App.css");
 
+/**
+ * Main application component
+ * @param initialProps
+ * @returns {*}
+ * @constructor
+ */
 function App(initialProps) {
 
   App.propTypes = {

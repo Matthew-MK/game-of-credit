@@ -18,19 +18,18 @@
 
 /**
  * Helper function for converting keyCode to helpful string property
- * @param callback {Function}
- * @returns {Function}
+ * @param keyCode {Number}
+ * @returns {String}
  */
-export function getKeyFromCode(callback) {
-  return keyCode => {
-    var key = String.fromCharCode(keyCode);
-    switch (key) {
-      case " ":
-        key = "SPACE";
-        break;
-    }
-    callback(key);
-  };
+export function getKeyFromCode(keyCode) {
+  var key = String.fromCharCode(keyCode);
+  switch (key) {
+    case " ":
+      return "SPACE";
+      break;
+    default:
+      return key;
+  }
 }
 
 /**

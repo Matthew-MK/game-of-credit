@@ -23,9 +23,6 @@ export default {
   pointerLockChanged(pointerLocked) {
     dispatcher.dispatch(actionTypes.POINTER_LOCK_CHANGE, pointerLocked);
   },
-  loadingProgressChanged(progress) {
-    dispatcher.dispatch(actionTypes.LOADING_PROGRESS_CHANGE, progress);
-  },
   loadingTexturesCompleted() {
     dispatcher.dispatch(actionTypes.LOADING_TEXTURES_COMPLETE, null);
   },
