@@ -22,7 +22,7 @@ import DocumentTitle from "react-document-title";
 import routes from "../routes";
 import Html from "../components/Html/Html.jsx";
 import { getInitialState } from "./initialState";
-import {DEV_SERVER_URL} from "../../webpack.config";
+import { getConfig } from "../config";
 
 /**
  * Server side rendering / router
@@ -38,10 +38,8 @@ export default function (req, res){
     const title = DocumentTitle.rewind();
     const html = "<!DOCTYPE html>" + React.renderToStaticMarkup(
         <Html
-          devURL={DEV_SERVER_URL}
-          env={env}
           title={title}
-          version={state.version}
+          config={getConfig(env)}
           state={state}>
         {innerHTML}
         </Html>

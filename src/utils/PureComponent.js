@@ -13,33 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @providesModule Loading
+ * @providesModule PureComponent
  **/
+import { Component } from "react";
+import shallowEqual from "react-pure-render";
 
-import React from "react";
-
-/**
- * Loading screen component
- * @param initialProps {Object}
- */
-function Loading(initialProps) {
-
-  const style = {
-    zIndex: 10,
-    backgroundColor: 0xffffff,
-    position: "absolute",
-    height: "100%",
-    width: "100%",
-    fontSize: "2em"
-  };
-
-  return {
-    props: initialProps,
-
-    render() {
-      return <div style={style} className="center">Loading...</div>;
+export default function pureComponent(component) {
+  return Object.assign(Component.prototype, {
+    shouldPureComponentUpdate(nextProps, nextState) {
+      return !shallowEqual(this.props, nextProps) || !shallowEqual(this.state, nextState);
     }
-  };
+  }, component);
 }
-
-export default Loading;

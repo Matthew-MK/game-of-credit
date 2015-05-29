@@ -15,73 +15,64 @@
  *
  * @providesModule Html
  **/
-import React from "react";
+import React, { PropTypes } from "react";
 
 /**
  * Basic HTML layout component for server side rendering
  * with application state & client HTML injection.
- * @class Html
+ * @param props {Object} Initial props
  */
-export default class Html extends React.Component {
-
-  static propTypes = {
-    env: React.PropTypes.string.isRequired,
-    title: React.PropTypes.string.isRequired,
-    version: React.PropTypes.string.isRequired,
-    state: React.PropTypes.object.isRequired
+function Html(props) {
+  Html.propTypes = {
+    title: PropTypes.string.isRequired,
+    config: PropTypes.object.isRequired,
+    state: PropTypes.object.isRequired
   };
 
-  injectState() {
-    return {
-      __html: `window._STATE_ = ${JSON.stringify(this.props.state)};`
-    };
+  function inject(obj) {
+    return {__html: obj};
   }
 
-  injectInnerHTML() {
-    return {__html: this.props.children};
+  function injectState(state) {
+    return inject(`window._STATE_ = ${JSON.stringify(state)};`);
   }
 
-  render() {
-    const { env, version, devURL, title } = this.props;
-
-    const js = (key, src) => <script key={key} src={src}/>;
-    const css = (key, href) => <link key={key} href={href} rel="stylesheet"/>;
-
-    const jsLinks = {
-      development: [
-        js("three", "/static/js/three.js"),
-        js("bundle", `${devURL}/build/bundle.js`)
-      ],
-      production: [
-        js("three", "https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"),
-        js("bundle", `/build/bundle.js?v=${version}`)
-      ]
-    };
-
-    const cssLinks = {
-      development: [
-        css("normalize", "/static/css/normalize.css")
-      ],
-      production: [
-        css("normalize", "/static/css/normalize.min.css"),
-        css("bundle", `/build/bundle.css?v=${version}`)
-      ]
-    };
-    return (
-      <html>
-      <head>
-        <title>{title}</title>
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-        <link rel="icon" href="/static/favicon.ico"/>
-        {cssLinks[env]}
-      </head>
-      <body>
-      <div id="render" dangerouslySetInnerHTML={this.injectInnerHTML()}/>
-      <script dangerouslySetInnerHTML={this.injectState()}/>
-      {jsLinks[env]}
-      </body>
-      </html>
-    );
+  function injectChildren(children) {
+    return inject(children);
   }
+
+  function insertCSS(links) {
+    return Object.keys(links)
+      .map(key => <link key={key} href={links[key]} rel="stylesheet"/>);
+  }
+
+  function insertJS(links) {
+    return Object.keys(links)
+      .map(key => <script key={key} src={links[key]}/>);
+  }
+
+  return {
+    render() {
+      const { js, css, favicon } = props.config.links;
+      return (
+        <html>
+        <head>
+          <title>{props.title}</title>
+          <meta name="viewport"
+                content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+          <link rel="icon" href={favicon}/>
+          {insertCSS(css)}
+        </head>
+        <body>
+        <div id="render"
+             dangerouslySetInnerHTML={injectChildren(props.children)}/>
+        <script dangerouslySetInnerHTML={injectState(props.state)}/>
+        {insertJS(js)}
+        </body>
+        </html>
+      );
+    }
+  };
 }
+
+export default Html;

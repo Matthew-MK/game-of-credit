@@ -16,19 +16,26 @@
  * @providesModule App
  **/
 
-import React, { Component } from "react";
+import React, { PropTypes } from "react";
 import { RouteHandler } from "react-router";
 import { isBrowser } from "../utils/ExecutionEnvironment";
 
 if (isBrowser) require("./App.css");
 
-/**
- * Main application component
- * @class App
- */
-export default class App extends Component {
+function App(initialProps) {
 
-  render() {
-    return <RouteHandler {...this.props} />;
-  }
+  App.propTypes = {
+    initialState: PropTypes.object.isRequired,
+    socket: PropTypes.object.isRequired
+  };
+
+  return {
+    props: initialProps,
+
+    render() {
+      return <RouteHandler {...this.props} />;
+    }
+  };
 }
+
+export default App;

@@ -16,14 +16,23 @@
  * @providesModule IndexPage
  **/
 
-import React from "react";
+import React, { PropTypes } from "react";
 import Title from "react-document-title";
 import { Link } from "react-router";
 import { isBrowser } from "../utils/ExecutionEnvironment";
 
 if (isBrowser) require("./IndexPage.css");
 
-export default function(props) {
+function IndexPage(props) {
+
+  IndexPage.propTypes = {
+    params: PropTypes.object.isRequired,
+    query: PropTypes.object.isRequired,
+
+    initialState: PropTypes.object.isRequired,
+    socket: PropTypes.object.isRequired
+  };
+
   return {
     render() {
       const { version, githubLink } = props.initialState;
@@ -46,3 +55,5 @@ export default function(props) {
     }
   };
 }
+
+export default IndexPage;

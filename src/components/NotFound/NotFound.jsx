@@ -17,23 +17,19 @@
  **/
 
 import React from "react";
-import DocumentTitle from "react-document-title";
-import shouldPureComponentUpdate from "react-pure-render/function";
+import Title from "react-document-title";
 
-/**
- * @class NotFound
- */
-class NotFound extends React.Component {
+function NotFound(initialProps) {
+  return {
+    props: initialProps,
 
-  shouldComponentUpdate = shouldPureComponentUpdate;
-
-  render() {
-    return (
-      <DocumentTitle title="Not found | Game of Credit">
-        <div>Not Found</div>
-      </DocumentTitle>
-    );
-  }
+    render() {
+      return (
+        <Title title="Not found | Game of Credit">
+          <div>Not Found</div>
+        </Title>
+      );
+    }
+  };
 }
-
 export default NotFound;
