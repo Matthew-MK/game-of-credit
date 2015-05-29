@@ -25,7 +25,7 @@ import { isBrowser } from "../utils/ExecutionEnvironment";
 import { loadTextures, loadModels } from "../utils/AssetsLoader";
 
 import Blocker from "../components/Blocker/Blocker.jsx";
-import Engine from "../components/Engine/EngineCanvas.jsx";
+import Engine from "../engine/Engine.jsx";
 import Loading from "../components/Loading/Loading.jsx";
 
 import Event from "../constants/EventTypes";

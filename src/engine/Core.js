@@ -19,8 +19,8 @@
 /* global THREE */
 import { createMeshes } from "./Meshes";
 import { getKeyFromCode } from "./Utils";
-import { createPacker } from "../../utils/Packer";
-import Event from "../../constants/EventTypes";
+import { createPacker } from "../utils/Packer";
+import Event from "../constants/EventTypes";
 
 /**
  * Game engine factory

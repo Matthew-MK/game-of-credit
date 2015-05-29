@@ -17,7 +17,7 @@
  **/
 
 import React, { PropTypes } from "react";
-import { createEngine } from "./Engine";
+import { createEngine } from "./Core";
 
 function Engine(initialProps) {
 
