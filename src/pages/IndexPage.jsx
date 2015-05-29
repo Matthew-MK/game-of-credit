@@ -19,11 +19,14 @@
 import React, { PropTypes } from "react";
 import Title from "react-document-title";
 import { Link } from "react-router";
-import { isBrowser } from "../utils/ExecutionEnvironment";
 
-if (isBrowser) require("./IndexPage.css");
+import "./IndexPage.css";
 
-function IndexPage(props) {
+/**
+ * Index page component
+ * @param initialProps
+ */
+function IndexPage(initialProps) {
 
   IndexPage.propTypes = {
     params: PropTypes.object.isRequired,
@@ -33,8 +36,10 @@ function IndexPage(props) {
   };
 
   return {
+    props: initialProps,
+
     render() {
-      const { version, githubLink } = props.state;
+      const { version, githubLink } = this.props.state;
       return (
         <Title title="Game of Credit">
           <div id="index-page" className="center">

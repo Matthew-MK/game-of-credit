@@ -18,15 +18,12 @@
 
 import React, { PropTypes } from "react";
 import { RouteHandler } from "react-router";
-import { isBrowser } from "../utils/ExecutionEnvironment";
 
-if (isBrowser) require("./App.css");
+import "./App.css";
 
 /**
  * Main application component
  * @param initialProps
- * @returns {*}
- * @constructor
  */
 function App(initialProps) {
 

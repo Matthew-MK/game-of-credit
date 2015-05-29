@@ -18,9 +18,8 @@
 
 import React, { Component, PropTypes } from "react";
 import shouldPureComponentUpdate from "react-pure-render/function";
-import { isBrowser } from "../../utils/ExecutionEnvironment";
 
-if (isBrowser) require("./Blocker.css");
+import "./Blocker.css";
 
 /**
  * @class Blocker
