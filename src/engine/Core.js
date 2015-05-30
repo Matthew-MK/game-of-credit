@@ -181,8 +181,8 @@ export function createEngine(props) {
       }
       collision.front = intersects[7] || intersects[0] || intersects[1];
       collision.back = intersects[3] || intersects[4] || intersects[5];
-      collision.left = intersects[5] || intersects[6] || intersects[7];
-      collision.right = intersects[1] || intersects[2] || intersects[3];
+      collision.right = intersects[5] || intersects[6] || intersects[7];
+      collision.left = intersects[1] || intersects[2] || intersects[3];
 
       // Player move
       if (keys.W && !collision.front) {
