@@ -21,6 +21,7 @@ import { createMeshes } from "./Meshes";
 import { getKeyFromCode } from "../utils/Helpers";
 import { createPacker } from "../utils/Packer";
 import Event from "../constants/EventTypes";
+import { forEach } from "underscore";
 
 /**
  * Game engine factory
@@ -150,7 +151,7 @@ export function createEngine(props) {
   scene.add(directionalLight);
 
   // Meshes
-  meshes.items.forEach(mesh => scene.add(mesh));
+  forEach(meshes.objectList, item => scene.add(item));
 
   // public
   return {
@@ -168,7 +169,7 @@ export function createEngine(props) {
       // y intersect
       rayCaster.far = 1000; // avoid skyBox
       rayCaster.set(cameraYaw.position, rayDirections.down);
-      collision.down = rayCaster.intersectObjects(meshes.items)[0];
+      collision.down = rayCaster.intersectObjects(meshes.meshList)[0];
       height = height ? cameraYaw.position.y - collision.down.distance + defaultHeight : defaultHeight;
 
       // xz intersects
@@ -176,7 +177,7 @@ export function createEngine(props) {
       for (idx = 0, direction = rayDirections.front.clone(); idx < 8; idx++) {
         direction.applyAxisAngle(rotationAxe, idx === 0 ? cameraYaw.rotation.y : rotationAngle);
         rayCaster.set(cameraYaw.position, direction);
-        intersects[idx] = !!rayCaster.intersectObjects(meshes.items)[0];
+        intersects[idx] = !!rayCaster.intersectObjects(meshes.meshList)[0];
       }
       collision.front = intersects[7] || intersects[0] || intersects[1];
       collision.back = intersects[3] || intersects[4] || intersects[5];

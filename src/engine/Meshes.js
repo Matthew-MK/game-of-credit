@@ -17,26 +17,45 @@
  **/
 
 /* global THREE */
-import { repeatTexture } from "../utils/Helpers";
 import { createMonster } from "./Monster";
+import { repeatTexture, setMeshProps } from "../utils/Helpers";
+import { forEach, map } from "underscore";
+import mapping from "./mapping.js";
+
+
 
 export function createMeshes(textures, models) {
 
-  const { Mesh } = THREE;
-  const { PI } = Math;
+  const { Mesh, BoxGeometry, PlaneBufferGeometry } = THREE;
 
   const geometry = {
-    ground: new THREE.PlaneBufferGeometry(1024, 1024),
-    wall: new THREE.PlaneBufferGeometry(1024, 128),
-    skyBox: new THREE.BoxGeometry(5000, 5000, 5000)
+    bricks: new BoxGeometry(30, 15, 10),
+    crate: new BoxGeometry(15, 15, 15),
+    container: new BoxGeometry(60, 60, 120),
+    ground: new PlaneBufferGeometry(1024, 1024),
+    rock: new BoxGeometry(250, 60, 150),
+    skyBox: new BoxGeometry(5000, 5000, 5000),
+    wall: new PlaneBufferGeometry(1024, 128)
   };
 
   const material = {
+    bricks: new THREE.MeshLambertMaterial({
+      map: repeatTexture(textures.simple.bricks, [1, 1])
+    }),
+    container: new THREE.MeshLambertMaterial({
+      map: repeatTexture(textures.simple.container, [2, 2])
+    }),
     grass: new THREE.MeshLambertMaterial({
       map: repeatTexture(textures.simple.grass, [16, 16])
     }),
     wall: new THREE.MeshLambertMaterial({
       map: repeatTexture(textures.simple.wall, [16, 2])
+    }),
+    crate: new THREE.MeshLambertMaterial({
+      map: repeatTexture(textures.simple.crate, [1, 1])
+    }),
+    rock: new THREE.MeshLambertMaterial({
+      map: repeatTexture(textures.simple.rock, [12, 5])
     }),
     skyBox: (() => {
       const shader = THREE.ShaderLib.cube;
@@ -52,44 +71,14 @@ export function createMeshes(textures, models) {
     })()
   };
 
-  const mapping = {
-    frontWall: {
-      position: [0, 64, -512]
-    },
-    leftWall: {
-      position: [-512, 64, 0],
-      rotation: [0, PI / 2, 0],
-      castShadow: true
-    },
-    rightWall: {
-      position: [512, 64, 0],
-      rotation: [0, -PI / 2, 0],
-      receiveShadow: true
-    },
-    backWall: {
-      position: [0, 64, 512],
-      rotation: [0, PI, 0],
-      castShadow: true,
-      receiveShadow: true
-    },
-    ground: {
-      rotation: [-PI / 2, 0, 0],
-      receiveShadow: true
-    },
-    monster: {
-      scale: [0.5, 0.5, 0.5],
-      position: [30, 12, -100]
-    }
-  };
-
   // Meshes
-  const wallMesh = new Mesh(geometry.wall, material.wall);
   const meshes = {
-    frontWall: wallMesh.clone(),
-    leftWall: wallMesh.clone(),
-    rightWall: wallMesh.clone(),
-    backWall: wallMesh.clone(),
+    bricks: new Mesh(geometry.bricks, material.bricks),
+    container: new Mesh(geometry.container, material.container),
+    wall: new Mesh(geometry.wall, material.wall),
+    crate: new Mesh(geometry.crate, material.crate),
     ground: new Mesh(geometry.ground, material.grass),
+    rock: new Mesh(geometry.rock, material.rock),
     skyBox: new Mesh(geometry.skyBox, material.skyBox),
     monster: createMonster({
       body: {
@@ -103,23 +92,23 @@ export function createMeshes(textures, models) {
     })
   };
 
-  Object.keys(mapping).forEach(key => {
-    const mesh = meshes[key];
-    const { position, rotation, scale, castShadow, receiveShadow } = mapping[key];
-    if (position) mesh.position.set(...position);
-    if (rotation) mesh.rotation.set(...rotation);
-    if (scale) mesh.scale.set(...scale);
-    if (castShadow) mesh.castShadow = castShadow;
-    if (receiveShadow) mesh.receiveShadow = receiveShadow;
-
+  const meshList = [];
+  const objectList = map(mapping, objProps => {
+    const obj3D = new THREE.Object3D();
+    forEach(objProps.items, props => {
+      const mesh = setMeshProps(meshes[props.mesh].clone(), props);
+      obj3D.add(mesh);
+      meshList.push(mesh);
+    });
+    return setMeshProps(obj3D, objProps);
   });
 
   return {
-    items: Object.keys(meshes).map(key => meshes[key]),
+    meshList,
+    objectList,
+
     update(delta) {
-      meshes.monster.children.forEach(child =>
-        child.updateAnimation(delta * 1000)
-      );
+      forEach(meshes.monster.children, child => child.updateAnimation(delta * 1000));
     }
   };
 }

@@ -19,7 +19,7 @@ import compression from "compression";
 import DocumentTitle from "react-document-title";
 import express from "express";
 import http from "http";
-import React, { renderToString, renderToStaticMarkup } from "react";
+import React from "react";
 import Router from "react-router";
 import socketIO from "socket.io";
 
@@ -42,10 +42,10 @@ app.use(compression());
 app.use("/build", express.static(`${__dirname}/../build`));
 app.use("/static", express.static(`${__dirname}/../static`));
 app.get("/sitemap.xml", sitemapRoute(routes));
-app.get('*', function (req, res) {
+app.get("*", function (req, res) {
   const state = getInitialState(env);
   Router.run(routes, req.originalUrl, (Handler, routerState) => {
-    const innerHTML = renderToString(<Handler state={state}/>);
+    const innerHTML = React.renderToString(<Handler state={state}/>);
     const title = DocumentTitle.rewind(); // always call rewind after rendering components to string
     const notFound = routerState.routes.some(route => route.name === "not-found");
     res.status(notFound ? 404 : 200).end(createStaticHtml({title, state}, innerHTML));

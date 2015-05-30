@@ -44,3 +44,15 @@ export function repeatTexture(texture, repeat) {
   texture.repeat.set(...repeat);
   return texture;
 }
+
+/**
+ * Helper function for setting mesh properties
+ */
+export function setMeshProps(mesh, {position, rotation, scale, castShadow, receiveShadow }) {
+  if (position) mesh.position.set(...position);
+  if (rotation) mesh.rotation.set(...rotation);
+  if (scale) mesh.scale.set(...scale);
+  if (castShadow) mesh.castShadow = castShadow;
+  if (receiveShadow) mesh.receiveShadow = receiveShadow;
+  return mesh;
+}
