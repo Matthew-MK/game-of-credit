@@ -57,6 +57,9 @@ export function createMonster({body, weapon}) {
   monster.add(bodyMesh);
   monster.add(weaponMesh);
   monster.rotation.y += Math.PI / 2;
+  monster.position.y += 12;
+  monster.scale.set(0.5, 0.5, 0.5);
+
 
   return monster;
 }

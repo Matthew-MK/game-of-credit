@@ -23,7 +23,6 @@ import { forEach, map } from "underscore";
 import mapping from "./mapping.js";
 
 
-
 export function createMeshes(textures, models) {
 
   const { Mesh, BoxGeometry, PlaneBufferGeometry } = THREE;
@@ -71,7 +70,6 @@ export function createMeshes(textures, models) {
     })()
   };
 
-  // Meshes
   const meshes = {
     bricks: new Mesh(geometry.bricks, material.bricks),
     container: new Mesh(geometry.container, material.container),
@@ -79,19 +77,10 @@ export function createMeshes(textures, models) {
     crate: new Mesh(geometry.crate, material.crate),
     ground: new Mesh(geometry.ground, material.grass),
     rock: new Mesh(geometry.rock, material.rock),
-    skyBox: new Mesh(geometry.skyBox, material.skyBox),
-    monster: createMonster({
-      body: {
-        model: models.ratamahattaBody,
-        texture: textures.simple.ratamahattaBody
-      },
-      weapon: {
-        model: models.ratamahattaWeapon,
-        texture: textures.simple.ratamahattaWeapon
-      }
-    })
+    skyBox: new Mesh(geometry.skyBox, material.skyBox)
   };
 
+  // create meshes based on mapping file
   const meshList = [];
   const objectList = map(mapping, objProps => {
     const obj3D = new THREE.Object3D();
@@ -103,12 +92,27 @@ export function createMeshes(textures, models) {
     return setMeshProps(obj3D, objProps);
   });
 
+
+  const monsterProps = {
+    body: {
+      model: models.ratamahattaBody,
+      texture: textures.simple.ratamahattaBody
+    },
+    weapon: {
+      model: models.ratamahattaWeapon,
+      texture: textures.simple.ratamahattaWeapon
+    }
+  };
+
+  const monster = createMonster(monsterProps);
+  objectList.push(monster);
+
   return {
     meshList,
     objectList,
 
     update(delta) {
-      forEach(meshes.monster.children, child => child.updateAnimation(delta * 1000));
+      forEach(monster.children, child => child.updateAnimation(delta * 1000));
     }
   };
 }
