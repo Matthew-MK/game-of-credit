@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @providesModule client
+ * @providesModule Play
  **/
-import React from "react";
-import Router from "react-router";
-import routes from "./routes";
-import { createWebSocketClient } from "./sockets/client";
 
-const initialState = window._STATE_;
-const renderElement = document.getElementById("render");
-const socket = createWebSocketClient();
-
-Router.run(routes, Router.HistoryLocation, (Handler) =>
-    React.render(<Handler socket={socket} state={initialState}/>, renderElement)
-);
+export default Object.freeze({
+  CONNECT: "1",
+  DISCONNECT: "2",
+  JOIN: "3",
+  LEAVE: "4",
+  DATA: "5"
+});

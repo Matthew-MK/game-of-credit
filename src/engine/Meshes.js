@@ -17,43 +17,45 @@
  **/
 
 /* global THREE */
-import { createMonster } from "./Monster";
-import { repeatTexture, setMeshProps } from "../utils/Helpers";
-import { forEach, map } from "underscore";
 import mapping from "./mapping.js";
+import { forEach, map, range } from "underscore";
+import { repeatTexture, setMeshProps } from "../utils/Helpers";
 
 
 export function createMeshes(textures, models) {
 
-  const { Mesh, BoxGeometry, PlaneBufferGeometry } = THREE;
+  const { Mesh, BoxGeometry, PlaneBufferGeometry, MeshLambertMaterial } = THREE;
 
   const geometry = {
     bricks: new BoxGeometry(30, 15, 10),
-    crate: new BoxGeometry(15, 15, 15),
+    bullet: new THREE.SphereGeometry(15, 15, 15),
     container: new BoxGeometry(60, 60, 120),
+    crate: new BoxGeometry(15, 15, 15),
     ground: new PlaneBufferGeometry(1024, 1024),
+    monsterBody: models.ratamahattaBody.geometry,
+    monsterWeapon: models.ratamahattaWeapon.geometry,
     rock: new BoxGeometry(250, 60, 150),
     skyBox: new BoxGeometry(5000, 5000, 5000),
     wall: new PlaneBufferGeometry(1024, 128)
   };
 
   const material = {
-    bricks: new THREE.MeshLambertMaterial({
+    bricks: new MeshLambertMaterial({
       map: repeatTexture(textures.simple.bricks, [1, 1])
     }),
-    container: new THREE.MeshLambertMaterial({
+    container: new MeshLambertMaterial({
       map: repeatTexture(textures.simple.container, [2, 2])
     }),
-    grass: new THREE.MeshLambertMaterial({
+    grass: new MeshLambertMaterial({
       map: repeatTexture(textures.simple.grass, [16, 16])
     }),
-    wall: new THREE.MeshLambertMaterial({
+    wall: new MeshLambertMaterial({
       map: repeatTexture(textures.simple.wall, [16, 2])
     }),
-    crate: new THREE.MeshLambertMaterial({
+    crate: new MeshLambertMaterial({
       map: repeatTexture(textures.simple.crate, [1, 1])
     }),
-    rock: new THREE.MeshLambertMaterial({
+    rock: new MeshLambertMaterial({
       map: repeatTexture(textures.simple.rock, [12, 5])
     }),
     skyBox: (() => {
@@ -67,7 +69,21 @@ export function createMeshes(textures, models) {
         depthWrite: false,
         side: THREE.BackSide
       });
-    })()
+    })(),
+    monsterBody: new MeshLambertMaterial({
+      map: textures.simple.ratamahattaBody,
+      morphTargets: true, morphNormals: true,
+      specular: 0xffffff, shininess: 60,
+      shading: THREE.SmoothShading,
+      vertexColors: THREE.FaceColors
+    }),
+    monsterWeapon: new MeshLambertMaterial({
+      map: textures.simple.ratamahattaWeapon,
+      morphTargets: true, morphNormals: true,
+      specular: 0xffffff, shininess: 60,
+      shading: THREE.SmoothShading,
+      vertexColors: THREE.FaceColors
+    })
   };
 
   const meshes = {
@@ -77,7 +93,19 @@ export function createMeshes(textures, models) {
     crate: new Mesh(geometry.crate, material.crate),
     ground: new Mesh(geometry.ground, material.grass),
     rock: new Mesh(geometry.rock, material.rock),
-    skyBox: new Mesh(geometry.skyBox, material.skyBox)
+    skyBox: new Mesh(geometry.skyBox, material.skyBox),
+    createMonsterBody: () => {
+      const mesh = new THREE.MorphAnimMesh(geometry.monsterBody, material.monsterBody);
+      mesh.parseAnimations();
+      mesh.playAnimation("stand", 10);
+      return mesh;
+    },
+    createMonsterWeapon: () => {
+      const mesh = new THREE.MorphAnimMesh(geometry.monsterWeapon, material.monsterWeapon);
+      mesh.parseAnimations();
+      mesh.playAnimation("stand", 10);
+      return mesh;
+    }
   };
 
   // create meshes based on mapping file
@@ -92,27 +120,26 @@ export function createMeshes(textures, models) {
     return setMeshProps(obj3D, objProps);
   });
 
+  function createMonster() {
+    const obj = new THREE.Object3D();
+    obj.add(meshes.createMonsterBody());
+    obj.add(meshes.createMonsterWeapon());
+    obj.scale.set(0.5, 0.5, 0.5);
+    return obj;
+  }
 
-  const monsterProps = {
-    body: {
-      model: models.ratamahattaBody,
-      texture: textures.simple.ratamahattaBody
-    },
-    weapon: {
-      model: models.ratamahattaWeapon,
-      texture: textures.simple.ratamahattaWeapon
-    }
-  };
-
-  const monster = createMonster(monsterProps);
-  objectList.push(monster);
+  // Create pool with some meshes
+  const monsterPool = map(range(6), createMonster);
 
   return {
     meshList,
     objectList,
 
-    update(delta) {
-      forEach(monster.children, child => child.updateAnimation(delta * 1000));
+    getMonster() {
+      return monsterPool.length > 0 ? monsterPool.pop() : createMonster();
+    },
+    freeMonster(monster) {
+      monsterPool.push(monster);
     }
   };
 }

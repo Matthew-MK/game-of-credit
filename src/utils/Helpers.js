@@ -56,3 +56,24 @@ export function setMeshProps(mesh, {position, rotation, scale, castShadow, recei
   if (receiveShadow) mesh.receiveShadow = receiveShadow;
   return mesh;
 }
+
+/**
+ * Helper function for generating lowest possible integers
+ * @returns {Object}
+ */
+export function idGenerator() {
+  const ids = new Set();
+  return {
+    generate(id = 1) {
+      if (ids.has(id)) {
+        return this.generate(id + 1);
+      } else {
+        ids.add(id);
+        return id;
+      }
+    },
+    release(id) {
+      ids.delete(id);
+    }
+  };
+}

@@ -21,7 +21,7 @@ import express from "express";
 import http from "http";
 import React from "react";
 import Router from "react-router";
-import socketIO from "socket.io";
+import WebSockets from "ws";
 
 import routes from "./routes.jsx";
 import sitemapRoute from "./components/Sitemap/sitemapRoute";
@@ -29,12 +29,13 @@ import { config } from "../package.json";
 import { createStaticHtml } from "./components/Html/Html.jsx";
 import { generateBundle } from "./bundler";
 import { getInitialState } from "./initialState";
+import { createWebSocketsServer } from "./sockets/server";
 
-let app = express();
-let io = socketIO();
-
+const app = express();
+const server = http.createServer(app);
+const wss = createWebSocketsServer(server);
 const env = app.get("env");
-const port = process.env.PORT || config.port;
+const port = parseInt(process.env.PORT, 10) || config.port;
 
 generateBundle(env);
 
@@ -42,28 +43,19 @@ app.use(compression());
 app.use("/build", express.static(`${__dirname}/../build`));
 app.use("/static", express.static(`${__dirname}/../static`));
 app.get("/sitemap.xml", sitemapRoute(routes));
+
 app.get("*", function (req, res) {
   const state = getInitialState(env);
   Router.run(routes, req.originalUrl, (Handler, routerState) => {
     const innerHTML = React.renderToString(<Handler state={state}/>);
     const title = DocumentTitle.rewind(); // always call rewind after rendering components to string
     const notFound = routerState.routes.some(route => route.name === "not-found");
-    res.status(notFound ? 404 : 200).end(createStaticHtml({title, state}, innerHTML));
+    res.status(notFound ? 404 : 200).end(createStaticHtml({ title, state }, innerHTML));
   });
 });
 
+server.listen(port, () => console.log(`Server listening on ${port} in ${env}`));
 
-io.on("connection", function (socket) {
-  console.log("connect", socket.id);
-});
-
-let server = http.createServer(app);
-server.listen(port);
-io.listen(server);
-
-server.on("listening", () => {
-  console.log(`Server listening on ${port} in ${env}`);
-});
 
 server.on("error", (err) => {
   if (err.syscall !== "listen") throw err;

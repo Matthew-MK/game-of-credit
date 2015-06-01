@@ -17,11 +17,11 @@
  **/
 
 /* global THREE */
-import { createMeshes } from "./Meshes";
-import { getKeyFromCode } from "../utils/Helpers";
-import { createPacker } from "../utils/Packer";
 import Event from "../constants/EventTypes";
+import { createMeshes } from "./Meshes";
 import { forEach } from "underscore";
+import { getKeyFromCode } from "../utils/Helpers";
+import { inProduction } from "../utils/ExecutionEnvironment";
 
 /**
  * Game engine factory
@@ -73,14 +73,7 @@ export function createEngine(props) {
   const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
 
   const meshes = createMeshes(props.textures, props.models);
-
-  const packer = createPacker([
-    {type: "Float32Array", count: 5},
-    {type: "Uint8Array", count: 1}
-  ]);
-
-  const sendPacket = (data) =>
-    socket.emit(packer.pack(data));
+  const players = {};
 
   var delta = 0.0;
   var deltaSpeed;
@@ -97,6 +90,40 @@ export function createEngine(props) {
   var isJumping = false;
   var direction;
   var height;
+
+  // INITIALIZATION
+
+  // Renderer
+  renderer.setSize(canvasWidth, canvasHeight);
+  renderer.shadowMapEnabled = true;
+
+  // no THREE warnings in production
+  if (inProduction) {
+    renderer.context.getProgramInfoLog = function () {
+      return "";
+    };
+  }
+
+  // Camera
+  cameraYaw.add(cameraPitch);
+  cameraYaw.position.set(...initialPosition);
+  cameraYaw.position.y += defaultHeight;
+  cameraYaw.rotation.set(...initialRotation);
+  scene.add(cameraYaw);
+
+  // Lights
+  directionalLight.position.set(-520, 520, 1000);
+  directionalLight.castShadow = true;
+  directionalLight.shadowCameraLeft = -720;
+  directionalLight.shadowCameraRight = 700;
+  directionalLight.shadowCameraBottom = -300;
+  directionalLight.shadowCameraNear = 550;
+  directionalLight.shadowCameraFar = 185;
+  scene.add(ambientLight);
+  scene.add(directionalLight);
+
+  // Meshes
+  forEach(meshes.objectList, item => scene.add(item));
 
   // EVENTS
   emitter.addListener(Event.CLICK, () => {
@@ -123,35 +150,31 @@ export function createEngine(props) {
     keys[key] = !keys.hasOwnProperty(key);
   });
 
-  // INITIALIZATION
+  function createPlayer(id) {
+    if (players[id] !== undefined) return;
+    players[id] = meshes.getMonster();
+    scene.add(players[id]);
+  }
 
-  // Renderer
-  renderer.setSize(canvasWidth, canvasHeight);
-  renderer.shadowMapEnabled = true;
+  function deletePlayer(id) {
+    if (players[id] === undefined) return;
+    scene.remove(players[id]);
+    meshes.freeMonster(players[id]);
+    delete players[id];
+  }
 
-  // no warnings
-  // renderer.context.getProgramInfoLog = function () { return '' };
+  socket.handleLeave(deletePlayer);
 
-  // Camera
-  cameraYaw.add(cameraPitch);
-  cameraYaw.position.set(...initialPosition);
-  cameraYaw.position.y += defaultHeight;
-  cameraYaw.rotation.set(...initialRotation);
-  scene.add(cameraYaw);
+  socket.handleData((id, [event, , , posX, posY, posZ, rotY]) => {
 
-  // Lights
-  directionalLight.position.set(-520, 520, 1000);
-  directionalLight.castShadow = true;
-  directionalLight.shadowCameraLeft = -720;
-  directionalLight.shadowCameraRight = 700;
-  directionalLight.shadowCameraBottom = -300;
-  directionalLight.shadowCameraNear = 550;
-  directionalLight.shadowCameraFar = 185;
-  scene.add(ambientLight);
-  scene.add(directionalLight);
-
-  // Meshes
-  forEach(meshes.objectList, item => scene.add(item));
+    const monster = players[id];
+    if (monster) {
+      monster.position.set(posX, posY - defaultHeight + 12, posZ);
+      monster.rotation.y = rotY + Math.PI / 2;
+    } else {
+      createPlayer(id);
+    }
+  });
 
   // public
   return {
@@ -174,7 +197,8 @@ export function createEngine(props) {
 
       // xz intersects
       rayCaster.far = speed;
-      for (idx = 0, direction = rayDirections.front.clone(); idx < 8; idx++) {
+      direction = rayDirections.front.clone();
+      for (idx = 0; idx < 8; idx++) {
         direction.applyAxisAngle(rotationAxe, idx === 0 ? cameraYaw.rotation.y : rotationAngle);
         rayCaster.set(cameraYaw.position, direction);
         intersects[idx] = !!rayCaster.intersectObjects(meshes.meshList)[0];
@@ -216,20 +240,26 @@ export function createEngine(props) {
       velocity.x -= velocity.x * deltaSpeed;
       velocity.z -= velocity.z * deltaSpeed;
 
-      meshes.update(delta);
-      renderer.render(scene, camera);
+      forEach(players, monster =>
+          forEach(monster.children, child =>
+            child.updateAnimation(delta * 1000))
+      );
+
+      // temporary prevent loading bug with reload TODO fix it
+      try {
+        renderer.render(scene, camera);
+      } catch (err) {
+        window.location.reload();
+      }
     },
     animate(callback) {
       const animationFrame = () => {
         if (callback()) return;
         this.render();
-        sendPacket([
-          cameraYaw.position.x,
-          cameraYaw.position.y,
-          cameraYaw.position.z,
-          cameraYaw.rotation.x,
-          cameraYaw.rotation.y,
-          1
+        socket.emitData([
+          0, 0, 0, 0,
+          cameraYaw.position.x, cameraYaw.position.y, cameraYaw.position.z,
+          cameraYaw.rotation.y
         ]);
         requestAnimationFrame(animationFrame);
       };

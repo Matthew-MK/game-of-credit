@@ -1,4 +1,15 @@
 {
-  "optional": ["runtime"],
+  "optional": [
+    "runtime"
+  ],
+  "env": {
+    "production": {
+      "optional": [
+        "utility.inlineEnvironmentVariables",
+        "minification.deadCodeElimination",
+        "minification.inlineExpressions"
+      ]
+    }
+  },
   "stage": 0
 }

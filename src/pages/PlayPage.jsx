@@ -33,44 +33,53 @@ import PlayActions from "../actions/PlayActions";
 import PlayStore from "../stores/PlayStore";
 
 
-function PlayPage(initialProps) {
+function PlayPage(props) {
 
   PlayPage.propTypes = {
-    // Injected by @connectToStores:
+    // Injected by connectToStores:
     isPointerLocked: PropTypes.bool.isRequired,
-    isLoading: PropTypes.bool.isRequired
+    isLoading: PropTypes.bool.isRequired,
+    models: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object
+    ])
   };
 
   const emitter = new EventEmitter();
-  const { config } = initialProps.state;
+  const { config } = props.state;
 
   var textures;
 
   if (isBrowser) {
     textures = loadTextures(config.textures, PlayActions.loadingTexturesCompleted);
-    loadModels(config.models, PlayActions.loadingModelsCompleted);
+    if (!props.models) {
+      loadModels(config.models, PlayActions.loadingModelsCompleted);
+    }
   }
 
   return {
 
-    props: initialProps,
+    props: props,
 
+    handleClick(e) {
+
+    },
     handleEvent(eventType) {
       return (e) => {
-        if (this.props.isPointerLocked) {
-          emitter.emit(eventType, e);
-        }
-      }
+        if (this.props.isPointerLocked) emitter.emit(eventType, e);
+      };
     },
     componentWillMount() {
       this.handleEvent = this.handleEvent.bind(this);
     },
     componentDidMount() {
+      this.props.socket.emitJoin();
       window.addEventListener("mousemove", this.handleEvent(Event.MOUSE_MOVE));
       window.addEventListener("keydown", this.handleEvent(Event.KEY_DOWN));
       window.addEventListener("keyup", this.handleEvent(Event.KEY_UP));
     },
     componentWillUnmount() {
+      this.props.socket.emitLeave();
       window.removeEventListener("mousemove", this.handleEvent(Event.MOUSE_MOVE));
       window.removeEventListener("keydown", this.handleEvent(Event.KEY_DOWN));
       window.removeEventListener("keyup", this.handleEvent(Event.KEY_UP));
