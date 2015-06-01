@@ -31,7 +31,7 @@ const common = {
 };
 
 const development = {
-  __proto__: common,
+  ...common,
 
   devtool: "cheap-eval-source-map",
   devServer: {
@@ -85,7 +85,7 @@ const development = {
 };
 
 const production = {
-  __proto__: common,
+  ...common,
 
   entry: path.join(__dirname, "src/client.jsx"),
   output: {
