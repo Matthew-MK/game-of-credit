@@ -8,7 +8,7 @@ Online 3D first person shooter experiment. __IN DEVELOPMENT__.
 
 ***
 ## Install
-1. Install iojs [iojs](https://www.google.com)
+1. Install [iojs](https://www.google.com)
 2. Clone this repo `git clone git@github.com:svagi/Game-of-credit.git`
 3. Change directory `cd Game-of-credit`
 3. Install all dependencies `npm install`
