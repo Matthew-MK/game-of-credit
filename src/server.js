@@ -21,7 +21,6 @@ import express from "express";
 import http from "http";
 import React from "react";
 import Router from "react-router";
-import WebSockets from "ws";
 
 import routes from "./routes.jsx";
 import sitemapRoute from "./components/Sitemap/sitemapRoute";
@@ -33,11 +32,12 @@ import { createWebSocketsServer } from "./sockets/server";
 
 const app = express();
 const server = http.createServer(app);
-const wss = createWebSocketsServer(server);
+
 const env = app.get("env");
 const port = parseInt(process.env.PORT, 10) || config.port;
 
 generateBundle(env);
+createWebSocketsServer(server);
 
 app.use(compression());
 app.use("/build", express.static(`${__dirname}/../build`));
