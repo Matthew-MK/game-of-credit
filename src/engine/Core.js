@@ -75,6 +75,7 @@ export function createEngine(props) {
 
   const meshes = createMeshes(props.textures, props.models);
   const players = {};
+  const bullets = {};
 
   var delta = 0.0;
   var deltaSpeed;
@@ -93,9 +94,11 @@ export function createEngine(props) {
     left: false,
     back: false,
     right: false,
-    jump: false
+    jump: false,
+    shoot: false
   };
   var isJumping = false;
+  var isShooting = false;
   var currentAnimation = Animation.STAND;
   var direction;
   var height;
@@ -147,21 +150,49 @@ export function createEngine(props) {
     delete players[id];
   }
 
+  function shootBullet(position, [rotX, rotY]) {
+
+    const bullet = meshes.getBullet();
+    bullet.position.set(position.x, position.y, position.z);
+    bullet.direction = {
+      x: -Math.sin(rotY),
+      y: Math.sin(rotX),
+      z: -Math.cos(rotY)
+    };
+    bullets[bullet.uuid] = bullet;
+    scene.add(bullet);
+
+    setTimeout(() => {
+      scene.remove(bullet);
+      delete bullets[bullet.uuid];
+      meshes.freeBullet(bullet);
+    }, 3000);
+  }
+
   function animatePlayer(player, anim, fps = 6) {
     if (player.lastAnimation === anim || player.isAnimating) return;
     forEach(player.children, part =>
         part.playAnimation(Animation.getKey(anim), fps)
     );
     player.lastAnimation = anim;
-    if (anim === Animation.JUMP) {
-      player.isAnimating = true;
-      setTimeout(() => player.isAnimating = false, 500);
+
+    switch (anim) {
+      case Animation.JUMP:
+        player.isAnimating = true;
+        setTimeout(() => player.isAnimating = false, 500);
+        break;
+      case Animation.ATTACK:
+        shootBullet(player.position, [player.rotX, player.rotY]);
+        break;
     }
   }
 
   // EVENTS
   emitter.addListener(Event.CLICK, () => {
-    console.log("click");
+    if (move.shoot) return;
+    move.shoot = true;
+    shootBullet(cameraYaw.position, [cameraPitch.rotation._x, cameraYaw.rotation._y]);
+    setTimeout(() => move.shoot = false, 1000);
   });
   emitter.addListener(Event.MOUSE_MOVE, e => {
     mouseX = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
@@ -186,11 +217,13 @@ export function createEngine(props) {
 
   socket.handleLeave(deletePlayer);
 
-  socket.handleData((id, [anim, , , posX, posY, posZ, rotY]) => {
+  socket.handleData((id, [anim, shoot, , posX, posY, posZ, rotX, rotY]) => {
     const player = players[id];
     if (player !== undefined) {
       player.position.set(posX, posY - defaultHeight + 12, posZ);
       player.rotation.y = rotY + Math.PI / 2;
+      player.rotX = rotX;
+      player.rotY = rotY;
       animatePlayer(player, anim);
     } else {
       createPlayer(id);
@@ -257,10 +290,16 @@ export function createEngine(props) {
       currentAnimation = Animation.STAND;
       if (move.front || move.left || move.back || move.right) currentAnimation = Animation.RUN;
       if (move.jump) currentAnimation = Animation.JUMP;
+      if (move.shoot) currentAnimation = Animation.ATTACK;
 
       forEach(players, player =>
           forEach(player.children, part => part.updateAnimation(delta * 1000))
       );
+      forEach(bullets, bullet => {
+        bullet.position.x += bullet.direction.x * speed;
+        bullet.position.y += bullet.direction.y * speed;
+        bullet.position.z += bullet.direction.z * speed;
+      });
 
       cameraYaw.translateX(velocity.x);
       cameraYaw.translateY(velocity.y);
@@ -277,7 +316,6 @@ export function createEngine(props) {
       velocity.z -= velocity.z * deltaSpeed;
 
 
-
       // temporary prevent loading bug with reload TODO fix it
       try {
         renderer.render(scene, camera);
@@ -290,8 +328,14 @@ export function createEngine(props) {
         if (callback()) return;
         this.render();
         socket.emitData([
-          0, currentAnimation, 0, 0,
-          cameraYaw.position.x, cameraYaw.position.y, cameraYaw.position.z,
+          0,
+          currentAnimation,
+          0,
+          0,
+          cameraYaw.position.x,
+          cameraYaw.position.y,
+          cameraYaw.position.z,
+          cameraPitch.rotation.x,
           cameraYaw.rotation.y
         ]);
         requestAnimationFrame(animationFrame);

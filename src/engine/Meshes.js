@@ -28,7 +28,7 @@ export function createMeshes(textures, models) {
 
   const geometry = {
     bricks: new BoxGeometry(30, 15, 10),
-    bullet: new THREE.SphereGeometry(15, 15, 15),
+    bullet: new THREE.SphereGeometry(5, 20, 20),
     container: new BoxGeometry(60, 60, 120),
     crate: new BoxGeometry(15, 15, 15),
     ground: new PlaneBufferGeometry(1024, 1024),
@@ -43,6 +43,7 @@ export function createMeshes(textures, models) {
     bricks: new MeshLambertMaterial({
       map: repeatTexture(textures.simple.bricks, [1, 1])
     }),
+    bullet: new THREE.MeshBasicMaterial({ color: 0xffff00 }),
     container: new MeshLambertMaterial({
       map: repeatTexture(textures.simple.container, [2, 2])
     }),
@@ -88,6 +89,7 @@ export function createMeshes(textures, models) {
 
   const meshes = {
     bricks: new Mesh(geometry.bricks, material.bricks),
+    bullet: new Mesh(geometry.bullet, material.bullet),
     container: new Mesh(geometry.container, material.container),
     wall: new Mesh(geometry.wall, material.wall),
     crate: new Mesh(geometry.crate, material.crate),
@@ -128,8 +130,13 @@ export function createMeshes(textures, models) {
     return obj;
   }
 
-  // Create pool with some meshes
+  function createBullet() {
+    return meshes.bullet.clone();
+  }
+
+  // Create pools with some meshes
   const monsterPool = map(range(6), createMonster);
+  const bulletPool = map(range(10), createBullet);
 
   return {
     meshList,
@@ -140,6 +147,12 @@ export function createMeshes(textures, models) {
     },
     freeMonster(monster) {
       monsterPool.push(monster);
+    },
+    getBullet() {
+      return bulletPool.length > 0 ? bulletPool.pop() : createBullet();
+    },
+    freeBullet(bullet) {
+      bulletPool.push(bullet);
     }
   };
 }

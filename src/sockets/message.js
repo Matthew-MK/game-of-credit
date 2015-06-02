@@ -21,7 +21,7 @@ import { createPacker } from "../utils/Packer";
 
 const packer = createPacker([
   { type: "Uint8Array", count: 4 },
-  { type: "Float32Array", count: 4 }
+  { type: "Float32Array", count: 5 }
 ]);
 
 export function createMessage({ data, code, id = 0, binary = false }) {
