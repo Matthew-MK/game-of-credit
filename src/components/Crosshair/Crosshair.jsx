@@ -46,7 +46,7 @@ function Crosshair(props) {
       };
 
       return (
-        <div style={style.wrapper} className="center">
+        <div style={style.wrapper} className="flex align-center">
           <div style={style.cross} />
         </div>
       );

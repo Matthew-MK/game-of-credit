@@ -37,7 +37,7 @@ function Loading(initialProps) {
     props: initialProps,
 
     render() {
-      return <div style={style} className="center">Loading...</div>;
+      return <div style={style} className="flex align-center">Loading...</div>;
     }
   };
 }

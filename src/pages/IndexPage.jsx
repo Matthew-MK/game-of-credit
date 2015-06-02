@@ -42,7 +42,7 @@ function IndexPage(initialProps) {
       const { version, githubLink } = this.props.state;
       return (
         <Title title="Game of Credit">
-          <div id="index-page" className="center">
+          <div id="index-page" className="flex columns align-center">
             <h1>Game of Credit
               <small className="version">v{version}</small>
             </h1>
