@@ -49,7 +49,14 @@ const common = {
     ratamahattaBody: "static/models/ratamahatta/ratamahatta.json",
     ratamahattaWeapon: "static/models/ratamahatta/weapon.json"
   },
-  favicon: "/static/favicon.ico"
+  favicon: "/static/favicon.ico",
+  ui: {
+    crosshair: {
+      src: "static/ui/crosshair.png",
+      width: 86,
+      height: 86
+    }
+  }
 };
 
 const development = {

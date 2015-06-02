@@ -27,6 +27,7 @@ import { loadTextures, loadModels } from "../utils/AssetsLoader";
 import Blocker from "../components/Blocker/Blocker.jsx";
 import Engine from "../engine/Engine.jsx";
 import Loading from "../components/Loading/Loading.jsx";
+import Crosshair from "../components/Crosshair/Crosshair.jsx";
 
 import Event from "../constants/EventTypes";
 import PlayActions from "../actions/PlayActions";
@@ -89,6 +90,7 @@ function PlayPage(props) {
       const loading = <Loading />;
       const playing = (
         <div onClick={this.handleEvent(Event.CLICK)}>
+          <Crosshair enable={isPointerLocked} config={config.ui.crosshair}/>
           <Blocker isPointerLocked={isPointerLocked}
                    handler={PlayActions.pointerLockChanged}/>
           <Engine emitter={emitter}
