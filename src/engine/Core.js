@@ -17,6 +17,7 @@
  **/
 
 /* global THREE */
+import Animation from "../constants/AnimationTypes";
 import Event from "../constants/EventTypes";
 import { createMeshes } from "./Meshes";
 import { forEach } from "underscore";
@@ -87,7 +88,15 @@ export function createEngine(props) {
     D: false,
     SPACE: false
   };
+  var move = {
+    front: false,
+    left: false,
+    back: false,
+    right: false,
+    jump: false
+  };
   var isJumping = false;
+  var currentAnimation = Animation.STAND;
   var direction;
   var height;
 
@@ -125,6 +134,31 @@ export function createEngine(props) {
   // Meshes
   forEach(meshes.objectList, item => scene.add(item));
 
+  function createPlayer(id) {
+    if (players[id] !== undefined) return;
+    players[id] = meshes.getMonster();
+    scene.add(players[id]);
+  }
+
+  function deletePlayer(id) {
+    if (players[id] === undefined) return;
+    scene.remove(players[id]);
+    meshes.freeMonster(players[id]);
+    delete players[id];
+  }
+
+  function animatePlayer(player, anim, fps = 6) {
+    if (player.lastAnimation === anim || player.isAnimating) return;
+    forEach(player.children, part =>
+        part.playAnimation(Animation.getKey(anim), fps)
+    );
+    player.lastAnimation = anim;
+    if (anim === Animation.JUMP) {
+      player.isAnimating = true;
+      setTimeout(() => player.isAnimating = false, 500);
+    }
+  }
+
   // EVENTS
   emitter.addListener(Event.CLICK, () => {
     console.log("click");
@@ -150,27 +184,14 @@ export function createEngine(props) {
     keys[key] = !keys.hasOwnProperty(key);
   });
 
-  function createPlayer(id) {
-    if (players[id] !== undefined) return;
-    players[id] = meshes.getMonster();
-    scene.add(players[id]);
-  }
-
-  function deletePlayer(id) {
-    if (players[id] === undefined) return;
-    scene.remove(players[id]);
-    meshes.freeMonster(players[id]);
-    delete players[id];
-  }
-
   socket.handleLeave(deletePlayer);
 
-  socket.handleData((id, [event, , , posX, posY, posZ, rotY]) => {
-
-    const monster = players[id];
-    if (monster) {
-      monster.position.set(posX, posY - defaultHeight + 12, posZ);
-      monster.rotation.y = rotY + Math.PI / 2;
+  socket.handleData((id, [anim, , , posX, posY, posZ, rotY]) => {
+    const player = players[id];
+    if (player !== undefined) {
+      player.position.set(posX, posY - defaultHeight + 12, posZ);
+      player.rotation.y = rotY + Math.PI / 2;
+      animatePlayer(player, anim);
     } else {
       createPlayer(id);
     }
@@ -208,23 +229,38 @@ export function createEngine(props) {
       collision.right = intersects[5] || intersects[6] || intersects[7];
       collision.left = intersects[1] || intersects[2] || intersects[3];
 
+      move.front = keys.W && !collision.front;
+      move.left = keys.A && !collision.left;
+      move.back = keys.S && !collision.back;
+      move.right = keys.D && !collision.right;
+      move.jump = keys.SPACE && !isJumping;
+
       // Player move
-      if (keys.W && !collision.front) {
+      if (move.front) {
         velocity.z -= deltaSpeed;
       }
-      if (keys.S && !collision.back) {
-        velocity.z += deltaSpeed;
-      }
-      if (keys.A && !collision.left) {
+      if (move.left) {
         velocity.x -= deltaSpeed;
       }
-      if (keys.D && !collision.right) {
+      if (move.back) {
+        velocity.z += deltaSpeed;
+      }
+
+      if (move.right) {
         velocity.x += deltaSpeed;
       }
-      if (keys.SPACE && !isJumping) {
+      if (move.jump) {
         velocity.y += 3.0;
         isJumping = true;
       }
+
+      currentAnimation = Animation.STAND;
+      if (move.front || move.left || move.back || move.right) currentAnimation = Animation.RUN;
+      if (move.jump) currentAnimation = Animation.JUMP;
+
+      forEach(players, player =>
+          forEach(player.children, part => part.updateAnimation(delta * 1000))
+      );
 
       cameraYaw.translateX(velocity.x);
       cameraYaw.translateY(velocity.y);
@@ -240,10 +276,7 @@ export function createEngine(props) {
       velocity.x -= velocity.x * deltaSpeed;
       velocity.z -= velocity.z * deltaSpeed;
 
-      forEach(players, monster =>
-          forEach(monster.children, child =>
-            child.updateAnimation(delta * 1000))
-      );
+
 
       // temporary prevent loading bug with reload TODO fix it
       try {
@@ -257,7 +290,7 @@ export function createEngine(props) {
         if (callback()) return;
         this.render();
         socket.emitData([
-          0, 0, 0, 0,
+          0, currentAnimation, 0, 0,
           cameraYaw.position.x, cameraYaw.position.y, cameraYaw.position.z,
           cameraYaw.rotation.y
         ]);
