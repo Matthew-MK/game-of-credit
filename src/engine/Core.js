@@ -38,7 +38,7 @@ export function createEngine(props) {
     canvasWidth = 0,
     canvasHeight = 0,
     // player
-    speed = 20,
+    speed = 30,
     initialPosition = [0, 0, 0],
     initialRotation = [0, 0, 0],
     } = props;
