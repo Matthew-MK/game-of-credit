@@ -44,7 +44,8 @@ function PlayPage(props) {
     models: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.object
-    ])
+    ]),
+    ammo: PropTypes.number.isRequired
   };
 
   const emitter = new EventEmitter();
@@ -63,12 +64,17 @@ function PlayPage(props) {
 
     props: props,
 
-    handleClick(e) {
-
-    },
     handleEvent(eventType) {
       return (e) => {
-        if (this.props.isPointerLocked) emitter.emit(eventType, e);
+        if (this.props.isPointerLocked) {
+          switch (eventType) {
+            case Event.CLICK:
+              emitter.emit(Event.CLICK, this.props.ammo, PlayActions.playerClick);
+              break;
+            default:
+              emitter.emit(eventType, e);
+          }
+        }
       };
     },
     componentWillMount() {
@@ -87,13 +93,13 @@ function PlayPage(props) {
       window.removeEventListener("keyup", this.handleEvent(Event.KEY_UP));
     },
     render() {
-      const { isLoading, isPointerLocked, socket, models } = this.props;
+      const { isLoading, isPointerLocked, socket, models, ammo } = this.props;
       const loading = <Loading />;
       const playing = (
         <div onClick={this.handleEvent(Event.CLICK)}>
           <Crosshair enable={isPointerLocked} config={config.ui.crosshair}/>
-          <Stats title="Hitpoints" count={100} align="align-bottom align-left" />
-          <Stats title="Ammo" count={10} align="align-bottom align-right" />
+          <Stats title="Hitpoints" count={100} align="align-bottom align-left"/>
+          <Stats title="Ammo" count={ammo} align="align-bottom align-right"/>
           <Blocker isPointerLocked={isPointerLocked}
                    handler={PlayActions.pointerLockChanged}/>
           <Engine emitter={emitter}
@@ -120,7 +126,8 @@ function getState() {
   return {
     isPointerLocked: PlayStore.isPointerLocked(),
     isLoading: PlayStore.isLoading(),
-    models: PlayStore.getModels()
+    models: PlayStore.getModels(),
+    ammo: PlayStore.getAmmo()
   };
 }
 

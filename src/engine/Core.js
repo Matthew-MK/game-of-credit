@@ -188,9 +188,10 @@ export function createEngine(props) {
   }
 
   // EVENTS
-  emitter.addListener(Event.CLICK, () => {
-    if (move.shoot) return;
+  emitter.addListener(Event.CLICK, (ammo, callback) => {
+    if (move.shoot || !ammo) return;
     move.shoot = true;
+    callback();
     shootBullet(cameraYaw.position, [cameraPitch.rotation._x, cameraYaw.rotation._y]);
     setTimeout(() => move.shoot = false, 1000);
   });

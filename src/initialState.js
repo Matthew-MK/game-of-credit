@@ -30,7 +30,8 @@ export function getInitialState(env) {
     playStore: {
       pointerLocked: false,
       textures: false,
-      models: false
+      models: false,
+      ammo: 20
     }
   };
 }

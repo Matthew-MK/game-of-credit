@@ -33,10 +33,16 @@ const PlayStore = store.createSubStore(["playStore"], {
         break;
       case Types.LOADING_MODELS_COMPLETE:
         state.set("models", data);
+        break;
+      case Types.PLAYER_CLICK:
+        state.update("ammo", ammo => ammo > 0 ? ammo - 1 : 0);
     }
   }),
   getModels() {
     return this.state.get("models");
+  },
+  getAmmo() {
+    return this.state.get("ammo");
   },
   isPointerLocked() {
     return this.state.get("pointerLocked");

@@ -4,7 +4,7 @@
 
 // ignore css require on server
 require.extensions[".css"] = function () {
-  return null
+  return null;
 };
 require("babel/register");
 require("../src/server");

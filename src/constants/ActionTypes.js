@@ -19,5 +19,6 @@
 export default Object.freeze({
   POINTER_LOCK_CHANGE: "pointerLockChange",
   LOADING_TEXTURES_COMPLETE: "loadingTexturesComplete",
-  LOADING_MODELS_COMPLETE: "loadingModelsComplete"
+  LOADING_MODELS_COMPLETE: "loadingModelsComplete",
+  PLAYER_CLICK: "playerClick"
 });

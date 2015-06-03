@@ -28,5 +28,8 @@ export default {
   },
   loadingModelsCompleted(models) {
     dispatcher.dispatch(actionTypes.LOADING_MODELS_COMPLETE, models);
+  },
+  playerClick() {
+    dispatcher.dispatch(actionTypes.PLAYER_CLICK, null);
   }
 };
