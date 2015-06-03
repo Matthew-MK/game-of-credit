@@ -35,6 +35,10 @@ function IndexPage(initialProps) {
     socket: PropTypes.object
   };
 
+  IndexPage.contextTypes = {
+    router: React.PropTypes.func
+  };
+
   return {
     props: initialProps,
 

@@ -48,6 +48,10 @@ function PlayPage(props) {
     ammo: PropTypes.number.isRequired
   };
 
+  PlayPage.contextTypes = {
+    router: React.PropTypes.func
+  };
+
   const emitter = new EventEmitter();
   const { config } = props.state;
 

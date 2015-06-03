@@ -32,6 +32,10 @@ function App(initialProps) {
     socket: PropTypes.object
   };
 
+  App.contextTypes = {
+    router: React.PropTypes.func
+  };
+
   return {
     props: initialProps,
 
