@@ -21,6 +21,7 @@ import { version } from "../package.json";
 export const PORT = 8888;
 export const HOST = os.hostname() || "localhost";
 export const DEV_SERVER_URL = `//${HOST}:${PORT}`;
+export const APP_PREFIX = process.env.APP_PREFIX || "";
 
 const common = {
   textures: {
@@ -74,11 +75,11 @@ const production = {
   ...common,
   css: {
     normalize: "/static/css/normalize.min.css",
-    bundle: `/build/bundle.css?v=${version}`
+    bundle: `${APP_PREFIX}/build/bundle.css?v=${version}`
   },
   js: {
     three: "https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js",
-    bundle: `/build/bundle.js?v=${version}`
+    bundle: `${APP_PREFIX}/build/bundle.js?v=${version}`
   }
 };
 

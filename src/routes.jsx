@@ -22,9 +22,10 @@ import App from "./pages/App.jsx";
 import IndexPage from "./pages/IndexPage.jsx";
 import PlayPage from "./pages/PlayPage.jsx";
 import NotFound from "./components/NotFound/NotFound.jsx";
+import { APP_PREFIX } from "./config";
 
 export default (
-  <Route path="/" name="app" handler={App} priority="1.0" changeFreq="monthly">
+  <Route path={APP_PREFIX + "/"} name="app" handler={App} priority="1.0" changeFreq="monthly">
     <DefaultRoute name="index" handler={IndexPage} />
     <Route name="play" handler={PlayPage} priority="1.0" changeFreq="daily"/>
     <NotFoundRoute name="not-found" handler={NotFound}/>
