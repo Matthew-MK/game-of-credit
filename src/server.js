@@ -50,7 +50,10 @@ app.get("*", function (req, res) {
     const innerHTML = React.renderToString(<Handler state={state}/>);
     const title = DocumentTitle.rewind(); // always call rewind after rendering components to string
     const notFound = routerState.routes.some(route => route.name === "not-found");
-    res.status(notFound ? 404 : 200).end(createStaticHtml({ title, state }, innerHTML));
+    res
+      .status(notFound ? 404 : 200)
+      .type("html")
+      .end(createStaticHtml({ title, state }, innerHTML));
   });
 });
 
