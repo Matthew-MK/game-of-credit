@@ -19,11 +19,10 @@ import EventEmitter from "events";
 import SocketType from "../constants/SocketTypes";
 import { createMessage, parseMessage } from "./message";
 
-
-export function createWebSocketClient(path = "/") {
+export function createWebSocketClient({prefix = "", path = "/"}) {
 
   const emitter = new EventEmitter();
-  const ws = new WebSocket("ws://" + window.document.location.host + path);
+  const ws = new WebSocket("ws://" + window.document.location.host + prefix + path);
 
   // send/receive binary data only with ArrayBuffer
   ws.binaryType = "arraybuffer";

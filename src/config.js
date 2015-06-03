@@ -24,6 +24,7 @@ export const DEV_SERVER_URL = `//${HOST}:${PORT}`;
 export const APP_PREFIX = process.env.APP_PREFIX || "";
 
 const common = {
+  APP_PREFIX,
   textures: {
     simple: {
       bricks: "static/textures/materials/bricks.jpg",
@@ -74,7 +75,7 @@ const development = {
 const production = {
   ...common,
   css: {
-    normalize: "/static/css/normalize.min.css",
+    normalize: APP_PREFIX + "/static/css/normalize.min.css",
     bundle: `${APP_PREFIX}/build/bundle.css?v=${version}`
   },
   js: {

@@ -22,7 +22,7 @@ import { createWebSocketClient } from "./sockets/client";
 
 const initialState = window._STATE_;
 const renderElement = document.getElementById("render");
-const socket = createWebSocketClient();
+const socket = createWebSocketClient({ prefix: initialState.config.APP_PREFIX });
 
 Router.run(routes, Router.HistoryLocation, (Handler) =>
     React.render(<Handler socket={socket} state={initialState}/>, renderElement)
