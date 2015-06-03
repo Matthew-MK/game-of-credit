@@ -98,7 +98,6 @@ export function createEngine(props) {
     shoot: false
   };
   var isJumping = false;
-  var isShooting = false;
   var currentAnimation = Animation.STAND;
   var direction;
   var height;
@@ -130,7 +129,8 @@ export function createEngine(props) {
   directionalLight.shadowCameraRight = 700;
   directionalLight.shadowCameraBottom = -300;
   directionalLight.shadowCameraNear = 550;
-  directionalLight.shadowCameraFar = 185;
+  directionalLight.shadowCameraFar = 1850;
+  //directionalLight.shadowCameraVisible = true;
   scene.add(ambientLight);
   scene.add(directionalLight);
 
