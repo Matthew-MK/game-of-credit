@@ -22,9 +22,11 @@ export const PORT = 8888;
 export const HOST = os.hostname() || "localhost";
 export const DEV_SERVER_URL = `//${HOST}:${PORT}`;
 export const APP_PREFIX = process.env.APP_PREFIX || "";
+export const APP_SECURE = !!process.env.APP_SECURE;
 
 const common = {
   APP_PREFIX,
+  APP_SECURE,
   textures: {
     simple: {
       bricks: "static/textures/materials/bricks.jpg",

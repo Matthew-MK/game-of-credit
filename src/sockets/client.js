@@ -19,10 +19,18 @@ import EventEmitter from "events";
 import SocketType from "../constants/SocketTypes";
 import { createMessage, parseMessage } from "./message";
 
-export function createWebSocketClient({prefix = "", path = "/"}) {
+export function createWebSocketClient(options) {
 
+  const {
+    secure = false,
+    host = window.document.location.host,
+    prefix = "",
+    path = "/"
+    } = options;
+
+  const protocol = secure ? "wss" : "ws";
+  const ws = new WebSocket(protocol + "://" + host + prefix + path);
   const emitter = new EventEmitter();
-  const ws = new WebSocket("ws://" + window.document.location.host + prefix + path);
 
   // send/receive binary data only with ArrayBuffer
   ws.binaryType = "arraybuffer";
@@ -54,7 +62,7 @@ export function createWebSocketClient({prefix = "", path = "/"}) {
 
   function send(message) {
     if (ws.readyState === 1) {
-      ws.send(message, { mask: true });
+      ws.send(message, {mask: true});
     } else {
       setTimeout(() => send(message), 16);
     }
@@ -62,13 +70,13 @@ export function createWebSocketClient({prefix = "", path = "/"}) {
 
   return {
     emitData(data) {
-      send(createMessage({ binary: true, data: data }));
+      send(createMessage({binary: true, data: data}));
     },
     emitJoin() {
-      send(createMessage({ code: SocketType.JOIN }));
+      send(createMessage({code: SocketType.JOIN}));
     },
     emitLeave() {
-      send(createMessage({ code: SocketType.LEAVE }));
+      send(createMessage({code: SocketType.LEAVE}));
     },
     handleData(cb) {
       emitter.addListener(SocketType.DATA, cb);
