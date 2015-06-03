@@ -18,6 +18,7 @@
 
 import React, { PropTypes } from "react";
 import { createEngine } from "./Core";
+import respawns from "./respawns";
 
 function Engine(initialProps) {
 
@@ -27,6 +28,8 @@ function Engine(initialProps) {
     textures: PropTypes.object,
     socket: PropTypes.object
   };
+
+  const spawn = respawns[Math.floor((Math.random() * respawns.length))];
 
   var unmounted = false;
   var engine;
@@ -48,6 +51,8 @@ function Engine(initialProps) {
       engine = createEngine({
         textures: this.props.textures,
         models: this.props.models,
+        initialPosition: spawn.position,
+        initialRotation: spawn.rotation,
         emitter: this.props.emitter,
         socket: this.props.socket,
         renderer: {
