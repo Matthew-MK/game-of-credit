@@ -32,10 +32,10 @@ const common = {
       bricks: "static/textures/materials/bricks.jpg",
       container: "static/textures/materials/container.jpg",
       crate: "static/textures/materials/crate.gif",
-      grass: "static/textures/materials/grass-512.jpg",
+      grass: "static/textures/materials/grass.jpg",
       ratamahattaBody: "static/textures/ratamahatta/ratamahatta.png",
       ratamahattaWeapon: "static/textures/ratamahatta/weapon.png",
-      rock: "static/textures/materials/rock-512.jpg",
+      rock: "static/textures/materials/rock.jpg",
       wall: "static/textures/materials/wall.jpg"
     },
     cube: {
