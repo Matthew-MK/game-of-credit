@@ -53,7 +53,7 @@ app.get("*", function (req, res) {
     res
       .status(notFound ? 404 : 200)
       .type("html")
-      .end(createStaticHtml({ title, state }, innerHTML));
+      .send(createStaticHtml({ title, state }, innerHTML));
   });
 });
 
