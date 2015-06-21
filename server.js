@@ -7,4 +7,4 @@ require.extensions[".css"] = function () {
   return null;
 };
 require("babel/register");
-require("../src/server");
+require("./src/server");
