@@ -41,7 +41,7 @@ const development = {
     inline: true,
     quiet: false,
     noInfo: false,
-    publicPath: DEV_SERVER_URL + "/build/",
+    publicPath: DEV_SERVER_URL + "/static/",
     stats: {
       assets: true,
       colors: true,
@@ -58,9 +58,9 @@ const development = {
     path.join(__dirname, "src/client.jsx")
   ],
   output: {
-    path: path.join(__dirname, "/build/"),
+    path: path.join(__dirname, "/static/"),
     filename: "bundle.js",
-    publicPath: DEV_SERVER_URL + "/build/"
+    publicPath: DEV_SERVER_URL + "/static/"
   },
   module: {
     loaders: [
@@ -89,7 +89,7 @@ const production = {
 
   entry: path.join(__dirname, "src/client.jsx"),
   output: {
-    path: path.join(__dirname, "build"),
+    path: path.join(__dirname, "static"),
     filename: "bundle.js"
   },
   module: {
@@ -113,6 +113,7 @@ const production = {
   plugins: [
     // set environment based on process.env[key]
     new webpack.EnvironmentPlugin("NODE_ENV"),
+    new webpack.EnvironmentPlugin("APP_PREFIX"),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
@@ -126,6 +127,3 @@ const production = {
 export default function (env) {
   return env === "production" ? production : development;
 }
-
-
-

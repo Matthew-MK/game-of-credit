@@ -28,6 +28,6 @@ export default (
   <Route path={APP_PREFIX + "/"} name="app" handler={App} priority="1.0" changeFreq="monthly">
     <DefaultRoute name="index" handler={IndexPage} />
     <Route name="play" handler={PlayPage} priority="1.0" changeFreq="daily"/>
-    <NotFoundRoute name="not-found" handler={NotFound}/>
+    <NotFoundRoute name="not-found" handler={IndexPage}/>
   </Route>
 );

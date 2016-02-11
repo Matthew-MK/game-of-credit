@@ -70,7 +70,7 @@ const development = {
   },
   js: {
     three: "/static/js/three.js",
-    bundle: `${DEV_SERVER_URL}/build/bundle.js`
+    bundle: `${DEV_SERVER_URL}/static/bundle.js`
   }
 };
 
@@ -78,11 +78,11 @@ const production = {
   ...common,
   css: {
     normalize: APP_PREFIX + "/static/css/normalize.min.css",
-    bundle: `${APP_PREFIX}/build/bundle.css?v=${version}`
+    bundle: `${APP_PREFIX}/static/bundle.css?v=${version}`
   },
   js: {
     three: "https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js",
-    bundle: `${APP_PREFIX}/build/bundle.js?v=${version}`
+    bundle: `${APP_PREFIX}/static/bundle.js?v=${version}`
   }
 };
 

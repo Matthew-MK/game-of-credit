@@ -25,6 +25,7 @@ import Router from "react-router";
 import routes from "./routes.jsx";
 import sitemapRoute from "./components/Sitemap/sitemapRoute";
 import { config } from "../package.json";
+import { APP_PREFIX } from "./config";
 import { createStaticHtml } from "./components/Html/Html.jsx";
 import { generateBundle } from "./bundler";
 import { getInitialState } from "./initialState";
@@ -40,13 +41,12 @@ generateBundle(env);
 createWebSocketsServer(server);
 
 app.use(compression());
-app.use("/build", express.static(`${__dirname}/../build`));
 app.use("/static", express.static(`${__dirname}/../static`));
 app.get("/sitemap.xml", sitemapRoute(routes));
 
 app.get("*", function (req, res) {
   const state = getInitialState(env);
-  Router.run(routes, req.originalUrl, (Handler, routerState) => {
+  Router.run(routes, APP_PREFIX + req.originalUrl, (Handler, routerState) => {
     const innerHTML = React.renderToString(<Handler state={state}/>);
     const title = DocumentTitle.rewind(); // always call rewind after rendering components to string
     const notFound = routerState.routes.some(route => route.name === "not-found");

@@ -22,7 +22,7 @@ import { createMessage, parseMessage } from "./message";
 export function createWebSocketClient(options) {
 
   const {
-    secure = false,
+    secure = true,
     host = window.document.location.host,
     prefix = "",
     path = "/"
@@ -95,5 +95,3 @@ export function createWebSocketClient(options) {
     }
   };
 }
-
-

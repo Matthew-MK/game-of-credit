@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  goc:
+    build: .
+    container_name: goc
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      APP_PREFIX: "/game-of-credit"
+      APP_SECURE: "true"
+
+networks:
+  default:
+    external:
+      name: vps
