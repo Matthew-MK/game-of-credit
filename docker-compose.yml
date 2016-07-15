@@ -5,13 +5,9 @@ services:
     build: .
     container_name: goc
     restart: always
+    network_mode: "host"
     ports:
       - "8000:8000"
     environment:
       APP_PREFIX: "/game-of-credit"
       APP_SECURE: "true"
-
-networks:
-  default:
-    external:
-      name: vps
