@@ -9,5 +9,5 @@ services:
     ports:
       - "8000:8000"
     environment:
-      APP_PREFIX: "/game-of-credit"
+      APP_PREFIX: ""
       APP_SECURE: "true"
