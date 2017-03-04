@@ -1,4 +1,4 @@
-FROM node:5.5.0
+FROM node:7.7.1
 ENV NODE_ENV "production"
 
 RUN mkdir -p /usr/src/app
@@ -8,4 +8,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 8000
-CMD [ "npm", "start" ]
+CMD ["npm", "start"]

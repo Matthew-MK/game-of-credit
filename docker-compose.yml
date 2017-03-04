@@ -11,3 +11,4 @@ services:
     environment:
       APP_PREFIX: ""
       APP_SECURE: "true"
+    command: node server.js

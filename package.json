@@ -29,10 +29,6 @@
   "config": {
     "port": "8000"
   },
-  "os": [
-    "win32",
-    "darwin"
-  ],
   "scripts": {
     "lint": " ./node_modules/eslint/bin/eslint.js ./src",
     "start": "node server.js",
